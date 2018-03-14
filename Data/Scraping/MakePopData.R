@@ -8,13 +8,13 @@
 #' 
 #'
 
-mydir <- 'C:/Users/morrism/Dropbox/FatalForce/'
-setwd(paste(mydir, 'Data/Code', sep=''))
+setwd('./ScrapedFiles/')
 
 knitr::opts_chunk$set(echo=TRUE, warning=FALSE, message=FALSE)
 library(tidyverse)
 library(stringr)
 library(noncensus)
+library(plyr)
 
 ######################################################################
 #' state names and abbreviations
@@ -77,5 +77,5 @@ pop_county_list <- dlply(pop_county, "state_name", identity)
 
 rm(list=ls(pattern="tmp"))
 
-save.image(paste(mydir, 'Data/PopulationData/Pop.Rdata', sep=''))
+save.image('./Pop.Rdata')
 
