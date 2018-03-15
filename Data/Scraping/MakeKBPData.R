@@ -45,6 +45,7 @@ x3 <- map(x2, ~.x %>%
                      sep = "<td>|<TD>",
                      remove = FALSE))
 
+#--------------------------------------------------------------------------------------------
 #' split the same row, multiple data entries cases
 x4 <- map(x3, ~.x %>%
             mutate(deceased = gsub('http\\S+\\s*', "", V5)) %>%
@@ -55,8 +56,8 @@ x4 <- map(x3, ~.x %>%
 
 x5 <- bind_rows(x4)
 
-x5$deceased <- apply(x5, 1, function(x) { ifelse(length(x[['genrace']]) > 1, strsplit(x[['deceased']], split = "<br>|<BR>"), x[['deceased']])})
-x5$id <- apply(x5, 1, function(x) { ifelse(length(x[['genrace']]) > 1, strsplit(x[['V2']], split = "<br>|<BR>"), x[['V2']])})
+x5$deceased <- apply(x5, 1, function(x) ifelse(length(x[['genrace']]) > 1, strsplit(x[['deceased']], split = "<br>|<BR>"), x[['deceased']]))
+x5$id <- apply(x5, 1, function(x) ifelse(length(x[['genrace']]) > 1, strsplit(x[['V2']], split = "<br>|<BR>"), x[['V2']]))
 
 empt <- function(x) {
   return(nchar(x) == 0 || is.na(x) || is.null(x))
@@ -68,7 +69,7 @@ x6 <- x5 %>%
 x6$genrace <- apply(x6, 1, function(x) { ifelse(is.na(x[['genrace']]) && typeof(x[['V4']]) == "character", x[['V4']], x[['genrace']])})
 x6$id <- apply(x6, 1, function(x) { ifelse(is.na(x[['id']]) && typeof(x[['V2']]) == "character", x[['V2']], x[['id']])})
 
-
+#------------------------------------------------------------------------------------
 #' format some col classes, numeric, date, get rid of white space
 x7 <- x6 %>% 
             mutate_all(funs(trimws)) %>% 
@@ -86,6 +87,11 @@ x7 <- x7 %>%
                      sep = "-",
                      remove = FALSE,
                      convert = TRUE)
+
+# handle extra "pregnant" tag in deceased column and add aka column
+x7 <- x7 %>% 
+          mutate(deceased = gsub("(<BR>|<br>)pregnant", "", deceased)) %>%
+          separate(deceased, into = c("deceased", "aka"), sep = "<br>|<BR>")
 
 #' split name/age and gender/race into different columns; and handle the case for method of killing
 x8 <- x7 %>%
@@ -121,9 +127,12 @@ kbp <- x8 %>%
   mutate(fb_pic = stringr::str_extract(V5, url_pattern)) %>%
   mutate(state = V3) 
 
+#-------------------------------------------------------------------------------
+
 # keep only what looks good
 kbp <- kbp %>%
-  subset(select=c(number, date, date_format, year, month, day, deceased, deceased_name, deceased_age, gender, race, method, fb_page, fb_pic, state)) %>%
+  subset(select=c(number, date, date_format, year, month, day, deceased, 
+                  deceased_name, deceased_age, gender, race, method, fb_page, fb_pic, state, aka)) %>%
   filter(state %in% c(state.abb, "DC"))
 
 rm(list=ls(pattern="x"))
