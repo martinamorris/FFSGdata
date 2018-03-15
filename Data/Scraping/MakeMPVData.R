@@ -6,6 +6,7 @@
 
 #' This file scrapes the police killings data from <https://mappingpoliceviolence.org/>.
 library(readxl)
+library(dplyr)
 
 setwd('./ScrapedFiles/')
 
@@ -14,12 +15,12 @@ setwd('./ScrapedFiles/')
 
 # get xlsx file and write
 url <- 'https://mappingpoliceviolence.org/s/MPVDatasetDownload-btzs.xlsx'
-download.file(url, destfile = 'MPV_raw.xlsx')
+download.file(url, destfile = 'MPV.xlsx')
 
 # View
-data <- read_xlsx('MPV_raw.xlsx')
+data <- read_xlsx('MPV.xlsx')
+file.remove("MPV.xlsx")
+
 glimpse(data)
 
-##################################################################################
-
-##################################################################################
+save.image("./MPV.clean.Rdata")
