@@ -7,12 +7,11 @@
 #' ---
 
 #' This file scrapes the police killings data from <https://killedbypolice.net/>.
-#' 
-#' KBPScraper has been written by Ben Marwick and modified by Martina Morris and Jainul Vaghasia.
 
 library(dplyr)
 library(glue)
 library(readr)
+library(tidyr)
 library(tidyverse)
 
 setwd('./ScrapedFiles/')
@@ -61,38 +60,43 @@ x4 <- map(x3, ~.x %>%
                      remove = FALSE,
                      convert = TRUE))
 
-#'  remove URLs in name col, split mulitple desceased into multiple cols
-x5 <- map(x4, ~.x %>% 
+#' split the same row, multiple data entries cases
+x5 <- map(x4, ~.x %>%
             mutate(deceased = gsub('http\\S+\\s*', "", V5)) %>%
-            mutate(deceased = gsub('<a href=">|</a>', "", deceased)) %>% 
-            # make separate row where there are two deceased in one row
-            separate_rows(deceased, sep = "<br>|<BR>") %>% 
-            # get the name and age in their own cols
-            separate(deceased, 
-                     into = c('deceased_name', 'deceased_age'),
-                     sep = ",(?=[^,]+$)",  # split on the last comma
-                     remove = FALSE)  %>% 
-            mutate(deceased_age = as.numeric(trimws(deceased_age))) %>% 
-            separate(V4, 
-                     into = c('gender', 'race'),
-                     sep = "/") %>% 
-            mutate(gender = substr(gender, 1, 1)) %>% 
-            separate(V6, 
-                     into = c('method', 'method1'),
-                     sep = "<br>|<BR>") %>% 
-            mutate(method = trimws(method)))
+            mutate(deceased = gsub('<a href=">|</a>', "", deceased)) %>%
+            mutate(genrace = gsub('<font color=white>_</font>/', "", V4)) %>%
+            mutate(genrace = strsplit(genrace, split = "<br>|<BR>"))
+          )
 
-#------------------------------------------------------------------------------
-
-#' convert list of data frames to one big data frame
 x6 <- bind_rows(x5)
 
-#' We have `r nrow(x6)` rows.
+x6$deceased <- apply(x6, 1, function(x) { ifelse(length(x[['genrace']]) > 1, strsplit(x[['deceased']], split = "<br>|<BR>"), x[['deceased']])})
+empt <- function(x) {
+  return(nchar(x) == 0 || is.na(x) || is.null(x))
+}
+x7 <- x6 %>% 
+  filter(!map_lgl(deceased, empt)) %>% 
+  unnest(deceased, genrace, .preserve = c(-deceased, -genrace)) %>% 
+  right_join(y = select(x6, -deceased, -genrace))
+x7$genrace <- apply(x7, 1, function(x) { ifelse(is.na(x[['genrace']]) && typeof(x[['V4']]) == "character", x[['V4']], x[['genrace']])})
+
+#' split name/age and gender/race into different columns; and handle the case for method of killing
+x8 <- x7 %>%
+          separate(deceased, 
+                  into = c('deceased_name', 'deceased_age'),
+                  sep = ",(?=[^,]+$)",  # split on the last comma
+                  remove = FALSE)  %>%
+          mutate(deceased_age = as.numeric(trimws(deceased_age))) %>%
+          separate(genrace,
+                   into = c('gender', 'race'),
+                   sep = "/") %>%
+          mutate(gender = substr(gender, 1, 1)) %>%
+          mutate(method = sapply(strsplit(V6, "<br>|<BR>"), function(x) paste(unique(x), collapse = ", ")))
 
 #------------------------------------------------------------------------------
 
 #' What does it look like? Here's a snippet of just a few columns:
-x6 %>% 
+x8 %>% 
   mutate(state = V3) %>% 
   select(number, date, state, deceased_name, deceased_age) %>% 
   head(n = 10) %>% 
@@ -105,14 +109,16 @@ x6 %>%
 url_pattern <- "http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
 
 #' create columns to hold the URL of the facebook post & pic (if any)
-kbp <- x6 %>% 
+kbp <- x8 %>% 
   mutate(fb_page = stringr::str_extract(V7, url_pattern)) %>%
   mutate(fb_pic = stringr::str_extract(V5, url_pattern)) %>%
-  mutate(state = V3)
+  mutate(state = V3) 
 
-##################################################################################
+# keep only what looks good
+kbp <- kbp %>%
+  subset(select=c(number, date, date_format, year, month, day, deceased, deceased_name, deceased_age, gender, race, method, fb_page, fb_pic, state)) %>%
+  filter(state %in% c(state.abb, "DC"))
 
+rm(list=ls(pattern="x"))
 
-##################################################################################
-
-
+save.image("./KBP.clean.Rdata")
