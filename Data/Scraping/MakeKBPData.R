@@ -35,7 +35,7 @@ x1 <- map(all_pages, ~setNames(.x, "V1"))
 #' filter to keep only columns that have data in them, get rid of some HTML 
 x2 <- map(x1, ~.x %>%   
             mutate(V99 = gsub('<center>|<CENTER>|<font size=2>|target=new', "", V1)) %>% 
-            filter(grepl("<TR><TD>\\(", V99)) %>% 
+            filter(grepl("<TR><TD>[^<]", V99)) %>% 
             select(-V1))
 
 x3 <- map(x2, ~.x %>% 
@@ -43,42 +43,49 @@ x3 <- map(x2, ~.x %>%
             separate(V99, 
                      into = glue('V{1:9}'),
                      sep = "<td>|<TD>",
-                     remove = FALSE) %>% # keep it so we can check on things later
-            separate(V2,
-                     into = c('number', 'date', 
-                              'number2', 'date2'),
-                     sep = "\\)|<br>|\\)|<BR>"))
-
-#' format some col classes, numeric, date, get rid of white space
-x4 <- map(x3, ~.x %>% 
-            mutate_all(funs(trimws)) %>% 
-            mutate(number = as.numeric(gsub("\\(", "", number))) %>% 
-            mutate(date_format =  as.Date(date, "%B %d, %Y")) %>%
-            separate(date_format,
-                     into = c('year','month','day'),
-                     sep = "-",
-                     remove = FALSE,
-                     convert = TRUE))
+                     remove = FALSE))
 
 #' split the same row, multiple data entries cases
-x5 <- map(x4, ~.x %>%
+x4 <- map(x3, ~.x %>%
             mutate(deceased = gsub('http\\S+\\s*', "", V5)) %>%
             mutate(deceased = gsub('<a href=">|</a>', "", deceased)) %>%
             mutate(genrace = gsub('<font color=white>_</font>/', "", V4)) %>%
             mutate(genrace = strsplit(genrace, split = "<br>|<BR>"))
           )
 
-x6 <- bind_rows(x5)
+x5 <- bind_rows(x4)
 
-x6$deceased <- apply(x6, 1, function(x) { ifelse(length(x[['genrace']]) > 1, strsplit(x[['deceased']], split = "<br>|<BR>"), x[['deceased']])})
+x5$deceased <- apply(x5, 1, function(x) { ifelse(length(x[['genrace']]) > 1, strsplit(x[['deceased']], split = "<br>|<BR>"), x[['deceased']])})
+x5$id <- apply(x5, 1, function(x) { ifelse(length(x[['genrace']]) > 1, strsplit(x[['V2']], split = "<br>|<BR>"), x[['V2']])})
+
 empt <- function(x) {
   return(nchar(x) == 0 || is.na(x) || is.null(x))
 }
-x7 <- x6 %>% 
+x6 <- x5 %>% 
   filter(!map_lgl(deceased, empt)) %>% 
-  unnest(deceased, genrace, .preserve = c(-deceased, -genrace)) %>% 
-  right_join(y = select(x6, -deceased, -genrace))
-x7$genrace <- apply(x7, 1, function(x) { ifelse(is.na(x[['genrace']]) && typeof(x[['V4']]) == "character", x[['V4']], x[['genrace']])})
+  unnest(deceased, genrace, id, .preserve = c(-deceased, -genrace, -id)) %>% 
+  right_join(y = select(x5, -deceased, -genrace, -id))
+x6$genrace <- apply(x6, 1, function(x) { ifelse(is.na(x[['genrace']]) && typeof(x[['V4']]) == "character", x[['V4']], x[['genrace']])})
+x6$id <- apply(x6, 1, function(x) { ifelse(is.na(x[['id']]) && typeof(x[['V2']]) == "character", x[['V2']], x[['id']])})
+
+
+#' format some col classes, numeric, date, get rid of white space
+x7 <- x6 %>% 
+            mutate_all(funs(trimws)) %>% 
+            separate(id, into = c("number", "date"), sep = "\\)", remove = FALSE) %>%
+            mutate(number = as.numeric(gsub("\\(", "", number))) %>%
+            mutate_all(funs(trimws))
+
+x7$date <- apply(x7, 1, function(x) if (is.na(x[['date']]) && length(strsplit(x[['id']], "\\)")) <= 1) x[['id']] else x[['date']])
+
+x7 <- x7 %>%
+            mutate_all(funs(trimws)) %>%
+            mutate(date_format =  as.Date(date, "%B %d, %Y")) %>%
+            separate(date_format,
+                     into = c('year','month','day'),
+                     sep = "-",
+                     remove = FALSE,
+                     convert = TRUE)
 
 #' split name/age and gender/race into different columns; and handle the case for method of killing
 x8 <- x7 %>%

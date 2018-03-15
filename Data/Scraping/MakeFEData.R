@@ -19,9 +19,6 @@ fe <- gs_read_csv(gs_url(url))
 # View
 glimpse(fe)
 
-# Save original scraped copy
-save.image('./fe.Rdata')
-
 ##################################################################################
 
 #fe <- read.csv(file = "FE_raw.csv")
