@@ -18,9 +18,9 @@ url <- 'https://mappingpoliceviolence.org/s/MPVDatasetDownload-btzs.xlsx'
 download.file(url, destfile = 'MPV.xlsx')
 
 # View
-data <- read_xlsx('MPV.xlsx')
+mpv <- read_xlsx('MPV.xlsx')
 file.remove("MPV.xlsx")
 
-glimpse(data)
+glimpse(mpv)
 
 save.image("./MPV.clean.Rdata")

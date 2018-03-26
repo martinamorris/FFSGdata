@@ -7,6 +7,7 @@
 #' This file scrapes the police killings data from <https://fatalencounters.org/>.
 
 library(googlesheets)
+library(dplyr)
 
 setwd('./ScrapedFiles/')
 
@@ -54,6 +55,42 @@ fe$kbp.filter <- ifelse(toupper(fe$`officialDisposition`)
 
 # Filter out non-police-shootings and write out clean FE csv
 fe.clean <- filter(fe, kbp.filter == "killed by police")
+
+# fix spelling errors in gender and race
+replacement <- function(x) {
+  if (is.na(x)) {
+    return(NA)
+  }
+  if (RecordLinkage::jarowinkler(tolower(x), "female") >= 0.9) {
+    return("Female")
+  } else if (RecordLinkage::jarowinkler(tolower(x), "male") >= 0.9) {
+    return("Male")
+  }
+}
+fe.clean$sex <- as.character(lapply(fe.clean$sex, replacement))
+
+replacement.2 <- function(x) {
+  if (is.na(x)) {
+    return(NA)
+  }
+  if (RecordLinkage::jarowinkler(x, "Hispanic/Latino") >= 0.9) {
+    return("Hispanic/Latino")
+  } else if (RecordLinkage::jarowinkler(x, "European-American/White") >= 0.9) {
+    return("European-American/White")
+  } else if (RecordLinkage::jarowinkler(x, "African-American/Black") >= 0.9) {
+    return("African-American/Black")
+  } else if (RecordLinkage::jarowinkler(x, "Asian/Pacific Islander") >= 0.9) {
+    return("Asian/Pacific Islander")
+  } else if (RecordLinkage::jarowinkler(x, "Middle Eastern") >= 0.9) {
+    return("Middle Eastern")
+  } else if (RecordLinkage::jarowinkler(x, "Native American/Alaskan") >= 0.9) {
+    return("Native American/Alaskan")
+  } else if (RecordLinkage::jarowinkler(x, "Race unspecified") >= 0.9) {
+    return("Race unspecified")
+  } 
+}
+fe.clean$race <- as.character(lapply(fe.clean$race, replacement.2))
+
 
 # save cleaned copy
 save.image('./fe.clean.Rdata')
