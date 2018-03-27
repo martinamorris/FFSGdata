@@ -2,43 +2,16 @@ library(dplyr)
 library(tidyr)
 library(rio)
 
-#---------------------------------read in datasets----------------------------------------
-
-censusdata <- rio::import("https://www2.census.gov/programs-surveys/popest/tables/2010-2016/state/totals/nst-est2016-01.xlsx")
+#---------------------------------read in datasets-----------------------------
+load("Data/Final/Pop.Rdata")
 fatalencounters <- rio::import("https://docs.google.com/spreadsheets/d/1dKmaV_JiWcG8XBoRgP8b4e9Eopkpgt7FL7nyspvzAsE/edit#gid=0")
+#eventually this will be Jainul's compiled work :)
 
 
-
-
-#---------------------------------organize census data------------------------------------
-
-#Only use rows with states or us data
-censusdatastates <- tail(head(censusdata, 59), 51) #uses just state data
-#remove period in front of state name and change state names to abbreviations to match FE data
-censusdatastates[,1] <- state.abb[match(gsub("\\.", "", censusdatastates[,1]), state.name)]
-censusdatastates[is.na(censusdatastates)] <- "DC" #doesn't recognize DC as state so change manually
-censusdatastates <- censusdatastates[order(censusdatastates$`table with row headers in column A and column headers in rows 3 through 4. (leading dots indicate sub-parts)`),]
-
-#pull US data and combine
-unitedstates <- tail(head(censusdata, 4), 1) #us data
-censusdata <- rbind(censusdatastates, unitedstates) #both us and state
-
-#remove columns that don't relate to a specific year or the state column and add variable names
-censusdata <- censusdata[,c(1,4:10)]
-names(censusdata) <- c('State', 2010:2016) #adds labels
-
-#columns read in as type 'character' change to type 'integer'
-censusdata$'2010' <- as.integer(censusdata$'2010')
-censusdata$'2011' <- as.integer(censusdata$'2011')
-censusdata$'2012' <- as.integer(censusdata$'2012')
-censusdata$'2013' <- as.integer(censusdata$'2013')
-censusdata$'2014' <- as.integer(censusdata$'2014')
-censusdata$'2015' <- as.integer(censusdata$'2015')
-censusdata$'2016' <- as.integer(censusdata$'2016')
-                                
-censusdata[,-1] <- censusdata[,-1]/1000000 #finds population in millions
-
-
+#------------------------------censusdata---------------------------------------------------
+reorder_pop_state <- state_pops[order(state_pops$state_abb),]
+pop_state_and_us <- rbind(reorder_pop_state, all_pops[1,])
+pop_state_and_us_mill <- pop_state_and_us[,3:20]/1000000
 
 
 #-----------------------------organize fatal encounters data-------------------------------------
@@ -61,20 +34,24 @@ fedata <- fatalencounters %>%
 
 #change NA values (where no data matched) to 0
 fedata[is.na(fedata)] <- 0
+
 #Calculate US total
 fedata["Total" ,][,-1] <- colSums(fedata[,-1])
-fedata[is.na(fedata)] <- "ustotal"
+fedata[is.na(fedata)] <- "US"
 
-#edit fedata to be the same size as censusdata
-fedata<- fedata[2:53,c(1,13:19)]
+#remove extra column/row (hopefully this won't be an issue once I have jainul's) and remove 2018
+fedataedit <- fedata[2:53,c(1, 3:20)]
 
+#add full state names
+fedataedit <- cbind(pop_state_and_us[,1], fedataedit)
 
-
+  
 #------------------------------calculate deaths per million------------------------------
 
 #calculate deaths per million population
-fepermill <- fedata[,-1] / censusdata[,-1]
+fepermill <- fedataedit[,-c(1:2)] / pop_state_and_us_mill
 
 #find avegages over all years
-rownames(fepermill) <- fedata$State
-fepermill$average <- rowMeans(fepermill)
+fepermill <- cbind(fedataedit[,1:2], fepermill, rowMeans(fepermill))
+
+colnames(fepermill)[1]<- "state_name"
