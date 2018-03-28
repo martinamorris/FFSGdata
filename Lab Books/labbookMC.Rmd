@@ -1,0 +1,23 @@
+---
+title: "Lab Book"
+author: "Maddi Cummins"
+output: html_document
+---
+
+##Progress Over Break
+
+###Data
+
+#####Tables
+
+* Finished writing calculations for per million table and pushed to github (using MM's Pop.Rdata and Fatal Encounters through rio)
+* Using the "DT" package I created a function to create a data table from per mill. The function takes in two inputs: state and all. State determines which state is displayed or highlighted. All is a boolean which if TRUE the data table contains all the states and the selected state is highlighted, if FALSE the data table is of length 1 and only includes the selected state.
+
+#####Graphics
+
+* I created a function to make a graph of time vs kills per million. The function takes in two inputs: state and all. State determines which state is displayed or highlighted. All is a boolean which if TRUE the data table contains all the states and the selected state is highlighted red and US is highlighted black with a legend, if FALSE the graph is just of the data for the selected state.
+
+###ShinyApp
+
+* Created a first draft for the UI of the ShinyApp. Space is optimized by using tabs.
+* Added Graph and Data table to "Per Capita" tab so that they are interactable with the select and checkbox inputs. Used functions created in Data folder to create visuals.
