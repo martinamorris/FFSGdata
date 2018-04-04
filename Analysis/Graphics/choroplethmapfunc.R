@@ -1,8 +1,9 @@
 library(plotly)
 
-choroplethmap <- function(yeart){  
-  x = fepermill[,colnames(fepermill) == yeart]
-  fepermill$hover <- with(fepermill, paste(state_name))
+choroplethmap <- function(yeart = "mean"){  
+  df <- permillcalc()
+  x <- df[,colnames(df) == yeart]
+  df$hover <- with(df, paste(state_name))
   # give state boundaries a white border
   l <- list(color = toRGB("white"), width = 2)
   # specify some map projection/options
@@ -13,7 +14,7 @@ choroplethmap <- function(yeart){
     lakecolor = toRGB('white')
   )
   
-  plot_geo(fepermill, locationmode = 'USA-states') %>%
+  plot_geo(df, locationmode = 'USA-states') %>%
     add_trace(
       z = ~ x, text = ~hover, locations = ~State,
       color = ~ x, colors = 'Purples'

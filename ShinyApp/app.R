@@ -10,7 +10,7 @@ ui <- navbarPage(
   
   
   tabPanel(
-    "Per Capita",
+    "Tables and Graphs",
     fluidPage(titlePanel("Victims per Capita")),
     sidebarLayout(
       sidebarPanel(
@@ -29,53 +29,30 @@ ui <- navbarPage(
   ),
   
   
-  tabPanel(
-    "Mapping Demographics",
-    fluidPage(
-      titlePanel("Mapping Demographics"),
-      h3("Chloropleth mapping based on selected demographics"),
-      sidebarPanel(
-        h4("Demographics"),
-        checkboxGroupInput(
-          "gender",
-          "Gender",
-          c("Female", "Male", "Transgender", "Unspecified"),
-          selected = c("Female", "Male", "Transgender", "Unspecified")
+  navbarMenu(
+    "Maps",
+      tabPanel("Choropleth",
+        fluidPage(
+          titlePanel("Choropleth Map of Deaths per Capita"),
+          h5("")
         ),
-        checkboxGroupInput(
-          "race",
-          "Race",
-          c(
-            "African-American/Black",
-            "Asian/Pacific Islander",
-            "European-American/White",
-            "Hispanic/Latino",
-            "Middle Eastern",
-            "Native-American/Alaskan",
-            "Unspecified"
+        sidebarLayout(
+          sidebarPanel(
+            h5("Map is shown for mean values, to select a year choose Select Year"),
+            checkboxInput("yearselect", "Select Year", FALSE),
+            conditionalPanel("input.yearselect",
+              sliderInput("year", "Year", 2000, 2017, value = 2000, animate = animationOptions(1500, TRUE))
+            )
           ),
-          selected = c(
-            "African-American/Black",
-            "Asian/Pacific Islander",
-            "European-American/White",
-            "Hispanic/Latino",
-            "Middle Eastern",
-            "Native-American/Alaskan",
-            "Unspecified"
-          )
-        ),
-        checkboxGroupInput(
-          "mental",
-          "Mental Illness Symptoms",
-          c("Yes", "No", "Drug or alcohol use", "Unknown"),
-          selected = c("Yes", "No", "Drug or alcohol use", "Unknown")
-        )
-      )
-    )
+          mainPanel(plotlyOutput("choropleth"))
+        )    
+      ),
+      tabPanel("Cartogram"),
+      tabPanel("Interactive")
   ),
   
   
-  tabPanel("Mapping Individuals"),
+  tabPanel("Data Analytics"),
   
   tabPanel("Data Compiling"),
   inverse = TRUE
@@ -91,6 +68,14 @@ server <- function(input, output, session) {
   output$permillDT <-
     renderDataTable({
       permilltable(input$state, input$all, input$capita)
+    })
+  output$choropleth <-
+    renderPlotly({
+      if(input$yearselect){
+        choroplethmap(paste("p", input$year, sep=""))
+      }else{
+        choroplethmap()
+      }
     })
 }
 
