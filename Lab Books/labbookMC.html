@@ -150,6 +150,36 @@ $(document).ready(function () {
 </ul>
 </div>
 </div>
+<div id="week-1" class="section level2">
+<h2>Week 1</h2>
+<div id="data-1" class="section level3">
+<h3>Data</h3>
+<div id="capita" class="section level5">
+<h5>Capita</h5>
+<ul>
+<li>added a “capita” argument to “permillcalculation.R”, “permillgraph.R”, and “permilltable.R”. This variable toggles whether the data is evaluated by population or just by counts.</li>
+<li>permillgraph and permilltable functions both call permillcalc function with capita set to egual the passed in capita.</li>
+<li>Capita also changes some other features (whether to graph US total etc.).</li>
+</ul>
+</div>
+</div>
+<div id="shinyapp-1" class="section level3">
+<h3>ShinyApp</h3>
+<div id="ui" class="section level5">
+<h5>UI</h5>
+<ul>
+<li>Created a togle button that interacts with the capita variable so that users can choose whether they want to see total or by capita results. - Set to “TRUE”</li>
+</ul>
+</div>
+<div id="error" class="section level5">
+<h5>Error</h5>
+<ul>
+<li>Table has appeared to stop rendering in shiny app. However, it does render when permilltable function is called.</li>
+<li>Currently working on fixes…</li>
+</ul>
+</div>
+</div>
+</div>
 
 
 

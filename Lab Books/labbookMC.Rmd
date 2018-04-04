@@ -21,3 +21,24 @@ output: html_document
 
 * Created a first draft for the UI of the ShinyApp. Space is optimized by using tabs.
 * Added Graph and Data table to "Per Capita" tab so that they are interactable with the select and checkbox inputs. Used functions created in Data folder to create visuals.
+
+##Week 1
+
+###Data
+
+#####Capita
+
+* added a "capita" argument to "permillcalculation.R", "permillgraph.R", and "permilltable.R". This variable toggles whether the data is evaluated by population or just by counts. 
+* permillgraph and permilltable functions both call permillcalc function with capita set to egual the passed in capita. 
+* Capita also changes some other features (whether to graph US total etc.).
+
+###ShinyApp
+
+#####UI
+
+* Created a togle button that interacts with the capita variable so that users can choose whether they want to see total or by capita results. - Set to "TRUE"
+
+#####Error
+
+* Table has appeared to stop rendering in shiny app. However, it does render when permilltable function is called.
+* Currently working on fixes...
