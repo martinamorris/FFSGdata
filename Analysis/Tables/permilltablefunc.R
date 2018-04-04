@@ -1,9 +1,11 @@
 library(DT)
 library(dplyr)
 
-permilltable <- function(state, all){
-  rounded <- fepermill
-  rounded[,3:21] <- round(rounded[,3:21], 2)
+permilltable <- function(state, all, capita){
+  rounded <- permillcalc(capita = capita)
+  if(capita){
+    rounded[,3:21] <- round(rounded[,3:21], 2)
+  }
   if(all){
     datatable(rounded) %>% formatStyle(
       'state_name',

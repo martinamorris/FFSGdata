@@ -1,23 +1,28 @@
-# source("Analysis/Tables/permillcalculation.R")
+source("Analysis/Tables/permillcalculation.R")
 
-
-permillgraph <- function(state, all) {
+permillgraph <- function(state, all, capita) {
+  df <- permillcalc(capita = capita)
+  if(!capita){
+    df <- head(df,-1)
+  }
+  
   if (all) {
     matplot(
       2000:2017,
-      t(fepermill[, 3:20]),
+      t(df[, 3:20]),
       type = "l",
       col = "grey",
       xlab = "Year",
       ylab = "Total Killings/Million",
-      main = "Total Police Killings in US by State"
+      main = "Police Killings in US by State"
     )
     
+    if(capita){
+      lines(2000:2017, df[df$state_name == "United States", 3:20],
+            col = "black")
+    }
     
-    lines(2000:2017, fepermill[fepermill$state_name == "United States", 3:20],
-          col = "black")
-    
-    lines(2000:2017, fepermill[fepermill$state_name == state, 3:20],
+    lines(2000:2017, df[df$state_name == state, 3:20],
           col = "red")
     
     legend(
@@ -33,7 +38,7 @@ permillgraph <- function(state, all) {
   } else{
     plot(
       2000:2017,
-      fepermill[fepermill$state_name == state, 3:20],
+      df[df$state_name == state, 3:20],
       type = "l",
       col = "red",
       xlab = "Year",

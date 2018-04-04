@@ -1,7 +1,8 @@
 library(shiny)
+library(here)
 
-source(here::here("Analysis/Tables/permillcalculation.R"))
-source(here::here("Analysis/Graphics/permillgraphfunc.R"))
+#source(here::here("Analysis/Tables/permillcalculation.R"))
+#source(here::here("Analysis/Graphics/permillgraphfunc.R"))
 
 ui <- navbarPage(
   "FFSG",
@@ -16,7 +17,8 @@ ui <- navbarPage(
         selectInput("state", "State", c(sort(
           c(state.name, "District of Columbia")
         ), "United States")),
-        checkboxInput("all", "With Other States", FALSE)
+        checkboxInput("all", "With Other States", FALSE),
+        checkboxInput("capita", "Graph per capita (in millions)", TRUE)
       ),
       mainPanel(tabsetPanel(
         type = "tabs",
@@ -84,11 +86,11 @@ ui <- navbarPage(
 server <- function(input, output, session) {
   output$permillplot <-
     renderPlot({
-      permillgraph(input$state, input$all)
+      permillgraph(input$state, input$all, input$capita)
     })
   output$permillDT <-
     renderDataTable({
-      permilltable(input$state, input$all)
+      permilltable(input$state, input$all, input$capita)
     })
 }
 
