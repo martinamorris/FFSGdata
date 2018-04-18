@@ -1,8 +1,13 @@
 library(shiny)
 library(here)
+#require(devtools)
+#devtools::install_github("saurfang/shinyCartogram")
+#library(shinyCartogram)
 
 #source(here::here("Analysis/Tables/permillcalculation.R"))
 #source(here::here("Analysis/Graphics/permillgraphfunc.R"))
+#source(here::here("Analysis/Graphics/choroplethmapfunc.R"))
+
 
 ui <- navbarPage(
   "FFSG",
@@ -47,8 +52,23 @@ ui <- navbarPage(
           mainPanel(plotlyOutput("choropleth"))
         )    
       ),
-      tabPanel("Cartogram"),
-      tabPanel("Interactive")
+      tabPanel("Cartogram",
+        fluidPage(
+          titlePanel("Cartogram of Deaths per Capita"),
+          h5("")
+        ),
+        sidebarLayout(
+          sidebarPanel(
+            sliderInput("yearcart", "Year", 2000, 2017, value = 2000, animate = animationOptions(1500, TRUE))
+          ),
+          mainPanel(h6(""))
+        )
+      ),
+      tabPanel("Interactive",
+               fluidPage(
+                 leafletOutput("intmap")
+               )
+      )
   ),
   
   
@@ -77,6 +97,15 @@ server <- function(input, output, session) {
         choroplethmap()
       }
     })
+  output$intmap <-
+    renderLeaflet({
+      interactivemap
+    })
+  
+  #output$cartogram <- renderPlot({
+  #  shinyCartogram::createCartogram({
+  #    ffcartogram(paste("p", input$year, sep = ""))
+  #  })})
 }
 
 shinyApp(ui, server)
