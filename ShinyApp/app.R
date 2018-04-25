@@ -1,8 +1,20 @@
-library(shiny)
-library(here)
-#require(devtools)
-#devtools::install_github("saurfang/shinyCartogram")
-#library(shinyCartogram)
+
+load_libraries <- function(x){
+  for( i in x ){
+    #  require returns TRUE invisibly if it was able to load package
+    if( ! require( i , character.only = TRUE ) ){
+      #  If package was not able to be loaded then re-install
+      install.packages( i , dependencies = TRUE )
+      #  Load package after installing
+      require( i , character.only = TRUE )
+    }
+  }
+}
+
+
+load_libraries( c("shiny" , "here" , "plotly", "leaflet",  
+                  "rio", "devtools", "maps", "sp", "maptools",
+                  "tmap", "cartogram", "DT", "dplyr") )
 
 #source(here::here("Analysis/Tables/permillcalculation.R"))
 #source(here::here("Analysis/Graphics/permillgraphfunc.R"))
@@ -14,23 +26,26 @@ ui <- navbarPage(
   tabPanel("About"),
   
   
-  tabPanel(
+  navbarMenu(
     "Tables and Graphs",
-    fluidPage(titlePanel("Victims per Capita")),
-    sidebarLayout(
-      sidebarPanel(
-        selectInput("state", "State", c(sort(
-          c(state.name, "District of Columbia")
-        ), "United States")),
-        checkboxInput("all", "With Other States", FALSE),
-        checkboxInput("capita", "Graph per capita (in millions)", TRUE)
+      tabPanel("Counts",
+        fluidPage(titlePanel("Victims per Capita")),
+        sidebarLayout(
+          sidebarPanel(
+            selectInput("state", "State", c(sort(
+              c(state.name, "District of Columbia")
+            ), "United States")),
+            checkboxInput("all", "With Other States", FALSE),
+            checkboxInput("capita", "Graph per capita (in millions)", TRUE)
+          ),
+          mainPanel(tabsetPanel(
+            type = "tabs",
+            tabPanel("plot", plotOutput("permillplot")),
+            tabPanel("table", dataTableOutput("permillDT"))
+          ))
+        )
       ),
-      mainPanel(tabsetPanel(
-        type = "tabs",
-        tabPanel("plot", plotOutput("permillplot")),
-        tabPanel("table", dataTableOutput("permillDT"))
-      ))
-    )
+      tabPanel("Descriptive Statistics")
   ),
   
   
@@ -61,7 +76,7 @@ ui <- navbarPage(
           sidebarPanel(
             sliderInput("yearcart", "Year", 2000, 2017, value = 2000, animate = animationOptions(1500, TRUE))
           ),
-          mainPanel(h6(""))
+          mainPanel(plotOutput("cartogram"))
         )
       ),
       tabPanel("Interactive",
@@ -102,10 +117,9 @@ server <- function(input, output, session) {
       interactivemap
     })
   
-  #output$cartogram <- renderPlot({
-  #  shinyCartogram::createCartogram({
-  #    ffcartogram(paste("p", input$year, sep = ""))
-  #  })})
+  output$cartogram <- renderPlot({
+    ffcartogram(input$yearcart) # BM: we capture the input value for the cartogram with the yearcart variable. 
+  })
 }
 
 shinyApp(ui, server)
