@@ -1,0 +1,64 @@
+---
+title: "Documentation"
+runtime: shiny
+output: 
+  html_document:
+    code_folding: hide
+    toc_float: TRUE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## About
+
+UW Fatal Force Research Group (FFRG) was brought together at the University of Washington by Professor Martina Morris and Ben Marwick. Morris' background in sociology and statistics led her to creating this research group to fight injustice in police using fatal force. Ben Marwick, an Archeology professor, with a background in statistics and social science joined Morris as a side project. This research group started about a year and half ago with two students of Morris. The group has now expanded to seven undergraduate students, two from Western Washington University, with the addition of the two UW Professors. UW FFRG's mission is to bring justice and peace to communities most impacted by police brutality through a comprehensive data analysis combined with the comparisons of respective laws and policies.
+
+# Data {.tabset .tabset-fade .tabset-pills}
+
+## Policies
+
+In the state of Washington, De-Escalate Washington Initiative 940 was introduced to initiate officer training and community safety. Because of the amount of deaths by police that happened in the state of Washington action was called. I-940 required training on mental illness, violence de-escalation, and first aid. It also required that the communities stakeholders be involved in any policy making. Community stakeholders include persons with disabilities; members of the lesbian, gay, bisexual, transgender, and queer community; persons of color; immigrants; non-citizens; native Americans; youth; and formerly incarcerated persons.
+
+On March 8, 2018, Washington state legislature voted on I-940 with the inclusion of ESHB 3003 to come to an agreement on how to further build trust back into the communities. With ESHB 3003, both sides agreed that there needs to be a clearer meaning of "good faith". Together with I-940 and ESHB 3003 resulted in requiring violence de-escalation and mental health training. Require first aid training for all officers and require that police render first aid at the earliest safe opportunity. Removes the de facto immunity and adopts a reasonable officer standard. Requires completely independent investigations of use of deadly force. Requires notification of Tribal governments where a tribal person was injured or killed. Brings diverse community stakeholders into the process for input on policy.
+
+On April 20, 2018, Judge Christine Schaller of Thurston County, WA ordered state legislature to put I-940 back on the November 2018 ballot. Time Eyman argued that the passing of ESHB 3003 was rush and,  "disrespect[ed] initiative signers and prevent[ed] voters from exercising their right to vote." Since wording and phrases were changed from the original initiative it went against Washington state's constitution stated that it must be passed with such wording or it should be sent to the ballot.
+
+### References
+
+Simmons, K.C., 2015. Increasing Police Accountability: Restoring Trust and Legitimacy Through the Appointment of Independent Prosecutors. *Washington University Journal of Law and Policy*, 49(1), pp. 137.
+
+<https://www.thestranger.com/slog/2018/04/20/26068324/eyman-wins-judge-orders-deadly-force-initiative-to-go-on-the-november-ballot>
+
+<https://www.king5.com/article/news/local/judge-throws-out-lawmakers-changes-to-deadly-force-measure/281-543773707>
+
+## Data Sources
+
+[Fatal Encounters](http://www.fatalencounters.org): This data source has been collected since 2000 and is active until present day. As of the month of April there have been a total of 19,856 number of cases that are recorded. This database allows you to go in and download any data needed and also includes visualizations.
+
+[Killed By Police](http://killedbypolice.net): An open sourced data collection from an online anonymous source that dates back to May 1, 2013. The data set is still in continuation and the legitimacy of each data point is confirmed through actual online news articles of each fatality. Killed By Police has a number of 4,629 cases recorded.
+
+[Washington Post](https://www.washingtonpost.com/graphics/national/police-shootings-2016): Washington Post Fatal Force page includes data on fatal force situations based on news, reports, public records, social media, and other source. Data has been collected for this set since 2016 and is still active until present day. Since 2016 there have a recorded number of 2,271 cases.
+
+[Mapping Police Violence](https://mappingpoliceviolence.org/aboutthedata/): In Mapping Police Violence has data that is represented on their sire accounting for people killed by police since 2013. This set remains active and continuously recording data until present day. They have recorded a total number of 1,179 people killed by police over the time period recorded. There are a few cases that are recorded in 2011 in this dataset.
+
+[CDC National Violent Death Reporting System](https://www.cdc.gov/violenceprevention/nvdrs/index.html):  The system gives readers a clear understanding about how many people are killed by violent death with exact data. NVDRS(National Violent Death Reporting System) is the only state-based surveillance system that converts data on violent deaths from other sources into anonymous data. This also covers all types of deaths including homicides and suicides.
+
+[The Guardian](https://www.theguardian.com/us-news/series/counted-us-police-killings): The Guardian is a news source that was collecting data on people killed by law enforcement from 2015 to 2016 and has not further data collected since then. Within this set there are a total of 1092 cases recorded. In this set they also included stories of who they were and established the trends in how they died.
+
+[CDC Vital Statistics](https://www.cdc.gov/nchs/nvss/mortality_methods.htm): Within this dataset collected by the Centers for Disease Control and Prevention and national Center for Health Statistics is a list of 906 cases. Their website provides information pertaining to data collection, data processing, information for Data Analysis and Micro-data. It is public information and has a continuous data collection process.
+
+[FBI Supplementary Homicide Reports](https://ucr.fbi.gov/nibrs/addendum-for-submitting-cargo-theft-data/shr) : This reports provide dataset of the circumstances under violent death with details. The reports provide details of the circumstances like type of weapon, age, sex, race, etc. Also, the reports provide what violent code is used. The reports help to search database for records of violent death.
+
+[Seattle Times](https://github.com/seattletimes/police-killings) : Seattle Times provide a dataset of deadly force data, laws, weapons. The deadly force data shows informations of victims like name, type of weapon, age, race, gender, date, and what county he or she lives. The laws dataset shows if each state in U.S agree or does not agree on law1, law2, law3, law4, law5. The weapons dataset shows if the weapon was fake or firearm and type of the weapon.
+
+[Seattle Police Department](http://www.seattle.gov/police/information-and-data/use-of-force-data/ois-dataset): Seattle Police Department provides a dataset of firearms cases prior to 2014. The dataset includes date, time, blurred address, and number of case. The department also provides use of force data, crisis contacts, bias crime unit, terry stops, tweets by beat. There are not only dataset, but also there are maps and graphs to show the dataset as visuals for a clear understanding.
+
+[Phil Stinson](https://fivethirtyeight.com/features/an-ex-cop-keeps-the-countrys-best-data-set-on-police-misconduct/) : It is an article written by FiveThirtyEight about ex cop who has the country's best data set on police misconduct. The name of ex cop is Philip M. Stinson. He has built database with 48 Google Alerts that Stinson set up in 2005. This system adds up to a data set of alleged police misconduct unmatched by anything created inside or outside of government which uses Google Alert to catch these cases.
+
+[BJS](https://www.bjs.gov/index.cfm?ty=dcdetail&iid=428) - arrest related deaths: Arrest related deaths is a census data of people who died while in a process of arrest or while in the custody of the state. The ARD program collects data of deaths that is relating to any use of force by law enforcement such as drowning, cardiac arrest, gunshot wound.
+
+[BJS](https://ucr.fbi.gov/leoka/2015) - law officers killed/harmed: As the title, it is a dataset of law enforcement officers killed and assaulted in 2015. Data is from UCR Program's National incident Based Reporting System for incidents, offenses, victims, offenders, and arrestees. There are four types of dataset such are officers feloniously killed, officers accidently killed, officers assaulted, and federal officers killed and assaulted.
+
+[Officer Down Memorial Page](https://www.odmp.org): This data set is from the Officer Down Memorial Page, Inc., a non-profit organization that honors American law enforcement that died in the line of duty. The page provides an on-going archive of fatalities, including when, who, what, why, and how each death occurred. Many of the sources are very detailed, although requires one of the researchers from the UW FFRG to create an algorithm to format the data points so it is easier to aggregate with R.
