@@ -1,4 +1,6 @@
 
+# BM: it's nice for other users if we auto-install missing packages
+# for them 
 load_libraries <- function(x){
   for( i in x ){
     #  require returns TRUE invisibly if it was able to load package
@@ -16,16 +18,18 @@ load_libraries( c("shiny" , "here" , "plotly", "leaflet",
                   "rio", "devtools", "maps", "sp", "maptools",
                   "tmap", "cartogram", "DT", "dplyr") )
 
-# BM; when we run the App, the working directory is set to some temp.
-# BM: so I need to run these before running the shiny app, there
-# BM: must be a neater way to get these in...
-# source(here::here("Analysis/Tables/permillcalculation.R"))
-# source(here::here("Analysis/Graphics/permillgraphfunc.R"))
-# source(here::here("Analysis/Graphics/choroplethmapfunc.R"))
-# source(here::here("Analysis/Graphics/descstatfuncs.R"))
-# source(here::here('Analysis/Graphics/choroplethmapfunc.R'))
-# source(here::here('Analysis/Graphics/cartogramfunc.R'))
-# source(here::here('Analysis/Graphics/interactivemap.R'))
+# BM: docs say that "the directory that you save server.R in 
+# will become the working directory of your Shiny app.
+# https://shiny.rstudio.com/tutorial/written-tutorial/lesson5/
+# so we need to source from here
+source("../Analysis/Tables/permillcalculation.R")
+source("../Analysis/Tables/permillcalculation.R")
+source("../Analysis/Graphics/permillgraphfunc.R")
+source("../Analysis/Graphics/choroplethmapfunc.R")
+source("../Analysis/Graphics/descstatfuncs.R")
+source("../Analysis/Graphics/choroplethmapfunc.R")
+source("../Analysis/Graphics/cartogramfunc.R")
+source("../Analysis/Graphics/interactivemap.R")
 
 
 
@@ -79,7 +83,10 @@ ui <- navbarPage(
             h5("Map is shown for mean values, to select a year choose Select Year"),
             checkboxInput("yearselect", "Select Year", FALSE),
             conditionalPanel("input.yearselect",
-              sliderInput("year", "Year", 2000, 2017, value = 2000, animate = animationOptions(1500, TRUE))
+              sliderInput("year", "Year", 2000, 2017, 
+                          value = 2000, 
+                          animate = animationOptions(1500, TRUE),
+                          sep = "") # BM: make the numbers look like years
             )
           ),
           mainPanel(plotlyOutput("choropleth"))
@@ -92,7 +99,7 @@ ui <- navbarPage(
         ),
         sidebarLayout(
           sidebarPanel(
-            sliderInput("yearcart", "Year", 2000, 2017, value = 2000, animate = animationOptions(1500, TRUE))
+            sliderInput("yearcart", "Year", 2000, 2017, value = 2000, animate = animationOptions(1500, TRUE),  sep = "") # BM: make the numbers look like years
           ),
           mainPanel(plotOutput("cartogram"))
         )
@@ -114,6 +121,9 @@ ui <- navbarPage(
 )
 
 server <- function(input, output, session) {
+  
+
+  
   output$permillplot <-
     renderPlot({
       permillgraph(input$state, input$all, input$capita)

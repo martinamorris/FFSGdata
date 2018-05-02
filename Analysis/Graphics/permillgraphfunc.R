@@ -1,4 +1,4 @@
-source("Analysis/Tables/permillcalculation.R")
+
 
 permillgraph <- function(state, all, capita) {
   df <- permillcalc(capita = capita)
