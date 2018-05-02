@@ -45,7 +45,17 @@ ui <- navbarPage(
           ))
         )
       ),
-      tabPanel("Descriptive Statistics")
+      tabPanel("Descriptive Statistics",
+        fluidPage(titlePanel("Descriptive Statistics"),
+          sidebarLayout(
+            sidebarPanel(
+              selectInput("dem", "Demographic", c("Race", "Gender", "Age")),
+              h6("Please take note that the data we have right now is still a work in progress so some of the data is missing. This means that there is a possibility that the trends displayed aren't the true trends for the data.")
+            ),
+            mainPanel(dataTableOutput("dstbl"), plotOutput("dsplt"))
+          )
+        )
+      )
   ),
   
   
@@ -119,6 +129,14 @@ server <- function(input, output, session) {
   
   output$cartogram <- renderPlot({
     ffcartogram(input$yearcart) # BM: we capture the input value for the cartogram with the yearcart variable. 
+  })
+  
+  output$dstbl <- renderDataTable({
+    dstable(input$dem)
+  }) 
+  
+  output$dsplt <- renderPlot({
+    dsplot(input$dem)
   })
 }
 
