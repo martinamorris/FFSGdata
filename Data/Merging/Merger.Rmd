@@ -1,0 +1,527 @@
+---
+title: "Merger"
+output: html_notebook
+---
+
+### Extracting necessary information and cleaning.
+
+We begin by importing the necessary libraries.
+```{r}
+library(dplyr)
+library(tidyr)
+library(lubridate)
+library(e1071)   # for the SVM classifier
+library(mice)    # for imputation using chained equation
+```
+
+First, we standardize the datasets so that they only contain information that goes into classifying. To this end, choose the following columns from their corresponding datasets.</br>
+FE: name, age, sex, race, dateDMY, address, city, state, zip, county, year</br>
+MPV: Victim's name, Victim's age, Victim's gender, Victim's race, Date of injury, address, city, state, zip code, county</br>
+KBP: date_format, deceased_name, deceased_age, gender, race, state</br>
+```{r}
+d1 <- fe.clean[c(1:4, 6:11, 22)]
+d2 <- mpv[c(1:4, 6:11)]
+d3 <- kbp[c(3, 8, 9, 10, 11, 15)]
+```
+
+Add row numbers columns, which shall be used in merging later.
+```{r}
+d1$parent_id <- seq.int(nrow(fe.clean))
+d2$parent_id <- seq.int(nrow(mpv))
+d3$parent_id <- seq.int(nrow(kbp))
+```
+
+Only keep the years in the intersection.
+```{r}
+d1 <- dplyr::filter(d1, d1$year >= 2013)
+```
+
+Clean up the name column, and add an **aka** column.
+```{r}
+# separate
+d1 <- dplyr::filter(d1, d1$`name` != "Name withheld by police")
+d1 <- tidyr::separate(d1, col = "name", into = c("name", "aka"), sep = " aka | or | transitioning from ")
+d2 <- dplyr::filter(d2, d2$`Victim's name` != "Name withheld by police")
+d2 <- tidyr::separate(d2, col = "Victim's name", into = c("Victim's name", "aka"), sep = " aka | or | transitioning from ")
+# remove empty
+d3$deceased_name <- as.character(lapply(d3$deceased_name, function(x) replace(x, x == "", NA)))
+# ....Format names to remove . and \" \" (non-alpha)....
+d1$name <- gsub("[^[:alnum:] ]", "", d1$name)
+d2$`Victim's name` <- gsub("[^[:alnum:] ]", "", d2$`Victim's name`)
+```
+
+Standardize race.
+```{r}
+table(d1$race)
+table(d2$`Victim's race`)
+table(d3$race)
+
+# replace Race unspecified and Unknown race with NA
+d1$race <- lapply(d1$race, function(x) replace(x, grepl("Race unspecified", x), NA))
+d2$`Victim's race` <- lapply(d2$`Victim's race`, function(x) replace(x, grepl("Unknown race", x), NA))
+
+# change the format of race for d1
+d1$race <- lapply(d1$race, function(x) replace(x, grepl("African-American/Black", x), "Black"))
+d1$race <- lapply(d1$race, function(x) replace(x, grepl("European-American/White", x), "White"))
+d1$race <- lapply(d1$race, function(x) replace(x, grepl("Hispanic/Latino", x), "Hispanic"))
+d1$race <- lapply(d1$race, function(x) replace(x, grepl("Native American/Alaskan", x), "Native American"))
+
+d1$race <- as.character(d1$race)
+d2$`Victim's race` <- as.character(d2$`Victim's race`)
+
+# change the format of race for d3
+d3$race <- lapply(d3$race, function(x) replace(x, grepl("\\bA\\b", x), "Asian/Pacific Islander"))
+d3$race <- lapply(d3$race, function(x) replace(x, grepl("\\bB\\b", x), "Black"))
+d3$race <- lapply(d3$race, function(x) replace(x, grepl("\\bI\\b", x), "Native American"))
+d3$race <- lapply(d3$race, function(x) replace(x, grepl("\\bL\\b", x), "Hispanic"))
+d3$race <- lapply(d3$race, function(x) replace(x, grepl("\\bO\\b", x), NA))
+d3$race <- lapply(d3$race, function(x) replace(x, grepl("\\bPI\\b", x), "Asian/Pacific Islander"))
+d3$race <- lapply(d3$race, function(x) replace(x, grepl("\\bW\\b", x), "White"))
+d3$race <- as.character(d3$race)
+
+table(d1$race)
+table(d2$`Victim's race`)
+table(d3$race)
+```
+
+Moving on to age.
+```{r}
+d2$`Victim's age` <- lapply(d2$`Victim's age`, function(x) replace(x, grepl("Unknown", x), NA))
+d2$`Victim's age` <- as.character(d2$`Victim's age`)
+d3$deceased_age <- as.character(d3$deceased_age)
+```
+
+Then sex.
+```{r}
+d1$sex <- as.character(lapply(d1$sex, function(x) replace(x, grepl("NULL", x), NA)))
+
+d2$`Victim's gender` <- as.character(lapply(d2$`Victim's gender`, function(x) replace(x, grepl("Unknown", x), NA)))
+
+d3$gender <- lapply(d3$gender, function(x) replace(x, grepl("F", x), "Female"))
+d3$gender <- lapply(d3$gender, function(x) replace(x, grepl("M", x), "Male"))
+d3$gender <- lapply(d3$gender, function(x) replace(x, grepl("T", x), "Transgender"))
+d3$gender <- as.character(d3$gender)
+```
+
+Finally, date.
+```{r}
+d1$dateDMY <- as.character(strptime(d1$dateDMY, "%m/%d/%Y"))
+d2$`Date of injury resulting in death (month/day/year)` <- as.character(strptime(d2$`Date of injury resulting in death (month/day/year)`, format = "%Y-%m-%d"))
+d3$date_format <- as.character(strptime(d3$date_format, "%Y-%m-%d"))
+```
+
+### Now we are ready to train the classifier for d1 vs. d2 and predict off it.
+
+Preapre the comparison weights.
+```{r}
+# ....start computing the comparison weights....
+# block by address
+cmp.tmp <- RecordLinkage::compare.linkage(as.data.frame(d1[c(1, 3:11)]), as.data.frame(d2[c(1, 3:11)]), strcmp = TRUE, blockfld = c(6))[[3]]
+# block by name
+cmp.tmp2 <- RecordLinkage::compare.linkage(as.data.frame(d1[c(1, 3:11)]), as.data.frame(d2[c(1, 3:11)]), strcmp = TRUE, blockfld = c(1))[[3]]
+# block by zip
+cmp.tmp3 <- RecordLinkage::compare.linkage(as.data.frame(d1[c(1, 3:11)]), as.data.frame(d2[c(1, 3:11)]), strcmp = TRUE, blockfld = c(9))[[3]]
+# block by date
+cmp.tmp4 <- RecordLinkage::compare.linkage(as.data.frame(d1[c(1, 3:11)]), as.data.frame(d2[c(1, 3:11)]), strcmp = TRUE, blockfld = c(5))[[3]]
+
+cmp <- unique(rbind(cmp.tmp, cmp.tmp2), by = c("id1", "id2"))
+cmp <- unique(rbind(cmp, cmp.tmp3), by = c("id1", "id2"))
+cmp <- unique(rbind(cmp, cmp.tmp4), by = c("id1", "id2"))
+```
+
+Imputate the missing values.
+```{r}
+# knnOutput <- knnImputation(cmp[c(-1, -2, -13)])
+imp <- mice(cmp[-13], m = 1, maxit = 10)
+densityplot(imp)
+knnOutput <- complete(imp)[c(-1, -2)]
+knnOutput$id1 <- cmp$id1
+knnOutput$id2 <- cmp$id2
+```
+
+Take an average over the various components of the address, and remove unecessary fields.
+```{r}
+knnOutput <- transform(knnOutput, new = (address + city + state + zip + county) / 5)
+knnOutput <- knnOutput[c(-12:-6)]
+```
+
+Sort the comparison weights and filter matches and non-matches.
+```{r}
+# ....Sort and filter matches and non-matches....
+one <- c(1, 1, 1, 1, 1, 1)
+zero <- c(0, 0, 0, 0, 0, 0)
+mat <- as.matrix(knnOutput)
+
+knnOutput$dist <- t(pracma::distmat(one, mat))[,1]
+knnOutput$dist2 <- t(pracma::distmat(zero, mat))[,1]
+
+# order the pairs by distance from one
+cmp.tmp6 <- knnOutput[order(knnOutput$dist),]
+
+# seed matches
+matches <- dplyr::filter(cmp.tmp6, dist <= 0.30)
+
+# seed non-matches
+# estimation ratio (true matches:true non-matches) r = 4865/(32696-4865) = 0.175
+# order the pairs by distance from zero
+cmp.tmp7 <- knnOutput[order(knnOutput$dist2),]
+
+nonmatches <- cmp.tmp7[1:15000,]
+
+# should be empty
+dim(dplyr::intersect(matches[1:2], nonmatches[1:2]))
+```
+
+Prepare the training data from seed created above and train the model.
+```{r}
+matches$class <- "match"
+nonmatches$class <- "nonmatch"
+
+train.data <- rbind(matches, nonmatches)[c(-7, -8)]
+
+svm.model <- svm(class ~ ., data = train.data, type = "C-classification")
+```
+
+Plot the model using slicing.
+```{r}
+plot(svm.model, data = train.data, name ~ new, slice = list(age = 1, sex = 1, race = 1, dateDMY = 1))
+plot(svm.model, data = train.data, name ~ dateDMY, slice = list(age = 1, sex = 1, race = 1, new = 1))
+plot(svm.model, data = train.data, name ~ race, slice = list(age = 1, sex = 1, new = 1, dateDMY = 1))
+```
+
+Predict and label the match number in d2 for matching cases, and "nonmatching" for other cases.
+```{r}
+test <- knnOutput[c( -7,-8)]
+
+prediction <- predict(svm.model, test)
+
+table(prediction)
+
+prediction <- cbind(knnOutput, as.data.frame(prediction))
+
+prediction$id1 <- cmp$id1
+prediction$id2 <- cmp$id2
+
+match.pred <- dplyr::filter(prediction, prediction == "match")
+
+d2[,"matching"] <- NA
+
+for (i in 1:length(d2[[1]])) {
+  d2[i,]$matching <- match.pred[match(i, match.pred$id2),]$id1
+}
+
+for (i in 1:length(d2[[1]])) {
+  if (is.na(d2[i, ]$matching)) {
+    d2[i,]$matching <- "nonmatching"
+  }
+}
+```
+
+We are done predicting the classes for d1 vs. d2. Now, we do it for d1 vs. d3.
+
+### In a very similar way, train the classifier for d1 vs. d3, and predict.
+
+In an additional step, we remove NA name records.
+```{r}
+d3 <- filter(d3, !is.na(d3$deceased_name))
+```
+
+Prepare the comparison weights.
+```{r}
+# block by date
+cmp.tmp <- RecordLinkage::compare.linkage(as.data.frame(d1[c(6, 1, 3, 4, 5, 9)]), as.data.frame(d3[-7]), strcmp = TRUE, blockfld = c(1))[[3]]
+# block by name
+cmp.tmp2 <- RecordLinkage::compare.linkage(as.data.frame(d1[c(6, 1, 3, 4, 5, 9)]), as.data.frame(d3[-7]), strcmp = TRUE, blockfld = c(2))[[3]]
+
+cmp2 <- unique(rbind(cmp.tmp, cmp.tmp2), by = c("id1", "id2"))
+```
+
+Imputate the missing values.
+```{r}
+# knnOutput2 <- knnImputation(cmp2[c(-1, -2, -9)])
+imp <- mice(cmp2[-9], m = 1)
+densityplot(imp)
+knnOutput2 <- complete(imp)[c(-1, -2)]
+```
+
+Sort the comparison weights and filter matches and non-matches.
+```{r}
+# ....Sort and filter matches and non-matches....
+one <- c(1, 1, 1, 1, 1, 1)
+zero <- c(0, 0, 0, 0, 0, 0)
+mat <- as.matrix(knnOutput2)
+
+knnOutput2$dist <- t(pracma::distmat(one, mat))[,1]
+knnOutput2$dist2 <- t(pracma::distmat(zero, mat))[,1]
+
+# order the pairs by distance from one
+cmp.tmp6 <- knnOutput2[order(knnOutput2$dist),]
+
+# seed matches
+matches2 <- dplyr::filter(cmp.tmp6, dist <= 0.10)
+
+# seed non-matches
+# estimation ratio (true matches:true non-matches) r = 4865/(32696-4865) = 0.175
+# order the pairs by distance from zero
+cmp.tmp7 <- knnOutput2[order(knnOutput2$dist2),]
+
+nonmatches2 <- cmp.tmp7[1:14500,]
+```
+
+Prepare the training data from seed created above and train the model.
+```{r}
+matches2$class <- "match"
+nonmatches2$class <- "nonmatch"
+
+train.data2 <- rbind(matches2, nonmatches2)[c(-7, -8)]
+
+svm.model2 <- svm(class ~ ., data = train.data2, type = "C-classification")
+```
+
+Predict and label the match number in d3 for matching cases, and "nonmatching" for other cases.
+```{r}
+test2 <- knnOutput2[c( -7,-8)]
+
+prediction2 <- predict(svm.model2, test2)
+
+table(prediction2)
+
+prediction2 <- cbind(knnOutput2, as.data.frame(prediction2))
+
+prediction2$id1 <- cmp2$id1
+prediction2$id2 <- cmp2$id2
+
+match.pred2 <- dplyr::filter(prediction2, prediction2 == "match")
+
+d3[,"matching"] <- NA
+
+for (i in 1:length(d3[[1]])) {
+  d3[i,]$matching <- match.pred2[match(i, match.pred2$id2),]$id1
+}
+
+for (i in 1:length(d3[[1]])) {
+  if (is.na(d3[i, ]$matching)) {
+    d3[i,]$matching <- "nonmatching"
+  }
+}
+```
+
+### Evaluate and Analyze
+
+Create a stratified sample.
+```{r}
+set.seed(5567)
+tmp <- filter(d2, !is.na(matching))
+
+tmp1 <- filter(tmp, matching == "nonmatching")
+rand1 <- tmp1[sample(nrow(tmp1), 25), ]
+
+tmp2 <- filter(tmp, matching != "nonmatching")
+rand2 <- tmp2[sample(nrow(tmp2), 25), ]
+
+tmp. <- filter(d3, !is.na(matching))
+
+tmp3 <- filter(tmp., matching == "nonmatching")
+rand3 <- tmp3[sample(nrow(tmp3), 25), ]
+
+tmp4 <- filter(tmp., matching != "nonmatching")
+rand4 <- tmp4[sample(nrow(tmp4), 25), ]
+```
+
+FE vs. MPV:
+
+    Sample stratified: 25 algorithm matches and 25 algorithm non-matches
+
+                            Algorithm match           Algorithm non-match
+            True match            25                            3
+            True non-match        0                             22
+    
+    Sensitivity: 0.89
+    Specificity: 1
+    Positive Predictive validity: 1
+    Negative Predictive validity: 0.88
+
+FE vs. KBP:
+
+    Sample stratified: 25 algorithm matches and 25 algorithm non-matches
+
+                            Algorithm match           Algorithm non-match
+            True match            25                            1
+            True non-match        0                             24
+
+    Sensitivity: 0.96
+    Specificity: 1
+    Positive Predictive validity: 1
+    Negative Predictive validity: 0.96
+
+### Misc.
+
+Exploring the prospect of merging.
+```{r}
+a <- filter(cmp2, is.na(race) & name == 1 & sex == 1 & age == 1 & state == 1 & dateDMY == 1)
+in.FE <- nrow(filter(d1[unique(a$id1),], !is.na(race)))
+in.KBP <- nrow(filter(d3[unique(a$id2),], !is.na(race)))
+in.both <- nrow(filter(cmp2, race == 1 & name == 1 & sex == 1 & age == 1 & state == 1 & dateDMY == 1))
+in.none <- nrow(a) - in.FE - in.KBP
+```
+
+On the data where everything matches perfectly, and **RACE** might be present or absent,
+
+                                       KBP present             KBP NA
+
+                 FE present                2206                  243
+                 FE NA                      21                   135
+                 
+```{r}
+a <- filter(cmp2, is.na(sex) & name == 1 & race == 1 & age == 1 & state == 1 & dateDMY == 1)
+in.FE <- nrow(filter(d1[unique(a$id1),], !is.na(sex)))
+in.KBP <- nrow(filter(d3[unique(a$id2),], !is.na(gender)))
+in.both <- nrow(filter(cmp2, race == 1 & name == 1 & sex == 1 & age == 1 & state == 1 & dateDMY == 1))
+in.none <- nrow(a) - in.FE - in.KBP
+```
+
+On the data where everything matches perfectly, and **SEX** might be present or absent,
+
+                                       KBP present             KBP NA
+
+                 FE present                2206                  0
+                 FE NA                      1                    0
+
+```{r}
+a <- filter(cmp2, is.na(age) & name == 1 & race == 1 & sex == 1 & state == 1 & dateDMY == 1)
+in.FE <- nrow(filter(d1[unique(a$id1),], !is.na(age)))
+in.KBP <- nrow(filter(d3[unique(a$id2),], !is.na(deceased_age)))
+in.both <- nrow(filter(cmp2, race == 1 & name == 1 & sex == 1 & age == 1 & state == 1 & dateDMY == 1))
+in.none <- nrow(a) - in.FE - in.KBP
+```
+
+On the data where everything matches perfectly, and **AGE** might be present or absent,
+
+                                       KBP present             KBP NA
+
+                 FE present                2206                  10
+                 FE NA                      4                     2
+                 
+### Merge.
+
+Extract any information out of the merged datasets that you can.
+```{r}
+final <- fe.clean
+b <- filter(d3, d3$matching != "nonmatching")
+for (i in 1:nrow(b)) {
+  j <- d1[b[i,]$matching,]$parent_id
+  if (is.na(d1[b[i,]$matching,]$age) & !is.na(b[i,]$deceased_age)) {
+    final[j,]$age <- b[i,]$deceased_age
+  }
+  if (is.na(d1[b[i,]$matching,]$sex) & !is.na(b[i,]$gender)) {
+    final[j,]$sex <- b[i,]$gender
+  }
+  if (is.na(d1[b[i,]$matching,]$race) & !is.na(b[i,]$race)) {
+    res <- b[i,]$race
+    z <- res
+    if (z == "Black") {
+      res <- "African-American/Black"
+    } else if (z == "Hispanic") {
+      res <- "Hispanic/Latino"
+    } else if (z == "White") {
+      res <- "European-American/White"
+    } else if (z == "Native American") {
+      res <- "Native American/Alaskan"
+    }
+    final[j,]$race <- res
+  }
+  if (is.na(d1[b[i,]$matching,]$dateDMY) & !is.na(b[i,]$date_format)) {
+    final[j,]$dateDMY <- b[i,]$date_format
+  }
+  if (is.na(d1[b[i,]$matching,]$state) & !is.na(b[i,]$state)) {
+    final[j,]$state <- b[i,]$state
+  }
+}
+```
+
+```{r}
+b <- filter(d2, d2$matching != "nonmatching")
+for (i in 1:nrow(b)) {
+  j <- d1[b[i,]$matching,]$parent_id
+  if (is.na(d1[b[i,]$matching,]$age) & !is.na(b[i,]$`Victim's age`)) {
+    final[j,]$age <- b[i,]$`Victim's age`
+  }
+  if (is.na(d1[b[i,]$matching,]$sex) & !is.na(b[i,]$`Victim's gender`)) {
+    final[j,]$sex <- b[i,]$`Victim's gender`
+  }
+  if (is.na(d1[b[i,]$matching,]$race) & !is.na(b[i,]$`Victim's race`)) {
+    res <- b[i,]$`Victim's race`
+    z <- res
+    if (z == "Black") {
+      res <- "African-American/Black"
+    } else if (z == "Hispanic") {
+      res <- "Hispanic/Latino"
+    } else if (z == "White") {
+      res <- "European-American/White"
+    } else if (z == "Native American") {
+      res <- "Native American/Alaskan"
+    } else if (z == "Asian") {
+      res <- "Asian/Pacific Islander"
+    } else if (z == "Pacific Islander") {
+      res <- "Asian/Pacific Islander"
+    }
+    final[j,]$race <- res
+  }
+  if (is.na(d1[b[i,]$matching,]$dateDMY) & !is.na(b[i,]$`Date of injury resulting in death (month/day/year)`)) {
+    final[j,]$dateDMY <- b[i,]$`Date of injury resulting in death (month/day/year)`
+  }
+  if (is.na(d1[b[i,]$matching,]$address) & !is.na(b[i,]$`Location of injury (address)`)) {
+    final[j,]$address <- b[i,]$`Location of injury (address)`
+  }
+  if (is.na(d1[b[i,]$matching,]$city) & !is.na(b[i,]$`Location of death (city)`)) {
+    final[j,]$city <- b[i,]$`Location of death (city)`
+  }
+  if (is.na(d1[b[i,]$matching,]$state) & !is.na(b[i,]$`Location of death (state)`)) {
+    final[j,]$state <- b[i,]$`Location of death (state)`
+  }
+  if (is.na(d1[b[i,]$matching,]$zip) & !is.na(b[i,]$`Location of death (zip code)`)) {
+    final[j,]$zip <- b[i,]$`Location of death (zip code)`
+  }
+  if (is.na(d1[b[i,]$matching,]$county) & !is.na(b[i,]$`Location of death (county)`)) {
+    final[j,]$county <- b[i,]$`Location of death (county)`
+  }
+}
+```
+
+Fatten up the non-matching data and append it to final.
+```{r}
+b <- filter(d3, matching == "nonmatching")
+for (i in 1:nrow(b)) {
+  ent <- kbp[b[i,]$parent_id,]
+  n <- strptime(ent$date_format, "%Y-%m-%d")
+  d <- format(n, "%m/%d/%Y")
+  res <- b[i,]$race
+  z <- res
+  if (!is.na(z)) {
+    if (z == "Black") {
+        res <- "African-American/Black"
+      } else if (z == "Hispanic") {
+        res <- "Hispanic/Latino"
+      } else if (z == "White") {
+        res <- "European-American/White"
+      } else if (z == "Native American") {
+        res <- "Native American/Alaskan"
+      } else if (z == "Asian") {
+        res <- "Asian/Pacific Islander"
+      } else if (z == "Pacific Islander") {
+        res <- "Asian/Pacific Islander"
+      }
+  }
+  to.add <- data.frame("name" = b[i,]$deceased_name, "age" = b[i,]$deceased_age,
+              "sex" = b[i,]$gender, "race" = res, "URLpic" = ent$fb_pic, "dateDMY" = d, "state" = b[i,]$state, "year" = year(n))
+  suppressWarnings(final <- bind_rows(final, to.add))
+}
+```
+
+Erase everything and save final.
+```{r}
+setwd("~/git/ffsg/Data/Merging/")
+rm(list=setdiff(ls(), "final"))
+save.image("./final.Rdata")
+```
+
