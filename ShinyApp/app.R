@@ -16,9 +16,17 @@ load_libraries( c("shiny" , "here" , "plotly", "leaflet",
                   "rio", "devtools", "maps", "sp", "maptools",
                   "tmap", "cartogram", "DT", "dplyr") )
 
-#source(here::here("Analysis/Tables/permillcalculation.R"))
-#source(here::here("Analysis/Graphics/permillgraphfunc.R"))
-#source(here::here("Analysis/Graphics/choroplethmapfunc.R"))
+# BM; when we run the App, the working directory is set to some temp.
+# BM: so I need to run these before running the shiny app, there
+# BM: must be a neater way to get these in...
+# source(here::here("Analysis/Tables/permillcalculation.R"))
+# source(here::here("Analysis/Graphics/permillgraphfunc.R"))
+# source(here::here("Analysis/Graphics/choroplethmapfunc.R"))
+# source(here::here("Analysis/Graphics/descstatfuncs.R"))
+# source(here::here('Analysis/Graphics/choroplethmapfunc.R'))
+# source(here::here('Analysis/Graphics/cartogramfunc.R'))
+# source(here::here('Analysis/Graphics/interactivemap.R'))
+
 
 
 ui <- navbarPage(
