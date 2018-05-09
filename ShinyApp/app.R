@@ -23,12 +23,12 @@ load_libraries( c("shiny" , "here" , "plotly", "leaflet",
 # https://shiny.rstudio.com/tutorial/written-tutorial/lesson5/
 # so we need to source from here
 source("../Analysis/Tables/permillcalculation.R")
-source("../Analysis/Tables/permillcalculation.R")
+source("../Analysis/Tables/permilltablefunc.R")
 source("../Analysis/Graphics/permillgraphfunc.R")
 source("../Analysis/Graphics/choroplethmapfunc.R")
 source("../Analysis/Graphics/descstatfuncs.R")
 source("../Analysis/Graphics/choroplethmapfunc.R")
-source("../Analysis/Graphics/cartogramfunc.R")
+#source("../Analysis/Graphics/cartogramfunc.R")
 source("../Analysis/Graphics/interactivemap.R")
 
 

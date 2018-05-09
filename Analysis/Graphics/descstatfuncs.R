@@ -3,15 +3,15 @@ library(dplyr)
 descstat <- function(dem){
   if (dem == "Age") {
     df <- fatalencounters%>%
-      count(`Subject's age`)
+      count(age)
   } 
   if(dem == "Gender") {
     df <- fatalencounters%>%
-      count(`Subject's gender`)
+      count(sex)
   } 
   if(dem == "Race") {
     df <- fatalencounters%>%
-      count(`Subject's race`)
+      count(race)
   }
   
   return(df)
@@ -26,5 +26,15 @@ dstable <- function(dem){
 dsplot <- function(dem){
   df <- descstat(dem)
 
-  barplot(df$n, names.arg = df[,1])
+  if (dem == "Age") {
+    plot <- ggplot(df, aes(age, n))+geom_col()
+  } 
+  if(dem == "Gender") {
+    plot <- ggplot(df, aes(sex, n))+geom_col()
+  } 
+  if(dem == "Race") {
+    plot <- ggplot(df, aes(race, n))+geom_col()
   }
+  
+  plot
+}

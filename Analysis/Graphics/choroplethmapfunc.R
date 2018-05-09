@@ -16,7 +16,7 @@ choroplethmap <- function(yeart = "mean"){
   
   plot_geo(df, locationmode = 'USA-states') %>%
     add_trace(
-      z = ~ x, text = ~hover, locations = ~State,
+      z = ~ x, text = ~hover, locations = ~state,
       color = ~ x, colors = 'Purples'
     ) %>%
     colorbar(title = "Civilian Deaths by Police per Million Capita") %>%

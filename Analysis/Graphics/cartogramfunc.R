@@ -14,7 +14,7 @@ usa <- SpatialPolygonsDataFrame(usa,
 
 
 df <- data.frame(permillcalc())
-df$State <- factor(df$State) # BM: cartogram fn can't handle characters
+df$State <- factor(df$state) # BM: cartogram fn can't handle characters
 
 # join data frame to the SpatialPolygonsDataFrame
 # from https://stackoverflow.com/a/3652472/1036500
