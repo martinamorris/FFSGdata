@@ -1,0 +1,123 @@
+---
+title: "Fatal Encounters with Police"
+author: "Madeline Cummins"
+output:
+  xaringan::moon_reader:
+    yolo: FALSE     
+    css: UGRSMaddi.css  # our .css file
+    lib_dir: libs
+---
+setwd("F:/GitHub/FFSG/ffsg")
+
+class: left, top
+### Our Goals
+.left-column[
+Investigate and understand how different locations and demographics are affected by police violence
+
+Not much data available - crowd sourced
+]
+
+---
+
+class: left, top
+### Police Related Deaths Per Capita in Washington
+.left-column[
+More per capita than the US average
+
+Initiative 940
+]
+
+.right-column[
+```{r, echo=FALSE}
+source('Analysis/Tables/permillcalculation.R')
+source('Analysis/Graphics/permillgraphfunc.R')
+permillgraph("Washington", all = TRUE, capita = TRUE)
+```
+]
+
+---
+
+class: left, top
+### Race and Gender
+.pull-left[
+Race
+
+```{r, echo=FALSE}
+source(here('Analysis/Graphics/descstatfuncs.R'))
+dsplot("Race")
+```
+]
+
+.pull-right[
+Gender
+
+```{r}
+source(here('Analysis/Graphics/descstatfuncs.R'))
+dsplot("Gender")
+```
+]
+
+---
+
+class: left, top
+### Choropleth
+.left-column[
+Shade of state is determined by per capita values for each state
+
+Shows for specific years or the mean
+]
+
+.right-column[
+```{r}
+source(here('Analysis/Graphics/choroplethmapfunc.R'))
+choroplethmap()
+```
+]
+
+---
+
+class: left, top
+### Cartogram
+.left-column[
+Size of state is determined by per capita values for each state
+
+Shows for specific years or the mean
+
+Harder to create but gives a much more intense visual
+]
+
+.right-column[
+```{r}
+source('Analysis/Graphics/cartogramfunc.R')
+ffcartogram(2017)
+```
+]
+
+---
+
+class: left, top
+### Interactive Map
+.column[
+```{r}
+library(leaflet)
+source('Analysis/Graphics/interactivemap.R')
+interactivemap
+```
+]
+
+---
+
+class: left, top
+### Future Work
+.column[
+Deal with missing data
+
+Better cartogram
+
+More analysis
+]
+
+---
+
+class: left, top
+### Jainul's Work
