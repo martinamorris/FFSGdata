@@ -8,6 +8,7 @@ output:
     
 ---
 
+#I am trying to get rid of this slide but am unsure of how to make the black US not render
 ```{r setup, echo = FALSE,warning=FALSE,message=FALSE}
 library(knitr)
 library(ggplot2)
@@ -43,6 +44,7 @@ class: left, top
 ```{r, echo=FALSE}
 source(here('Analysis/Tables/permilltablefunc.R'))
 permilltable("Washington", TRUE, FALSE)
+#I will shorten this so it is a more consise ~ 2-3 columns
 ```
 ]
 
@@ -91,7 +93,8 @@ cart2016
 ```
 ]
 ---
-
+### Present Shiny Here
+---
 class:left, top
 ### Future Work
 .column[
