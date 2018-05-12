@@ -1,6 +1,7 @@
 library(DT)
 library(dplyr)
 
+
 permilltable <- function(state, all, capita){
   rounded <- permillcalc(capita = capita)
   if(capita){

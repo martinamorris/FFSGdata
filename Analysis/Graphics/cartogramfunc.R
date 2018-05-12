@@ -33,4 +33,24 @@ ffcartogram <- function(year){
     tm_fill(year, style="jenks") +
     tm_borders() + 
     tm_layout(frame=F)
+  
 }
+
+cart2000 <- ffcartogram(2000)
+cart2001 <- ffcartogram(2001)
+cart2002 <- ffcartogram(2002)
+cart2003 <- ffcartogram(2003)
+cart2004 <- ffcartogram(2004)
+cart2005 <- ffcartogram(2005)
+cart2006 <- ffcartogram(2006)
+cart2007 <- ffcartogram(2007)
+cart2008 <- ffcartogram(2008)
+cart2009 <- ffcartogram(2009)
+cart2010 <- ffcartogram(2010)
+cart2011 <- ffcartogram(2011)
+cart2012 <- ffcartogram(2012)
+cart2013 <- ffcartogram(2013)
+cart2014 <- ffcartogram(2014)
+cart2015 <- ffcartogram(2015)
+cart2016 <- ffcartogram(2016)
+cart2017 <- ffcartogram(2017)

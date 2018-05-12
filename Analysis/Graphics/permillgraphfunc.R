@@ -1,5 +1,5 @@
 
-
+## ---- pmgraph
 permillgraph <- function(state, all, capita) {
   df <- permillcalc(capita = capita)
   if(!capita){
@@ -47,3 +47,4 @@ permillgraph <- function(state, all, capita) {
     )
   }
 }
+## ---- end-of-pmgraph
