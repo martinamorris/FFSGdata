@@ -1,0 +1,34 @@
+---
+title: "Pages"
+runtime: shiny
+output: 
+  html_document:
+    code_folding: hide
+    toc_float: TRUE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Tables and Graphs {.tabset .tabset-fade .tabset-pills}
+
+### Counts
+Counts gives a line graph of victims per capita in millions per state. Through this filter, users can also use individual state data to compare to other states as well. This count plot gives a visualization of the ups and downs of fatality rates as time increases.
+
+### Descriptive Statistics
+The Descriptive Statistics answers the question of "What are the demogrpahics of the victims". Through this page, people can go through and choose to display data based upon subject's race, age, or gender.For example, from the bar graph of subject's age, people can see that most of the victims are within their 20's.
+
+## Maps {.tabset .tabset-fade .tabset-pills}
+
+### Choropleth
+The Choropleth Map shows the comparisons of states shown through the intensity of color. This indicates if a state has a high or low rate of fata encounters with the police forces. For example, one can notice that New Mexico has the highest rate of fatal encounters with police because of the dark color represented. While Washington has a lower rate of fatal encounters based upon the colors shown on the legend. This map can also be filtered by year for further data analysis.
+
+### Cartogram
+
+### Interactive
+The Interactive Map are aggregated by clusters of an area and is also represented by color. Hovering over a cluster will show users what the boundaries of the clusters are. By clicking into the cluster, the data pictured will get narrower and narrower. Eventually, markers will show up for users to click for specific events and occurrences of these fatalities.
+
+## Data Analytics
+
+## Data Compiling
