@@ -1,6 +1,7 @@
 ---
 title: "Fatal Encounters with Police"
-author: "Madeline Cummins"
+subtitle: "Improving Public Access to Exploratory Data Analytics"
+author: "Madeline Cummins, Martina Morris, Ben Marwick"
 output:
   xaringan::moon_reader:
     yolo: FALSE     
@@ -14,6 +15,8 @@ library(knitr)
 library(ggplot2)
 library(here)
 library(dplyr)
+library(janitor)
+library(DT)
 opts_chunk$set(message = FALSE,
                warning = FALSE)
 ```
@@ -29,22 +32,51 @@ source(here('Analysis/Graphics/cartogramfunc.R'))
 class: left, top
 ### Outline
 .column[
-Investigate and understand how different locations and demographics are affected by police violence
+Goal: To provide open-source, simple tools for exploring the data on fatal 
+encounters with police
 
-Make data easily available to public
+Build Shiny App
 
-Shiny app with tables, static visualtions, and interactive maps to display the data
+Simple Exploratory Data Analytics
 ]
 
+---
+class: left, top
+### Shiny App
+.column[
+UI (user interface) - makes what the client sees
+```{r, echo=TRUE, eval=FALSE}
+tabPanel("Descriptive Statistics",
+        fluidPage(titlePanel("Descriptive Statistics"),
+          sidebarLayout(
+            sidebarPanel(
+              selectInput("dem", "Demographic", c("Race", "Gender", "Age")),
+              h6("Please take note that the data we have right now is still a work in progress so some of the data is missing. This means that there is a possibility that the trends displayed aren't the true trends for the data.")
+            ),
+            mainPanel(dataTableOutput("dstbl"), plotOutput("dsplt")))))
+```
+Server - interacts with r codes and functions
+```{r, echo=TRUE, eval=FALSE}
+output$dstbl <- renderDataTable({
+    dstable(input$dem)
+  }) 
+  
+output$dsplt <- renderPlot({
+    dsplot(input$dem)
+  })
+```
+]
 ---
 
 class: left, top
 ### Tabular Representation
 .pull-left[
 ```{r, echo=FALSE}
-source(here('Analysis/Tables/permilltablefunc.R'))
-permilltable("Washington", TRUE, FALSE)
-#I will shorten this so it is a more consise ~ 2-3 columns
+df <- permillcalc()
+df <- df%>%
+  select("state_name", "p2017", "mean")
+df[,2:3] <- round(df[,2:3],2)
+datatable(df)
 ```
 ]
 
