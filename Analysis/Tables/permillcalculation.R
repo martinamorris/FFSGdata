@@ -1,3 +1,5 @@
+## @knitr pmcalc
+
 library(dplyr)
 library(tidyr)
 library(rio)
@@ -12,7 +14,7 @@ pop_state_and_us_mill <- pop_state_and_us[, 3:20] / 1000000
 
 #-----------------------------fatal encounters data-------------------------------------
 
-#fatalencounters <- read.csv("Data/Final/fe_clean_lat_long.csv") 
+fatalencounters <- read.csv(here::here("Data/Final/fe_clean_lat_long.csv"))
 
 #------------------------------function-----------------------------------------------
 
@@ -54,3 +56,5 @@ permillcalc <- function(x = fatalencounters, capita = TRUE){
   
   return(table)
 }
+
+## ---- end-of-pmcalc

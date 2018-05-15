@@ -28,7 +28,7 @@ source("../Analysis/Graphics/permillgraphfunc.R")
 source("../Analysis/Graphics/choroplethmapfunc.R")
 source("../Analysis/Graphics/descstatfuncs.R")
 source("../Analysis/Graphics/choroplethmapfunc.R")
-#source("../Analysis/Graphics/cartogramfunc.R")
+source("../Analysis/Graphics/cartogramfunc.R")
 source("../Analysis/Graphics/interactivemap.R")
 
 

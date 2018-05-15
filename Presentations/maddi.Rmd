@@ -4,56 +4,72 @@ author: "Madeline Cummins"
 output:
   xaringan::moon_reader:
     yolo: FALSE     
-    css: UGRSMaddi.css  # our .css file
     lib_dir: libs
+    
 ---
-setwd("F:/GitHub/FFSG/ffsg")
 
+#I am trying to get rid of this slide but am unsure of how to make the black US not render
+```{r setup, echo = FALSE,warning=FALSE,message=FALSE}
+library(knitr)
+library(ggplot2)
+library(here)
+library(dplyr)
+opts_chunk$set(message = FALSE,
+               warning = FALSE)
+```
+
+```{r, echo=FALSE}
+source(here('Analysis/Tables/permillcalculation.R'))
+```
+
+```{r, echo=FALSE, results='hide', message=FALSE}
+source(here('Analysis/Graphics/cartogramfunc.R'))
+```
+---
 class: left, top
-### Our Goals
-.left-column[
+### Outline
+.column[
 Investigate and understand how different locations and demographics are affected by police violence
 
-Not much data available - crowd sourced
+Make data easily available to public
+
+Shiny app with tables, static visualtions, and interactive maps to display the data
 ]
 
 ---
 
 class: left, top
-### Police Related Deaths Per Capita in Washington
-.left-column[
-More per capita than the US average
-
-Initiative 940
-]
-
-.right-column[
-```{r, echo=FALSE}
-source('Analysis/Tables/permillcalculation.R')
-source('Analysis/Graphics/permillgraphfunc.R')
-permillgraph("Washington", all = TRUE, capita = TRUE)
-```
-]
-
----
-
-class: left, top
-### Race and Gender
+### Tabular Representation
 .pull-left[
-Race
-
 ```{r, echo=FALSE}
-source(here('Analysis/Graphics/descstatfuncs.R'))
-dsplot("Race")
+source(here('Analysis/Tables/permilltablefunc.R'))
+permilltable("Washington", TRUE, FALSE)
+#I will shorten this so it is a more consise ~ 2-3 columns
 ```
 ]
 
 .pull-right[
-Gender
-
-```{r}
+```{r, echo=FALSE}
 source(here('Analysis/Graphics/descstatfuncs.R'))
-dsplot("Gender")
+dstable("Race")
+```
+]
+
+---
+
+class:left, top
+### Static Plots
+.pull-left[
+```{r, echo=FALSE}
+source(here('Analysis/Graphics/permillgraphfunc.R'))
+permillgraph("United States", FALSE, TRUE)
+```
+]
+
+.pull-right[
+```{r, echo=FALSE}
+source(here('Analysis/Graphics/permillgraphfunc.R'))
+permillgraph("Washington", TRUE, TRUE)
 ```
 ]
 
@@ -61,63 +77,34 @@ dsplot("Gender")
 
 class: left, top
 ### Choropleth
-.left-column[
-Shade of state is determined by per capita values for each state
-
-Shows for specific years or the mean
-]
-
-.right-column[
-```{r}
+.column[
+```{r, echo=FALSE}
 source(here('Analysis/Graphics/choroplethmapfunc.R'))
 choroplethmap()
 ```
 ]
-
 ---
 
 class: left, top
 ### Cartogram
-.left-column[
-Size of state is determined by per capita values for each state
-
-Shows for specific years or the mean
-
-Harder to create but gives a much more intense visual
-]
-
-.right-column[
-```{r}
-source('Analysis/Graphics/cartogramfunc.R')
-ffcartogram(2017)
-```
-]
-
----
-
-class: left, top
-### Interactive Map
 .column[
-```{r}
-library(leaflet)
-source('Analysis/Graphics/interactivemap.R')
-interactivemap
+```{r, echo=FALSE}
+cart2016
 ```
 ]
-
 ---
-
-class: left, top
+### Present Shiny Here
+---
+class:left, top
 ### Future Work
 .column[
-Deal with missing data
+Make work publicaly available
 
-Better cartogram
+Compile into a package with guide
 
-More analysis
+Facebook page
+
+Linked with fatal encounters, killed by police, and campaign 0
+
+Add pics to interactive map
 ]
-
----
-
-class: left, top
-### Jainul's Work
