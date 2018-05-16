@@ -1,4 +1,3 @@
-
 # BM: it's nice for other users if we auto-install missing packages
 # for them 
 load_libraries <- function(x){
@@ -18,6 +17,7 @@ load_libraries( c("shiny" , "here" , "plotly", "leaflet",
                   "rio", "devtools", "maps", "sp", "maptools",
                   "tmap", "cartogram", "DT", "dplyr") )
 
+
 # BM: docs say that "the directory that you save server.R in 
 # will become the working directory of your Shiny app.
 # https://shiny.rstudio.com/tutorial/written-tutorial/lesson5/
@@ -29,13 +29,26 @@ source("../Analysis/Graphics/choroplethmapfunc.R")
 source("../Analysis/Graphics/descstatfuncs.R")
 source("../Analysis/Graphics/choroplethmapfunc.R")
 source("../Analysis/Graphics/cartogramfunc.R")
+source("../Analysis/Graphics/runcart.R")
 source("../Analysis/Graphics/interactivemap.R")
 
 
 
 ui <- navbarPage(
   "FFSG",
-  tabPanel("About"),
+  tabPanel("About",
+           fluidPage(titlePanel("Fatal Force Study Group")),
+           sidebarLayout(
+             sidebarPanel(
+               h3("Resources"),
+               h6("")
+             ),
+             mainPanel(
+               h2("About"),
+               h4("UW Fatal Force Research Group (FFRG) was brought together at the University of Washington by Professor Martina Morris and Ben Marwick. Morris' background in sociology and statistics led her to creating this research group to fight injustice in police using fatal force. Ben Marwick, an Archeology professor, with a background in statistics and social science joined Morris as a side project. This research group started about a year and half ago with two students of Morris. The group has now expanded to seven undergraduate students, two from Western Washington University, with the addition of the two UW Professors. UW FFRG's mission is to bring justice and peace to communities most impacted by police brutality through a comprehensive data analysis combined with the comparisons of respective laws and policies.")
+                       )
+           )
+           ),
   
   
   navbarMenu(
@@ -146,7 +159,7 @@ server <- function(input, output, session) {
     })
   
   output$cartogram <- renderPlot({
-    ffcartogram(input$yearcart) # BM: we capture the input value for the cartogram with the yearcart variable. 
+    whichcart(input$yearcart) # BM: we capture the input value for the cartogram with the yearcart variable. 
   })
   
   output$dstbl <- renderDataTable({
