@@ -15,11 +15,12 @@ library(knitr)
 library(ggplot2)
 library(here)
 library(dplyr)
-library(janitor)
 library(DT)
+library(shiny)
 opts_chunk$set(message = FALSE,
                warning = FALSE)
 ```
+
 
 ```{r, echo=FALSE}
 source(here('Analysis/Tables/permillcalculation.R'))
@@ -35,9 +36,17 @@ class: left, top
 Goal: To provide open-source, simple tools for exploring the data on fatal 
 encounters with police
 
-Build Shiny App
-
 Simple Exploratory Data Analytics
+<ul>
+<li>Tables</li>
+<li>Static Plots</li>
+<li>Interactive Maps</li>
+</ul>
+Make Data Accessible
+<ul>
+<li>Shiny</li>
+<li>GitHub</li>
+</ul>
 ]
 
 ---
@@ -66,6 +75,11 @@ output$dsplt <- renderPlot({
   })
 ```
 ]
+---
+
+class: left, top
+![](maddi_files/pictures/DescStatPage.png)
+
 ---
 
 class: left, top
@@ -121,11 +135,9 @@ class: left, top
 ### Cartogram
 .column[
 ```{r, echo=FALSE}
-cart2016
+ffcartogram(2017)
 ```
 ]
----
-### Present Shiny Here
 ---
 class:left, top
 ### Future Work
