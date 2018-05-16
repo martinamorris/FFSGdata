@@ -1,4 +1,3 @@
-## @knitr pmcalc
 
 library(dplyr)
 library(tidyr)
@@ -14,8 +13,8 @@ pop_state_and_us_mill <- pop_state_and_us[, 3:20] / 1000000
 
 #-----------------------------fatal encounters data-------------------------------------
 
-fatalencounters <- read.csv(here::here("Data/Final/fe_clean_lat_long.csv"))
-
+load(here::here("Data/Scraping/ScrapedFiles/fe.clean.Rdata"))
+fatalencounters <- fe.clean
 #------------------------------function-----------------------------------------------
 
 permillcalc <- function(x = fatalencounters, capita = TRUE){
@@ -41,7 +40,7 @@ permillcalc <- function(x = fatalencounters, capita = TRUE){
   
   if(capita){
     #calculate deaths per million population
-    kpm <- kdata[, -c(1:2)] / pop_state_and_us_mill
+    kpm <- kdata[, -c(1:2,21:22)] / pop_state_and_us_mill
     
     #find avegages over all years
     kpm <- cbind(kdata[, 1:2], kpm, rowMeans(kpm))
@@ -57,4 +56,3 @@ permillcalc <- function(x = fatalencounters, capita = TRUE){
   return(table)
 }
 
-## ---- end-of-pmcalc
