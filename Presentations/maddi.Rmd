@@ -2,6 +2,7 @@
 title: "Fatal Encounters with Police"
 subtitle: "Improving Public Access to Exploratory Data Analytics"
 author: "Madeline Cummins, Martina Morris, Ben Marwick"
+linked project: "Jainul"
 output:
   xaringan::moon_reader:
     yolo: FALSE     
@@ -150,13 +151,13 @@ ffcartogram(2017)
 class:left, top
 ### Future Work
 .column[
-Make work publicaly available
+Make work publicly available
+
+Add pictures to cases in interactive map
 
 Compile into a package with guide
 
-Facebook page
+Facebook Page
 
-Linked with fatal encounters, killed by police, and campaign 0
-
-Add pics to interactive map
+Linked with Fatal Encounters, Killed by Police, and Campaign 0
 ]
