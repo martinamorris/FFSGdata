@@ -1,36 +1,52 @@
 # BM: it's nice for other users if we auto-install missing packages
 # for them 
-load_libraries <- function(x){
-  for( i in x ){
-    #  require returns TRUE invisibly if it was able to load package
-    if( ! require( i , character.only = TRUE ) ){
-      #  If package was not able to be loaded then re-install
-      install.packages( i , dependencies = TRUE )
-      #  Load package after installing
-      require( i , character.only = TRUE )
-    }
-  }
-}
+# load_libraries <- function(x){
+#   for( i in x ){
+#     #  require returns TRUE invisibly if it was able to load package
+#     if( ! require( i , character.only = TRUE ) ){
+#       #  If package was not able to be loaded then re-install
+#       install.packages( i , dependencies = TRUE )
+#       #  Load package after installing
+#       require( i , character.only = TRUE )
+#     }
+#   }
+# }
+# 
+# 
+# load_libraries( c("shiny" , "here" , "plotly", "leaflet",  
+#                   "rio", "devtools", "maps", "sp", "maptools",
+#                   "tmap", "cartogram", "DT", "dplyr") )
 
-
-load_libraries( c("shiny" , "here" , "plotly", "leaflet",  
-                  "rio", "devtools", "maps", "sp", "maptools",
-                  "tmap", "cartogram", "DT", "dplyr") )
+# seems like we need to have library calls so that shinyapps.io can detect what pkgs to 
+# install
+library("shiny")
+library("here")
+library("plotly")
+library("leaflet")
+library("rio")
+library("devtools")
+library("maps")
+library("sp")
+library("maptools")
+library("tmap")
+library("cartogram")
+library("DT")
+library("dplyr")
 
 
 # BM: docs say that "the directory that you save server.R in 
 # will become the working directory of your Shiny app.
 # https://shiny.rstudio.com/tutorial/written-tutorial/lesson5/
 # so we need to source from here
-source("../Analysis/Tables/permillcalculation.R")
-source("../Analysis/Tables/permilltablefunc.R")
-source("../Analysis/Graphics/permillgraphfunc.R")
-source("../Analysis/Graphics/choroplethmapfunc.R")
-source("../Analysis/Graphics/descstatfuncs.R")
-source("../Analysis/Graphics/choroplethmapfunc.R")
-source("../Analysis/Graphics/cartogramfunc.R")
-source("../Analysis/Graphics/runcart.R")
-source("../Analysis/Graphics/interactivemap.R")
+source("permillcalculation.R")
+source("permilltablefunc.R")
+source("permillgraphfunc.R")
+source("choroplethmapfunc.R")
+source("descstatfuncs.R")
+source("choroplethmapfunc.R")
+source("cartogramfunc.R")
+source("runcart.R")
+source("interactivemap.R")
 
 
 

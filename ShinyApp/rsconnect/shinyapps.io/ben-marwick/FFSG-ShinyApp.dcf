@@ -1,0 +1,12 @@
+name: FFSG-ShinyApp
+title: FFSG-ShinyApp
+username:
+account: ben-marwick
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 344215
+bundleId: 1377637
+url: https://ben-marwick.shinyapps.io/FFSG-ShinyApp/
+when: 1526506616.18171
+asMultiple: FALSE
+asStatic: FALSE
