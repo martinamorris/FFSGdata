@@ -1,0 +1,156 @@
+---
+title: "Fatal Encounters with Police"
+subtitle: "Improving Public Access to Exploratory Data Analytics"
+author: "Madeline Cummins, Martina Morris, Ben Marwick"
+linked project: "Jainul"
+output:
+  xaringan::moon_reader:
+    yolo: FALSE     
+    lib_dir: libs
+    
+---
+class: left, top
+
+```{r setup, echo = FALSE,warning=FALSE,message=FALSE}
+library(knitr)
+library(ggplot2)
+library(dplyr)
+library(DT)
+library(shiny)
+opts_chunk$set(message = FALSE,
+               warning = FALSE)
+```
+
+
+```{r, echo=FALSE, results='hide', message=FALSE}
+source('permillcalculation.R')
+source('cartogramfunc.R')
+```
+
+
+### Outline
+.column[
+Goal: To provide open-source, simple tools for exploring the data on fatal 
+encounters with police
+
+Simple Exploratory Data Analytics Tools
+<ul>
+<li>Tables</li>
+<li>Static Plots</li>
+<li>Interactive Maps</li>
+</ul>
+Tools for Public Access
+<ul>
+<li>Shiny</li>
+<li>GitHub</li>
+</ul>
+]
+
+---
+class: left, top
+### Shiny App
+.column[
+UI (user interface) - makes what the client sees
+```{r, echo=TRUE, eval=FALSE}
+fluidPage(titlePanel("Descriptive Statistics"),
+          sidebarLayout(
+            sidebarPanel(
+              selectInput("dem", "Demographic", c("Race", "Gender", "Age")),
+              h6("Please take note that the data we have right now is still a work in progress so some of the data is missing. This means that there is a possibility that the trends displayed aren't the true trends for the data.")
+            ),
+            mainPanel(dataTableOutput("dstbl"), plotOutput("dsplt"))))
+```
+Server - interacts with r codes and functions
+```{r, echo=TRUE, eval=FALSE}
+output$dstbl <- renderDataTable({
+    dstable(input$dem)
+  }) 
+  
+output$dsplt <- renderPlot({
+    dsplot(input$dem)
+  })
+```
+]
+---
+class: left, top
+![](../Presentations/maddi_files/pictures/DescStatPage.png)
+
+---
+class: left, top
+### Tabular Representation
+.pull-left[
+```{r, echo=FALSE}
+df <- permillcalc()
+df <- df%>%
+  select("state_name", "p2017", "mean")
+df[,2:3] <- round(df[,2:3],2)
+datatable(df)
+```
+]
+
+.pull-right[
+```{r, echo=FALSE}
+source('descstatfuncs.R')
+dstable("Race")
+```
+]
+
+---
+class:left, top
+### Static Plots
+.pull-left[
+```{r, echo=FALSE}
+source('permillgraphfunc.R')
+permillgraph("United States", FALSE, TRUE)
+```
+<ul>
+<li>simpler</li>
+<li>easier to read</li>
+</ul>
+]
+
+.pull-right[
+```{r, echo=FALSE}
+source('permillgraphfunc.R')
+permillgraph("Washington", TRUE, TRUE)
+```
+<ul>
+<li>easier comparisons</li>
+<li>show vs average</li>
+<li>fluxuation of other states</li>
+</ul>
+]
+
+---
+
+class: left, top
+### Choropleth
+.column[
+```{r, echo=FALSE, fig.width=10}
+source('choroplethmapfunc.R')
+choroplethmap()
+```
+]
+---
+
+class: left, top
+### Cartogram
+.column[
+```{r, echo=FALSE, fig.width=10}
+ffcartogram(2017)
+```
+]
+---
+class:left, top
+### Future Work
+.column[
+Make work publicly available
+
+Add pictures to cases in interactive map
+
+Compile into a package with guide
+
+Facebook Page
+
+Linked with Fatal Encounters, Killed by Police, and Campaign 0
+]
