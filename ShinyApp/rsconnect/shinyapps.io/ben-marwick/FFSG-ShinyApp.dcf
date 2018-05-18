@@ -5,8 +5,9 @@ account: ben-marwick
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 344215
-bundleId: 1377637
+bundleId: 1381099
 url: https://ben-marwick.shinyapps.io/FFSG-ShinyApp/
-when: 1526506616.18171
+when: 1526666651.52638
 asMultiple: FALSE
 asStatic: FALSE
+ignoredFiles: DescStatPage.png|maddi.html|maddi.Rmd|libs|maddi_files
