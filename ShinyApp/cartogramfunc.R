@@ -5,7 +5,7 @@ require(tmap)
 require(cartogram)
 
 # get a SpatialPolygonsDataFrame of US states
-usa <- map("state", fill = TRUE)
+usa <- map("state", fill = TRUE, plot = FALSE)
 IDs <- sapply(strsplit(usa$names, ":"), function(x) x[1])
 usa <- map2SpatialPolygons(usa, IDs=IDs, proj4string=CRS("+proj=longlat +datum=WGS84"))
 usa <- SpatialPolygonsDataFrame(usa, 
