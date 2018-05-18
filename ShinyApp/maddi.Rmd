@@ -41,7 +41,7 @@ Simple Exploratory Data Analytics Tools
 </ul>
 Tools for Public Access
 <ul>
-<li>Shiny</li>
+<li><a href="https://ben-marwick.shinyapps.io/FFSG-ShinyApp/">Shiny</a></li>
 <li>GitHub</li>
 </ul>
 ]
