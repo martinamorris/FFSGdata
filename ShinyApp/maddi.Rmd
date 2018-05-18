@@ -73,7 +73,7 @@ output$dsplt <- renderPlot({
 ]
 ---
 class: left, top
-![](../Presentations/maddi_files/pictures/DescStatPage.png)
+![](DescStatPage.png)
 
 ---
 class: left, top
@@ -122,7 +122,6 @@ permillgraph("Washington", TRUE, TRUE)
 ]
 
 ---
-
 class: left, top
 ### Choropleth
 .column[
