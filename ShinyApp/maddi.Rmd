@@ -2,7 +2,6 @@
 title: "Fatal Encounters with Police"
 subtitle: "Improving Public Access to Exploratory Data Analytics"
 author: "Madeline Cummins, Martina Morris, Ben Marwick"
-linked project: "Jainul"
 output:
   xaringan::moon_reader:
     yolo: FALSE     
@@ -13,18 +12,8 @@ class: left, top
 
 ```{r setup, echo = FALSE,warning=FALSE,message=FALSE}
 library(knitr)
-library(ggplot2)
-library(dplyr)
-library(DT)
-library(shiny)
 opts_chunk$set(message = FALSE,
                warning = FALSE)
-```
-
-
-```{r, echo=FALSE, results='hide', message=FALSE}
-source('permillcalculation.R')
-source('cartogramfunc.R')
 ```
 
 
@@ -79,76 +68,12 @@ Screenshot from our app: <https://ben-marwick.shinyapps.io/FFSG-ShinyApp/>
 ![](DescStatPage.png)
 
 ---
-class: left, top
-### Tabular Representation
-.pull-left[
-```{r, echo=FALSE}
-df <- permillcalc()
-df <- df%>%
-  select("state_name", "p2017", "mean")
-df[,2:3] <- round(df[,2:3],2)
-datatable(df)
-```
-]
-
-.pull-right[
-```{r, echo=FALSE}
-source('descstatfuncs.R')
-dstable("Race")
-```
-]
-
----
-class:left, top
-### Static Plots
-.pull-left[
-```{r, echo=FALSE}
-source('permillgraphfunc.R')
-permillgraph("United States", FALSE, TRUE)
-```
-<ul>
-<li>simpler</li>
-<li>easier to read</li>
-</ul>
-]
-
-.pull-right[
-```{r, echo=FALSE}
-source('permillgraphfunc.R')
-permillgraph("Washington", TRUE, TRUE)
-```
-<ul>
-<li>easier comparisons</li>
-<li>show vs average</li>
-<li>fluxuation of other states</li>
-</ul>
-]
-
----
-class: left, top
-### Choropleth
-.column[
-```{r, echo=FALSE, fig.width=10}
-source('choroplethmapfunc.R')
-choroplethmap()
-```
-]
----
-
-class: left, top
-### Cartogram
-.column[
-```{r, echo=FALSE, fig.width=10}
-ffcartogram(2017)
-```
-]
----
 class:left, top
 ### Future Work
 .column[
-Make work publicly available: <https://ben-marwick.shinyapps.io/FFSG-ShinyApp>
-
 Add pictures to cases in interactive map
+
+Finalize app and make publicly available: <https://ben-marwick.shinyapps.io/FFSG-ShinyApp>
 
 Compile into a package with guide
 

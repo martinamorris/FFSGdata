@@ -70,14 +70,14 @@ ui <- navbarPage(
   navbarMenu(
     "Tables and Graphs",
       tabPanel("Counts",
-        fluidPage(titlePanel("Victims per Capita")),
+        fluidPage(titlePanel("Counting Fatal Encounters")),
         sidebarLayout(
           sidebarPanel(
             selectInput("state", "State", c(sort(
               c(state.name, "District of Columbia")
-            ), "United States")),
-            checkboxInput("all", "With Other States", FALSE),
-            checkboxInput("capita", "Graph per capita (in millions)", TRUE)
+            ), "United States"), selected = "Washington"),
+            checkboxInput("all", "Display with other states", FALSE),
+            checkboxInput("capita", "Calculate per capita (in millions)", TRUE)
           ),
           mainPanel(tabsetPanel(
             type = "tabs",
@@ -91,7 +91,7 @@ ui <- navbarPage(
           sidebarLayout(
             sidebarPanel(
               selectInput("dem", "Demographic", c("Race", "Gender", "Age")),
-              h6("Please take note that the data we have right now is still a work in progress so some of the data is missing. This means that there is a possibility that the trends displayed aren't the true trends for the data.")
+              h6("Disclaimer: Please take note that the data we are currently using is still a work in progress so some of the data is missing. This means that there is a possibility that the trends displayed aren't the true trends for the data.")
             ),
             mainPanel(dataTableOutput("dstbl"), plotOutput("dsplt"))
           )
@@ -128,7 +128,7 @@ ui <- navbarPage(
         ),
         sidebarLayout(
           sidebarPanel(
-            sliderInput("yearcart", "Year", 2000, 2017, value = 2000, animate = animationOptions(1500, TRUE),  sep = "") # BM: make the numbers look like years
+            sliderInput("yearcart", "Year", 2000, 2017, value = 2010, animate = animationOptions(1500, TRUE),  sep = "") # BM: make the numbers look like years
           ),
           mainPanel(plotOutput("cartogram"))
         )
