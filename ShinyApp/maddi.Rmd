@@ -73,6 +73,9 @@ output$dsplt <- renderPlot({
 ]
 ---
 class: left, top
+
+Screenshot from our app: <https://ben-marwick.shinyapps.io/FFSG-ShinyApp/>
+
 ![](DescStatPage.png)
 
 ---
@@ -143,7 +146,7 @@ ffcartogram(2017)
 class:left, top
 ### Future Work
 .column[
-Make work publicly available
+Make work publicly available: <https://ben-marwick.shinyapps.io/FFSG-ShinyApp>
 
 Add pictures to cases in interactive map
 
