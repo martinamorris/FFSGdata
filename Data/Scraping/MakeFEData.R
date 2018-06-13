@@ -10,8 +10,10 @@
 library(googlesheets)
 library(dplyr)
 
-# uncomment for first run in session.  assumes current dir is local repo dir.
-#mydir <- getwd() 
+# assumes current dir is local repo dir.
+mydir <- getwd() 
+# Don't need this anymore -- best not to setwd to play nice with sourcing from 
+# other files. Instead use mydir and paste to save out.
 #setwd(paste(mydir, 'Data/Scraping/ScrapedFiles/', sep="/"))
 
 # fatal encounters, <https://fatalencounters.org/>
@@ -67,8 +69,7 @@ fe.clean <- filter(fe, kbp.filter == "killed by police")
 ## Clean up field entries
 
 # clean up year, using dateMDY variable -- this will fix the parsing errors
-fe.clean$year <- as.numeric(substr(fe$dateMDY,7,10))
-
+fe.clean$year <- as.numeric(substr(fe.clean$dateMDY,7,10))
 
 # fix spelling errors in gender and race
 replacement <- function(x) {
@@ -107,5 +108,5 @@ fe.clean$race <- as.character(lapply(fe.clean$race, replacement.2))
 
 
 # save cleaned copy
-save.image('./fe.clean.Rdata')
+save.image(paste(mydir, 'Data/Scraping/ScrapedFiles/fe.clean.Rdata', sep="/"))
 

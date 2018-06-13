@@ -14,7 +14,10 @@ library(readr)
 library(tidyr)
 library(tidyverse)
 
-#mydir <- getwd()  # only needs to be set at start, assumes local repo dir
+# assumes current dir is local repo dir.
+mydir <- getwd() 
+# Don't need this anymore -- best not to setwd to play nice with sourcing from 
+# other files. Instead use mydir and paste to save out.
 #setwd(paste(mydir, 'Data/Scraping/ScrapedFiles/', sep="/"))
 
 this_year <- as.numeric(format(Sys.Date(), '%Y'))
@@ -140,4 +143,4 @@ kbp <- kbp %>%
 
 rm(list=ls(pattern="x"))
 
-save.image("./KBP.clean.Rdata")
+save.image(paste(mydir, 'Data/Scraping/ScrapedFiles/KBP.clean.Rdata', sep="/"))

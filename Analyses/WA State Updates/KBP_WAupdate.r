@@ -2,8 +2,8 @@
 
 library(tidyr)
 
-#mydir <- getwd()  # only if makefile update has not been run already
-#source(paste(mydir, '/Data/Scraping/MakeFEData.R', sep="/"))
+mydir <- getwd()
+source(paste(mydir, '/Data/Scraping/MakeKBPData.R', sep="/"))
 
 thismonth <- as.numeric(format(Sys.Date(), '%m'))-1 # row index for last complete month
 

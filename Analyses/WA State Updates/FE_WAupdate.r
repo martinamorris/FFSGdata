@@ -7,7 +7,7 @@ source(paste(mydir, '/Data/Scraping/MakeFEData.R', sep="/"))
 
 thismonth <- as.numeric(format(Sys.Date(), '%m'))-1 # row index for last complete month
 
-tmp.data <- separate(fe.clean, dateDMY,
+tmp.data <- separate(fe.clean, dateMDY,
                      into = c('month', 'day','year'),
                      sep = "/",
                      remove = FALSE,
