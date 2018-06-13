@@ -1,14 +1,18 @@
 ---
 title: "Fatal Encounters with Police"
 subtitle: "Improving Public Access to Exploratory Data Analytics"
-author: "Madeline Cummins, Martina Morris, Ben Marwick"
+author: | 
+        | Madeline Cummins
+        | Mentors: Martina Morris, Ben Marwick <br>      
+        | Linked presentation: Jainul Vaghasia
 output:
   xaringan::moon_reader:
+    css: "maddi.css"
     yolo: FALSE     
     lib_dir: libs
     
 ---
-class: left, top
+class: top
 
 ```{r setup, echo = FALSE,warning=FALSE,message=FALSE}
 library(knitr)
@@ -18,21 +22,40 @@ opts_chunk$set(message = FALSE,
 
 
 ### Outline
-.column[
+
+.large[
+
 Goal: To provide open-source, simple tools for exploring the data on fatal 
 encounters with police
 
-Simple Exploratory Data Analytics Tools
+
+.pull-left[
+**Simple Exploratory Data Analytics Tools**
 <ul>
 <li>Tables</li>
 <li>Static Plots</li>
 <li>Interactive Maps</li>
 </ul>
-Tools for Public Access
+]
+
+.pull-right[
+**Tools for Public Access**
 <ul>
 <li><a href="https://ben-marwick.shinyapps.io/FFSG-ShinyApp/">Shiny</a></li>
 <li>GitHub</li>
 </ul>
+]
+]
+
+---
+### Data sources
+
+.large[
+Here we are using the [Fatal Encounters](http://www.fatalencounters.org/) dataset, which is a crowd-sourced, unofficial dataset of people killed by Police in the US.  
+
+The data spans 2000-2018, about 21,000 records.
+
+Jainul Vaghasia's research has partially cleaned these data. 
 ]
 
 ---
@@ -70,14 +93,15 @@ Screenshot from our app: <https://ben-marwick.shinyapps.io/FFSG-ShinyApp/>
 ---
 class:left, top
 ### Future Work
-.column[
-Add pictures to cases in interactive map
 
-Finalize app and make publicly available: <https://ben-marwick.shinyapps.io/FFSG-ShinyApp>
+.large[
+- Add pictures to cases in interactive map    
 
-Compile into a package with guide
+- Finalize app and make publicly available: <https://ben-marwick.shinyapps.io/FFSG-ShinyApp>     
 
-Facebook Page
+- Compile into a package with guide    
 
-Linked with Fatal Encounters, Killed by Police, and Campaign 0
+- Facebook Page     
+
+- Linked with Fatal Encounters, Killed by Police, and Campaign Zero    
 ]
