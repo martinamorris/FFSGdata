@@ -14,7 +14,9 @@ library(readr)
 library(tidyr)
 library(tidyverse)
 
-setwd('./ScrapedFiles/')
+#mydir <- getwd()  # only needs to be set at start, assumes local repo dir
+#setwd(paste(mydir, 'Data/Scraping/ScrapedFiles/', sep="/"))
+
 this_year <- as.numeric(format(Sys.Date(), '%Y'))
 
 # killed by police, <https://killedbypolice.net/>
@@ -24,7 +26,7 @@ url <- 'http://killedbypolice.net/'
 #'  For all KBP pages...
 
 #' make a vector of URLs for all years available
-years <- (this_year - 1):2013
+years <- (this_year):2013
 all_urls <- c(url, glue('{url}kbp{years}'))
 
 safe_read <- safely(read_table, otherwise = NA)
@@ -132,7 +134,8 @@ kbp <- x8 %>%
 # keep only what looks good
 kbp <- kbp %>%
   subset(select=c(number, date, date_format, year, month, day, deceased, 
-                  deceased_name, deceased_age, gender, race, method, fb_page, fb_pic, state, aka)) %>%
+                  deceased_name, deceased_age, gender, race, method, 
+                  fb_page, fb_pic, state, aka)) %>%
   filter(state %in% c(state.abb, "DC"))
 
 rm(list=ls(pattern="x"))

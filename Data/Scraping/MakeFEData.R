@@ -6,33 +6,40 @@
 
 #' This file scrapes the police killings data from <https://fatalencounters.org/>.
 
+#install.packages(c('googlesheets', 'RecordLinkage'))
 library(googlesheets)
 library(dplyr)
 
-setwd('./ScrapedFiles/')
+# uncomment for first run in session.  assumes current dir is local repo dir.
+#mydir <- getwd() 
+#setwd(paste(mydir, 'Data/Scraping/ScrapedFiles/', sep="/"))
 
 # fatal encounters, <https://fatalencounters.org/>
 
 # get google sheet
+# a few records have unreadable "Year" entries, but the record is read, and year can be retrieved
+# from the Date of Injury field.
+# note you can retrieve/view parsing problems with problems(fe)
 url <- 'https://docs.google.com/spreadsheets/d/1dKmaV_JiWcG8XBoRgP8b4e9Eopkpgt7FL7nyspvzAsE/export?format=csv&id=1dKmaV_JiWcG8XBoRgP8b4e9Eopkpgt7FL7nyspvzAsE&gid=0'
 fe <- gs_read_csv(gs_url(url))
+
 
 # View
 glimpse(fe)
 
 ##################################################################################
 
-#fe <- read.csv(file = "FE_raw.csv")
 
-# remove non-pertinent columns; these include columns "read me", undocumented columns with only one
-# data point, and a duplicate ID col
+# remove non-pertinent columns; these include columns "read me", 
+# undocumented columns with only one data point, and a duplicate ID col
 fe <- fe[,c(-1, -28, -26, -25, -23, -22)]
 
 # Clean up column names
-colnames(fe) <- c('name', 'age', 'sex', 'race', 'URLpic', 'dateDMY', 'address',
-                       'city', 'state',	'zip', 'county',	'fullAddress', 'latitude', 'longitude','agency', 'causeOfDeath', 'circumstances', 
-                       'officialDisposition', 'URLarticle', 'mentalIllness',
-                       'Description','year')
+colnames(fe) <- c('name', 'age', 'sex', 'race', 'URLpic', 'dateMDY', 'address',
+                  'city', 'state',	'zip', 'county',	'fullAddress', 'latitude', 'longitude',
+                  'agency', 'causeOfDeath', 'circumstances', 
+                  'officialDisposition', 'URLarticle', 'mentalIllness',
+                  'Description','year')
 
 # remove data points that are not fact-checked
 boundary <- which(fe$name == "Items below this row have not been fact-checked.")
@@ -55,6 +62,13 @@ fe$kbp.filter <- ifelse(toupper(fe$`officialDisposition`)
 
 # Filter out non-police-shootings and write out clean FE csv
 fe.clean <- filter(fe, kbp.filter == "killed by police")
+
+
+## Clean up field entries
+
+# clean up year, using dateMDY variable -- this will fix the parsing errors
+fe.clean$year <- as.numeric(substr(fe$dateMDY,7,10))
+
 
 # fix spelling errors in gender and race
 replacement <- function(x) {
@@ -94,3 +108,4 @@ fe.clean$race <- as.character(lapply(fe.clean$race, replacement.2))
 
 # save cleaned copy
 save.image('./fe.clean.Rdata')
+
