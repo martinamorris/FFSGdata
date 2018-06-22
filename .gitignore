@@ -35,3 +35,10 @@ vignettes/*.pdf
 
 # Banished mac ds_store
 .DS_Store
+
+# markdown and notebook html
+*.html
+*.nb.html
+
+# data files (these are large, frequently changed, and should be remade with code, not stored)
+*.Rdata
