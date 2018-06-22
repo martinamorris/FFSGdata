@@ -1,6 +1,16 @@
-setwd("~/git/ffsg/Data/Merging/")
+# WARNING: next line assumes current wd is local repo dir top level.
+mydir <- getwd() 
+# Use mydir and paste to read in / save out.
+
+# Do not use setwd, as it doesn't play well with executing 
+# multiple scripts
+
 
 library(dplyr)
+
+load(paste(mydir, "Data/Scraping/ScrapedFiles/fe.clean.Rdata", sep="/"))
+load(paste(mydir, "Data/Scraping/ScrapedFiles/KBP.clean.Rdata", sep="/"))
+load(paste(mydir, "Data/Scraping/ScrapedFiles/MPV.clean.Rdata", sep="/"))
 
 #--------------------------------------Comparing FE vs MPV------------------------------------
 
@@ -14,18 +24,24 @@ d2$parent_id <- seq.int(nrow(mpv))
 
 # ....remove no name and split the aka names....
 d1 <- dplyr::filter(d1, d1$`name` != "Name withheld by police")
-d1 <- tidyr::separate(d1, col = "name", into = c("name", "aka"), sep = " aka | or | transitioning from ")
+d1 <- tidyr::separate(d1, col = "name", 
+                      into = c("name", "aka"), 
+                      sep = " aka | or | transitioning from ")
 
 d2 <- dplyr::filter(d2, d2$`Victim's name` != "Name withheld by police")
-d2 <- tidyr::separate(d2, col = "Victim's name", into = c("Victim's name", "aka"), sep = " aka | or | transitioning from ")
+d2 <- tidyr::separate(d2, col = "Victim's name", 
+                      into = c("Victim's name", "aka"), 
+                      sep = " aka | or | transitioning from ")
 
 # ....standardize races....
 table(d1$race)
 table(d2$`Victim's race`)
 
 # replace Race unspecified and Unknown race with NA
-d1$race <- lapply(d1$race, function(x) replace(x, grepl("Race unspecified", x), NA))
-d2$`Victim's race` <- lapply(d2$`Victim's race`, function(x) replace(x, grepl("Unknown race", x), NA))
+d1$race <- lapply(d1$race, 
+                  function(x) replace(x, grepl("Race unspecified", x), NA))
+d2$`Victim's race` <- lapply(d2$`Victim's race`, 
+                             function(x) replace(x, grepl("Unknown race", x), NA))
 
 # change the format of race
 d1$race <- lapply(d1$race, function(x) replace(x, grepl("African-American/Black", x), "Black"))
@@ -45,7 +61,7 @@ d1$name <- gsub("[^[:alnum:] ]", "", d1$name)
 d2$`Victim's name` <- gsub("[^[:alnum:] ]", "", d2$`Victim's name`)
 
 # ....Format date column....
-d1$dateDMY <- as.character(strptime(d1$dateDMY, "%m/%d/%Y"))
+d1$dateMDY <- as.character(strptime(d1$dateMDY, "%m/%d/%Y"))
 d2$`Date of injury resulting in death (month/day/year)` <- as.character(strptime(d2$`Date of injury resulting in death (month/day/year)`, format = "%Y-%m-%d"))
 # ....Remove previous years....
 d1 <- dplyr::filter(d1, d1$year >= 2013)
@@ -111,11 +127,17 @@ train.data <- rbind(matches, nonmatches)[c(-1,-2, -9, -10)]
 
 library(e1071)
 
-svm.model <- svm(class ~ name + age + sex + race + dateDMY + new, data = train.data, type = "C-classification")
+svm.model <- svm(class ~ name + age + sex + race + dateMDY + new, data = train.data, type = "C-classification")
 
-plot(svm.model, data = train.data, name ~ new, slice = list(age = 1, sex = 1, race = 1, dateDMY = 1))
-plot(svm.model, data = train.data, name ~ dateDMY, slice = list(age = 1, sex = 1, race = 1, new = 1))
-plot(svm.model, data = train.data, name ~ race, slice = list(age = 1, sex = 1, new = 1, dateDMY = 1))
+plot(svm.model, data = train.data, 
+     name ~ new, 
+     slice = list(age = 1, sex = 1, race = 1, dateMDY = 1))
+plot(svm.model, data = train.data, 
+     name ~ dateMDY, 
+     slice = list(age = 1, sex = 1, race = 1, new = 1))
+plot(svm.model, data = train.data, 
+     name ~ race, 
+     slice = list(age = 1, sex = 1, new = 1, dateMDY = 1))
 
 test <- cmp[c(-1, -2, -9,-10)]
 
@@ -276,9 +298,12 @@ nonmatches2$class <- "nonmatch"
 train.data2 <- rbind(matches2, nonmatches2)
 train.data2 <- train.data2[c(-2, -1, -9, -10, -11)]
 
-svm.model2 <- svm(class ~ ., data = train.data2, type = "C-classification")
+svm.model2 <- svm(class ~ ., data = train.data2, 
+                  type = "C-classification")
 
-plot(svm.model2, data = train.data2, sex ~ age, slice = list(dateDMY = 1, name = 1, state = 1, race = 1))
+plot(svm.model2, data = train.data2, 
+     sex ~ age, 
+     slice = list(dateMDY = 1, name = 1, state = 1, race = 1))
 
 
 test2 <- cmp2[c(-1, -2, -9,-10, -11)]
