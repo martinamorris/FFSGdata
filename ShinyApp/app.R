@@ -89,8 +89,25 @@ ui <- navbarPage(
             selectInput("state", "State", c(sort(
               c(state.name, "District of Columbia")
             ), "United States"), selected = "Washington"),
-            checkboxInput("all", "Display with other states", FALSE),
-            checkboxInput("capita", "Calculate per capita (in millions)", TRUE)
+            fluidRow(
+              column(9,
+                     checkboxInput("all", "Display with other states", FALSE)
+                     ),
+              column(3,
+                     actionButton(inputId = "helpbuttonsmall1", label = icon(name = "question-circle")),
+                     uiOutput("HelpBoxsmall1")
+                     )
+            ),
+            fluidRow(
+              column(9,
+                     checkboxInput("capita", "Calculate per capita (in millions)", TRUE)
+                     ),
+              column(3,
+                     actionButton(inputId = "helpbuttonsmall2", label = icon(name = "question-circle")),
+                     uiOutput("HelpBoxsmall2")
+                     )
+            )
+
           ),
           
           mainPanel(tabsetPanel(
@@ -290,6 +307,31 @@ server <- function(input, output, session) {
                At lowest level individual cases
                are showed and can be clicked on to
                display more info in a pop-up.")
+    }else{
+      return()
+    }
+  })
+  
+  output$HelpBoxsmall1 = renderUI({
+    if (input$helpbuttonsmall1 %% 2 == 1){
+      helpText("Selected state is colored red
+               with the other states displayed
+               in gray and the US average in 
+               black. (US average is only 
+               shown for per capita values)")
+    }else{
+      return()
+    }
+  })
+  
+  output$HelpBoxsmall2 = renderUI({
+    if (input$helpbuttonsmall2 %% 2 == 1){
+      helpText("When selected values are 
+               calculated as a number of
+               fatal events per million
+               people in the population.
+               Otherwise displays total
+               number of fatal events.")
     }else{
       return()
     }
