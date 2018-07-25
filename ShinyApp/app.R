@@ -45,7 +45,7 @@ source("choroplethmapfunc.R")
 source("descstatfuncs.R")
 source("choroplethmapfunc.R")
 source("cartogramfunc.R")
-source("runcart.R")
+#source("runcart.R")
 source("interactivemap.R")
 
 
@@ -69,8 +69,21 @@ ui <- navbarPage(
   
   navbarMenu(
     "Tables and Graphs",
+    
+    
       tabPanel("Counts",
-        fluidPage(titlePanel("Counting Fatal Encounters")),
+               
+        fluidPage(
+          fluidRow(
+            column(10,
+                   h1("Counting Fatal Encounters")),
+            column(2,
+                   actionButton(inputId = "helpbutton1", label = icon(name = "question-circle")),
+                   uiOutput("HelpBox1")
+                   )
+          )
+        ),
+        
         sidebarLayout(
           sidebarPanel(
             selectInput("state", "State", c(sort(
@@ -79,6 +92,7 @@ ui <- navbarPage(
             checkboxInput("all", "Display with other states", FALSE),
             checkboxInput("capita", "Calculate per capita (in millions)", TRUE)
           ),
+          
           mainPanel(tabsetPanel(
             type = "tabs",
             tabPanel("plot", plotOutput("permillplot")),
@@ -86,8 +100,21 @@ ui <- navbarPage(
           ))
         )
       ),
+    
+    
       tabPanel("Descriptive Statistics",
-        fluidPage(titlePanel("Descriptive Statistics"),
+               
+               fluidPage(
+                 fluidRow(
+                   column(10,
+                          h1("Descriptive Statistics")),
+                   column(2,
+                          actionButton(inputId = "helpbutton2", label = icon(name = "question-circle")),
+                          uiOutput("HelpBox2")
+                   )
+                 )
+               ),
+               
           sidebarLayout(
             sidebarPanel(
               selectInput("dem", "Demographic", c("Race", "Gender", "Age")),
@@ -96,17 +123,24 @@ ui <- navbarPage(
             mainPanel(dataTableOutput("dstbl"), plotOutput("dsplt"))
           )
         )
-      )
-  ),
+      ),
   
   
-  navbarMenu(
-    "Maps",
+  navbarMenu("Maps",
+             
       tabPanel("Choropleth",
-        fluidPage(
-          titlePanel("Choropleth Map of Deaths per Capita"),
-          h5("")
-        ),
+        
+               fluidPage(
+                 fluidRow(
+                   column(10,
+                          h1("Choropleth Map of Deaths per Capita")),
+                   column(2,
+                          actionButton(inputId = "helpbutton3", label = icon(name = "question-circle")),
+                          uiOutput("HelpBox3")
+                   )
+                 )
+               ),        
+                     
         sidebarLayout(
           sidebarPanel(
             h5("Map is shown for mean values, to select a year choose Select Year"),
@@ -122,10 +156,18 @@ ui <- navbarPage(
         )    
       ),
       tabPanel("Cartogram",
-        fluidPage(
-          titlePanel("Cartogram of Deaths per Capita"),
-          h5("")
-        ),
+               
+               fluidPage(
+                 fluidRow(
+                   column(10,
+                          h1("Cartogram of Deaths per Capita")),
+                   column(2,
+                          actionButton(inputId = "helpbutton4", label = icon(name = "question-circle")),
+                          uiOutput("HelpBox4")
+                   )
+                 )
+               ),    
+        
         sidebarLayout(
           sidebarPanel(
             sliderInput("yearcart", "Year", 2000, 2017, value = 2010, animate = animationOptions(1500, TRUE),  sep = "") # BM: make the numbers look like years
@@ -133,8 +175,17 @@ ui <- navbarPage(
           mainPanel(plotOutput("cartogram"))
         )
       ),
+      
+      
       tabPanel("Interactive",
                fluidPage(
+                 fluidRow(
+                   column(10),
+                   column(2,
+                          actionButton(inputId = "helpbutton5", label = icon(name = "question-circle")),
+                          uiOutput("HelpBox5")
+                   )
+                 ),
                  leafletOutput("intmap")
                )
       )
@@ -184,6 +235,64 @@ server <- function(input, output, session) {
   
   output$dsplt <- renderPlot({
     dsplot(input$dem)
+  })
+  
+  output$HelpBox1 = renderUI({
+    if (input$helpbutton1 %% 2 == 1){
+      helpText("View trends by state over the years
+               2000 to 2017. Plot and table tabs 
+               allow you to switch between viewing
+               the data in a line plot or in a table.")
+    }else{
+      return()
+    }
+  })
+  
+  output$HelpBox2 = renderUI({
+    if (input$helpbutton2 %% 2 == 1){
+      helpText("Displays total counts of fatal 
+               encounters in the US by demographic
+               (race, age, or gender).")
+    }else{
+      return()
+    }
+  })
+  
+  output$HelpBox3 = renderUI({
+    if (input$helpbutton3 %% 2 == 1){
+      helpText("Map displays distribution of fatal
+               events by state. States that are 
+               darker have more deaths per capita.
+               Hovering over a state displays
+               the state's name and number of
+               fatal events per capita.")
+    }else{
+      return()
+    }
+  })
+  
+  output$HelpBox4 = renderUI({
+    if (input$helpbutton4 %% 2 == 1){
+      helpText("Map displays distribution of fatal
+               events by state. States that are 
+               darker and bigger have more deaths 
+               per capita.")
+    }else{
+      return()
+    }
+  })
+  
+  output$HelpBox5 = renderUI({
+    if (input$helpbutton5 %% 2 == 1){
+      helpText("Map displays counts based on region 
+               clicking on bubbles or zooming in
+               breaks bubbles into smaller areas.
+               At lowest level individual cases
+               are showed and can be clicked on to
+               display more info in a pop-up.")
+    }else{
+      return()
+    }
   })
 }
 
