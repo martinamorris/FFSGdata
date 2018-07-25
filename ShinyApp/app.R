@@ -62,150 +62,152 @@ ui <- navbarPage(
              mainPanel(
                h2("About"),
                h4("UW Fatal Force Research Group (FFRG) was brought together at the University of Washington by Professor Martina Morris and Ben Marwick. Morris' background in sociology and statistics led her to creating this research group to fight injustice in police using fatal force. Ben Marwick, an Archeology professor, with a background in statistics and social science joined Morris as a side project. This research group started about a year and half ago with two students of Morris. The group has now expanded to seven undergraduate students, two from Western Washington University, with the addition of the two UW Professors. UW FFRG's mission is to bring justice and peace to communities most impacted by police brutality through a comprehensive data analysis combined with the comparisons of respective laws and policies.")
-                       )
+             )
            )
-           ),
+  ),
   
   
   navbarMenu(
     "Tables and Graphs",
     
     
-      tabPanel("Counts",
-               
-        fluidPage(
-          fluidRow(
-            column(10,
-                   h1("Counting Fatal Encounters")),
-            column(2,
-                   actionButton(inputId = "helpbutton1", label = icon(name = "question-circle")),
-                   uiOutput("HelpBox1")
-                   )
-          )
-        ),
-        
-        sidebarLayout(
-          sidebarPanel(
-            selectInput("state", "State", c(sort(
-              c(state.name, "District of Columbia")
-            ), "United States"), selected = "Washington"),
-            fluidRow(
-              column(9,
-                     checkboxInput("all", "Display with other states", FALSE)
-                     ),
-              column(3,
-                     actionButton(inputId = "helpbuttonsmall1", label = icon(name = "question-circle")),
-                     uiOutput("HelpBoxsmall1")
-                     )
-            ),
-            fluidRow(
-              column(9,
-                     checkboxInput("capita", "Calculate per capita (in millions)", TRUE)
-                     ),
-              column(3,
-                     actionButton(inputId = "helpbuttonsmall2", label = icon(name = "question-circle")),
-                     uiOutput("HelpBoxsmall2")
-                     )
-            )
-
-          ),
-          
-          mainPanel(tabsetPanel(
-            type = "tabs",
-            tabPanel("plot", plotOutput("permillplot")),
-            tabPanel("table", dataTableOutput("permillDT"))
-          ))
-        )
-      ),
-    
-    
-      tabPanel("Descriptive Statistics",
-               
-               fluidPage(
+    tabPanel("Counts",
+             
+             fluidPage(
+               fluidRow(
+                 column(10,
+                        h1("Counting Fatal Encounters")),
+                 column(2,
+                        actionButton(inputId = "helpbutton1", label = icon(name = "question-circle")),
+                        uiOutput("HelpBox1")
+                 )
+               )
+             ),
+             
+             sidebarLayout(
+               sidebarPanel(
+                 selectInput("state", "State", c(sort(
+                   c(state.name, "District of Columbia")
+                 ), "United States"), selected = "Washington"),
                  fluidRow(
-                   column(10,
-                          h1("Descriptive Statistics")),
-                   column(2,
-                          actionButton(inputId = "helpbutton2", label = icon(name = "question-circle")),
-                          uiOutput("HelpBox2")
+                   column(9,
+                          checkboxInput("all", "Display with other states", FALSE)
+                   ),
+                   column(3,
+                          actionButton(inputId = "helpbuttonsmall1", label = icon(name = "question-circle")),
+                          uiOutput("HelpBoxsmall1")
+                   )
+                 ),
+                 fluidRow(
+                   column(9,
+                          checkboxInput("capita", "Calculate per capita (in millions)", TRUE)
+                   ),
+                   column(3,
+                          actionButton(inputId = "helpbuttonsmall2", label = icon(name = "question-circle")),
+                          uiOutput("HelpBoxsmall2")
                    )
                  )
+                 
                ),
                
-          sidebarLayout(
-            sidebarPanel(
-              selectInput("dem", "Demographic", c("Race", "Gender", "Age")),
-              h6("Disclaimer: Please take note that the data we are currently using is still a work in progress so some of the data is missing. This means that there is a possibility that the trends displayed aren't the true trends for the data.")
-            ),
-            mainPanel(dataTableOutput("dstbl"), plotOutput("dsplt"))
-          )
-        )
-      ),
+               mainPanel(tabsetPanel(
+                 type = "tabs",
+                 tabPanel("plot", plotOutput("permillplot")),
+                 tabPanel("table", dataTableOutput("permillDT"))
+               ))
+             )
+    ),
+    
+    
+    tabPanel("Descriptive Statistics",
+             
+             fluidPage(
+               fluidRow(
+                 column(10,
+                        h1("Descriptive Statistics")),
+                 column(2,
+                        actionButton(inputId = "helpbutton2", label = icon(name = "question-circle")),
+                        uiOutput("HelpBox2")
+                 )
+               )
+             ),
+             
+             sidebarLayout(
+               sidebarPanel(
+                 selectInput("dem", "Demographic", c("Race", "Gender", "Age")),
+                 h6("Disclaimer: Please take note that the data we are currently using is still a work in progress so some of the data is missing. This means that there is a possibility that the trends displayed aren't the true trends for the data."),
+                 actionButton(inputId = "helpbuttonsmall3", label = icon(name = "question-circle")),
+                 uiOutput("HelpBoxsmall3")
+               ),
+               mainPanel(dataTableOutput("dstbl"), plotOutput("dsplt"))
+             )
+    )
+  ),
   
   
   navbarMenu("Maps",
              
-      tabPanel("Choropleth",
-        
-               fluidPage(
-                 fluidRow(
-                   column(10,
-                          h1("Choropleth Map of Deaths per Capita")),
-                   column(2,
-                          actionButton(inputId = "helpbutton3", label = icon(name = "question-circle")),
-                          uiOutput("HelpBox3")
-                   )
-                 )
-               ),        
-                     
-        sidebarLayout(
-          sidebarPanel(
-            h5("Map is shown for mean values, to select a year choose Select Year"),
-            checkboxInput("yearselect", "Select Year", FALSE),
-            conditionalPanel("input.yearselect",
-              sliderInput("year", "Year", 2000, 2017, 
-                          value = 2000, 
-                          animate = animationOptions(1500, TRUE),
-                          sep = "") # BM: make the numbers look like years
-            )
-          ),
-          mainPanel(plotlyOutput("choropleth"))
-        )    
-      ),
-      tabPanel("Cartogram",
-               
-               fluidPage(
-                 fluidRow(
-                   column(10,
-                          h1("Cartogram of Deaths per Capita")),
-                   column(2,
-                          actionButton(inputId = "helpbutton4", label = icon(name = "question-circle")),
-                          uiOutput("HelpBox4")
-                   )
-                 )
-               ),    
-        
-        sidebarLayout(
-          sidebarPanel(
-            sliderInput("yearcart", "Year", 2000, 2017, value = 2010, animate = animationOptions(1500, TRUE),  sep = "") # BM: make the numbers look like years
-          ),
-          mainPanel(plotOutput("cartogram"))
-        )
-      ),
-      
-      
-      tabPanel("Interactive",
-               fluidPage(
-                 fluidRow(
-                   column(10),
-                   column(2,
-                          actionButton(inputId = "helpbutton5", label = icon(name = "question-circle")),
-                          uiOutput("HelpBox5")
-                   )
-                 ),
-                 leafletOutput("intmap")
-               )
-      )
+             tabPanel("Choropleth",
+                      
+                      fluidPage(
+                        fluidRow(
+                          column(10,
+                                 h1("Choropleth Map of Deaths per Capita")),
+                          column(2,
+                                 actionButton(inputId = "helpbutton3", label = icon(name = "question-circle")),
+                                 uiOutput("HelpBox3")
+                          )
+                        )
+                      ),        
+                      
+                      sidebarLayout(
+                        sidebarPanel(
+                          h5("Map is shown for mean values, to select a year choose Select Year"),
+                          checkboxInput("yearselect", "Select Year", FALSE),
+                          conditionalPanel("input.yearselect",
+                                           sliderInput("year", "Year", 2000, 2017, 
+                                                       value = 2000, 
+                                                       animate = animationOptions(1500, TRUE),
+                                                       sep = "") # BM: make the numbers look like years
+                          )
+                        ),
+                        mainPanel(plotlyOutput("choropleth"))
+                      )    
+             ),
+             tabPanel("Cartogram",
+                      
+                      fluidPage(
+                        fluidRow(
+                          column(10,
+                                 h1("Cartogram of Deaths per Capita")),
+                          column(2,
+                                 actionButton(inputId = "helpbutton4", label = icon(name = "question-circle")),
+                                 uiOutput("HelpBox4")
+                          )
+                        )
+                      ),    
+                      
+                      sidebarLayout(
+                        sidebarPanel(
+                          sliderInput("yearcart", "Year", 2000, 2017, value = 2010, animate = animationOptions(1500, TRUE),  sep = "") # BM: make the numbers look like years
+                        ),
+                        mainPanel(plotOutput("cartogram"))
+                      )
+             ),
+             
+             
+             tabPanel("Interactive",
+                      fluidPage(
+                        fluidRow(
+                          column(10),
+                          column(2,
+                                 actionButton(inputId = "helpbutton5", label = icon(name = "question-circle")),
+                                 uiOutput("HelpBox5")
+                          )
+                        ),
+                        leafletOutput("intmap")
+                      )
+             )
   ),
   
   
@@ -219,7 +221,7 @@ ui <- navbarPage(
 
 server <- function(input, output, session) {
   
-
+  
   
   output$permillplot <-
     renderPlot({
@@ -336,6 +338,19 @@ server <- function(input, output, session) {
       return()
     }
   })
-}
+  
+  output$HelpBoxsmall3 = renderUI({
+    if (input$helpbuttonsmall3 %% 2 == 1){
+      helpText("Trends will differ based on
+               if the data is missing at 
+               random (meaning that each group
+               is just as likely to have been 
+               marked as unspecified) or not. 
+               If not the trends will change.")
+    }else{
+      return()
+    }
+  })
+  }
 
 shinyApp(ui, server)
