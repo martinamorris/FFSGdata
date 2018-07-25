@@ -45,7 +45,7 @@ source("choroplethmapfunc.R")
 source("descstatfuncs.R")
 source("choroplethmapfunc.R")
 source("cartogramfunc.R")
-#source("runcart.R")
+source("runcart.R")
 source("interactivemap.R")
 
 
