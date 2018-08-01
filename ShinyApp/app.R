@@ -32,6 +32,7 @@ library("tmap")
 library("cartogram")
 library("DT")
 library("dplyr")
+library("shinyWidgets")
 
 
 # BM: docs say that "the directory that you save server.R in 
@@ -45,7 +46,7 @@ source("choroplethmapfunc.R")
 source("descstatfuncs.R")
 source("choroplethmapfunc.R")
 source("cartogramfunc.R")
-source("runcart.R")
+#source("runcart.R")
 source("interactivemap.R")
 
 
@@ -56,12 +57,23 @@ ui <- navbarPage(
            fluidPage(titlePanel("Fatal Force Study Group")),
            sidebarLayout(
              sidebarPanel(
-               h3("Resources"),
-               h6("")
+               
+               h3("Data Resources"),
+               actionLink("felink", "Fatal Encounters", onclick = "location.href='http://www.fatalencounters.org', '_blank)"),
+               h6("This data source has been collected since 2000 and is active until present day. As of the month of April there have been a total of 19,856 number of cases that are recorded. This database allows you to go in and download any data needed and also includes visualizations."),
+               actionLink("kbplink", "Killed By Police", onclick = "window.open('http://killedbypolice.net', '_blank)"),
+               h6("An open sourced data collection from an online anonymous source that dates back to May 1, 2013. The data set is still in continuation and the legitimacy of each data point is confirmed through actual online news articles of each fatality. Killed By Police has a number of 4,629 cases recorded."),
+               actionLink("moredata", "More"),
+               
+               h3("Aditional Information")
              ),
              mainPanel(
                h2("About"),
-               h4("UW Fatal Force Research Group (FFRG) was brought together at the University of Washington by Professor Martina Morris and Ben Marwick. Morris' background in sociology and statistics led her to creating this research group to fight injustice in police using fatal force. Ben Marwick, an Archeology professor, with a background in statistics and social science joined Morris as a side project. This research group started about a year and half ago with two students of Morris. The group has now expanded to seven undergraduate students, two from Western Washington University, with the addition of the two UW Professors. UW FFRG's mission is to bring justice and peace to communities most impacted by police brutality through a comprehensive data analysis combined with the comparisons of respective laws and policies.")
+               h4("UW Fatal Force Research Group (FFRG) was brought together at the University of Washington by Professor Martina Morris and Ben Marwick. Morris' background in sociology and statistics led her to creating this research group to fight injustice in police using fatal force. Ben Marwick, an Archeology professor, with a background in statistics and social science joined Morris as a side project. This research group started about a year and half ago with two students of Morris. The group has now expanded to seven undergraduate students, two from Western Washington University, with the addition of the two UW Professors. UW FFRG's mission is to bring justice and peace to communities most impacted by police brutality through a comprehensive data analysis combined with the comparisons of respective laws and policies."),
+               h2("Washington Policies"),
+               h4("In the state of Washington, De-Escalate Washington Initiative 940 was introduced to initiate officer training and community safety. Because of the amount of deaths by police that happened in the state of Washington action was called. I-940 required training on mental illness, violence de-escalation, and first aid. It also required that the communities stakeholders be involved in any policy making. Community stakeholders include persons with disabilities; members of the lesbian, gay, bisexual, transgender, and queer community; persons of color; immigrants; non-citizens; native Americans; youth; and formerly incarcerated persons."),
+               h4("On March 8, 2018, Washington state legislature voted on I-940 with the inclusion of ESHB 3003 to come to an agreement on how to further build trust back into the communities. With ESHB 3003, both sides agreed that there needs to be a clearer meaning of good faith. Together with I-940 and ESHB 3003 resulted in requiring violence de-escalation and mental health training. Require first aid training for all officers and require that police render first aid at the earliest safe opportunity. Removes the de facto immunity and adopts a reasonable officer standard. Requires completely independent investigations of use of deadly force. Requires notification of Tribal governments where a tribal person was injured or killed. Brings diverse community stakeholders into the process for input on policy."),
+               h4("On April 20, 2018, Judge Christine Schaller of Thurston County, WA ordered state legislature to put I-940 back on the November 2018 ballot. Time Eyman argued that the passing of ESHB 3003 was rush and,  disrespect[ed] initiative signers and prevent[ed] voters from exercising their right to vote. Since wording and phrases were changed from the original initiative it went against Washington state's constitution stated that it must be passed with such wording or it should be sent to the ballot.")
              )
            )
   ),
@@ -78,8 +90,8 @@ ui <- navbarPage(
                  column(10,
                         h1("Counting Fatal Encounters")),
                  column(2,
-                        actionButton(inputId = "helpbutton1", label = icon(name = "question-circle")),
-                        uiOutput("HelpBox1")
+                        actionBttn(inputId = "helpbutton1", label = icon(name = "question-circle"), size = "lg", style = "fill")#,
+                        #uiOutput("HelpBox1")
                  )
                )
              ),
@@ -256,15 +268,16 @@ server <- function(input, output, session) {
     dsplot(input$dem)
   })
   
-  output$HelpBox1 = renderUI({
-    if (input$helpbutton1 %% 2 == 1){
-      helpText("View trends by state over the years
-               2000 to 2017. Plot and table tabs 
-               allow you to switch between viewing
-               the data in a line plot or in a table.")
-    }else{
-      return()
-    }
+  observeEvent(input$helpbutton1, {
+    sendSweetAlert(
+      session = session,
+      title = "Help",
+      text = "View trends by state over the years
+      2000 to 2017. Plot and table tabs 
+      allow you to switch between viewing
+      the data in a line plot or in a table.",
+      type = "info"
+    )
   })
   
   output$HelpBox2 = renderUI({
