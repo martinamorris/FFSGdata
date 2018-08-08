@@ -143,7 +143,6 @@ fe_data = fe_data %>%
 # --- Train / Build model ---
 
 
-
 cmp_fe_data = as.data.frame(fe_data[1:11])
 cmp_mpv_data = as.data.frame(mpv_data[2:12])
 
@@ -315,39 +314,6 @@ ranmpv_data <- tmp2[sample(nrow(tmp2), 25), ]
 
 
 #---------------------------------------Comparing FE vs. KBP-----------------------------------
-
-# ....filter KBP for necessary columns....
-kpb_data = kbp %>%
-    select(date_format, deceased_name, deceased_age, gender, race, state) %>%
-    
-    rename('date' = date_format,
-        'name' = deceased_name,
-        'age'  = deceased_age,
-        'sex'  = gender)%>%
-    
-    mutate(race = as.character(race)) %>%
-    
-    mutate(sex = as.character(sex)) %>%
-    
-    mutate(age = as.character(age)) %>%
-
-    mutate(race = recode(race, "B" = "Black",
-                          "I" = "Native American",
-                          "L" = "Hispanic",
-                          "O" = 'NA',
-                         "PI" = "Asian/Pacific Islander",
-                          "W" = "White")) %>%
-    
-    mutate(sex = recode(sex, "F" = "Female",
-                     "M" = "Male",
-                     "T" = "Transgender")) %>%
-    
-    mutate(name = replace(name, name == "", NA)) %>%
-    
-    
-    mutate(date = as.character(strptime(kbp$date, "%B %d, %Y"))) %>%
-    
-    filter(complete.cases(.))
 
 cmp_fe_data = as.data.frame(fe_data)[colnames(kpb_data)]
 cmp_kpb_data = as.data.frame(kpb_data)
