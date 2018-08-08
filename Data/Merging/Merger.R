@@ -46,7 +46,7 @@ fe_data = fe.clean %>%
     mutate(name = gsub("[^[:alnum:] ]", "", name)) %>%
     
     # filter for complete cases, excluding the column 'aka'
-    filter(complete.cases(fe_data[-2])) # `aka` column
+    filter(complete.cases(.[-2])) # `aka` column
 
 mpv_data = mpv %>%
     select("Victim's name", "Victim's age", 
@@ -77,7 +77,7 @@ mpv_data = mpv %>%
              sep  = " aka | or | transitioning from ") %>%
     
     # reformat date
-    mutate(date = as.character(strptime(date, format = "%m/%d/%Y"))) %>%
+    mutate(date = as.character(strptime(date, format = "%Y-%m-%d"))) %>%
     
     # reformat missing race to NA
     mutate(race = replace(race, grepl("Race unspecified", race), NA)) %>%
@@ -92,10 +92,10 @@ mpv_data = mpv %>%
                          "Native American/Alaskan"  = "Native American")) %>%
     
     # clear non alphanumeric names
-    mutate(name = gsub("[^[:alnum:] ]", "", name)) %>%
+    mutate(`name` = gsub("[^[:alnum:] ]", "", `name`)) %>%
     
     # filter for complete cases, excluding the column 'aka'
-    filter(complete.cases(mpv_data[-3])) 
+    filter(complete.cases(.[-2])) 
 
 kbp_data = kbp %>%
     select(date_format, deceased_name, deceased_age, gender, race, state) %>%
@@ -318,7 +318,7 @@ ranmpv_data <- tmp2[sample(nrow(tmp2), 25), ]
 cmp_fe_data = as.data.frame(fe_data)[colnames(kpb_data)]
 cmp_kpb_data = as.data.frame(kpb_data)
 
-cmp_tmp <- RecordLinkage::compare.linkage(cmp_fe_data, cmp_kpb_data, strcmp = TRUE, blockfld = c(1))[[3]]
+cmp_tmp  <- RecordLinkage::compare.linkage(cmp_fe_data, cmp_kpb_data, strcmp = TRUE, blockfld = c(1))[[3]]
 cmp_tmp2 <- RecordLinkage::compare.linkage(cmp_fe_data, cmp_kpb_data, strcmp = TRUE, blockfld = c(2))[[3]]
 cmp_tmp3 <- RecordLinkage::compare.linkage(cmp_fe_data, cmp_kpb_data, strcmp = TRUE, blockfld = c(3, 4))[[3]]
 cmp_tmp4 <- RecordLinkage::compare.linkage(cmp_fe_data, cmp_kpb_data, strcmp = TRUE, blockfld = c(5, 6))[[3]]
