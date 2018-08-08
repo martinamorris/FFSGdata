@@ -6,7 +6,7 @@ We normalize on the following columns:
 |------| -----|----|
 | name| string| The victim's name (s)|
 |sex | {Male, Female, Transgender} | The victim's sex (or status as transgender)|
-|race| {Black, White, Hispanic, Native American, ...}| The victim's race (see follow up)|
+|race| {"Black", "White", "Native American", "Hispanic", "NA", "A", "Asian/Pacific      Islander", "Middle Eastern", "Unknown race", "Asian", "Pacific Islander", ...} | The victim's race (see follow up)|
 |date| ISO date | |
 |city| string | |
 |state|FIPS state code| |
@@ -21,3 +21,10 @@ I attempted to write a generalized function to standardize the inputs, but was u
 
 2. Using a named list, and `rename_at(as.character(col_map), ~names(col_map))` from `dplyr`
 - This failed because I kept running into `.Internal(date()) must be a column name or position, not a function`
+
+3. Using `setnames` from data.table
+- This requires a whole extra package, is not tidyverse compliant, casting from data.frame to data.table to tibble
+
+None of these approaches are ideal. In the spirit of separation of concerns, and making legitimate progress on this project, I'm simply going to write assert statements at the end of the data cleaning sections, and comment out that that code should be made into a separate function at some future date.
+
+
