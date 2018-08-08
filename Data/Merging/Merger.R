@@ -1,108 +1,170 @@
 # WARNING: next line assumes current wd is local repo dir top level.
-mydir <- getwd() 
+my_dir <- getwd()
 # Use mydir and paste to read in / save out.
 
 # Do not use setwd, as it doesn't play well with executing 
 # multiple scripts
 
-
 library(dplyr)
+library(tidyverse)
+library(purrr)
+library(e1071)
 
-load(paste(mydir, "Data/Scraping/ScrapedFiles/fe.clean.Rdata", sep="/"))
-load(paste(mydir, "Data/Scraping/ScrapedFiles/KBP.clean.Rdata", sep="/"))
-load(paste(mydir, "Data/Scraping/ScrapedFiles/MPV.clean.Rdata", sep="/"))
+load(file.path(my_dir, "Data/Scraping/ScrapedFiles/fe.clean.Rdata"))
+load(file.path(my_dir, "Data/Scraping/ScrapedFiles/MPV.clean.Rdata"))
+load(file.path(my_dir, "Data/Scraping/ScrapedFiles/KBP.clean.Rdata"))
 
-#--------------------------------------Comparing FE vs MPV------------------------------------
+# ----- Extract / Transform data ------
+fe_data = fe.clean %>%
+    select("name", "age", "sex", "race", 
+         "dateMDY", "address", "city", 
+         "state", "zip", "county", "year") %>%
+  
+    rename('date' = dateMDY) %>%
+    
+    # ....remove no name and split the aka names....
+    filter(name != "Name withheld by police") %>%
 
-# ....filter FE for necessary columns....
-d1 <- fe.clean[c(1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 22)]
+    separate(col  = name, 
+          into = c("name", "aka"), 
+          sep  = " aka | or | transitioning from ") %>%
 
-# filter MPV for necessary columns
-d2 <- mpv[c(1, 2, 3, 4, 6, 7, 8, 9, 10, 11)]
+    mutate(date = as.character(strptime(date, format = "%m/%d/%Y"))) %>%
 
-d2$parent_id <- seq.int(nrow(mpv))
+    mutate(race = replace(race, grepl("Race unspecified", race), NA)) %>%
 
-# ....remove no name and split the aka names....
-d1 <- dplyr::filter(d1, d1$`name` != "Name withheld by police")
-d1 <- tidyr::separate(d1, col = "name", 
-                      into = c("name", "aka"), 
-                      sep = " aka | or | transitioning from ")
+    mutate(race = recode(race, "African-American/Black"  = "Black",
+                        "European-American/White"  = "White",
+                        "Hispanic/Latino"          = "Hispanic",
+                        "Native American/Alaskan"  = "Native American")) %>%
 
-d2 <- dplyr::filter(d2, d2$`Victim's name` != "Name withheld by police")
-d2 <- tidyr::separate(d2, col = "Victim's name", 
-                      into = c("Victim's name", "aka"), 
-                      sep = " aka | or | transitioning from ")
+    mutate(name = gsub("[^[:alnum:] ]", "", name)) %>%
+    
+    filter(complete.cases(fe_data[-2])) # `aka` column
 
-# ....standardize races....
-table(d1$race)
-table(d2$`Victim's race`)
+mpv_data = mpv %>%
+    select("Victim's name", "Victim's age", 
+        "Victim's gender", "Victim's race" ,
+        "Date of injury resulting in death (month/day/year)" ,
+        "Location of injury (address)", 
+        "Location of death (city)" , "Location of death (state)",
+        "Location of death (zip code)" ,"Location of death (county)") %>%
+    
+    rename("name" = `Victim's name`,
+           "age" = `Victim's age`,
+           "gender" = `Victim's gender`,
+           "race" = `Victim's race`,
+           "date" = `Date of injury resulting in death (month/day/year)`,
+           "address" = `Location of injury (address)`,
+           "city" = `Location of death (city)`,
+           "state" = `Location of death (state)`,
+           "zip" = `Location of death (zip code)`,
+           "county" = `Location of death (county)`) %>%
+    
+    # ....remove no name and split the aka names....
+    filter(name != "Name withheld by police") %>%
+    
+    separate(col  = name, 
+             into = c("name", "aka"), 
+             sep  = " aka | or | transitioning from ") %>%
+    
+    # reformat date
+    mutate(date = as.character(strptime(date, format = "%m/%d/%Y"))) %>%
+    
+    mutate(race = replace(race, grepl("Race unspecified", race), NA)) %>%
+    
+    mutate(race = recode(race, "African-American/Black"  = "Black",
+                         "European-American/White"  = "White",
+                         "Hispanic/Latino"          = "Hispanic",
+                         "Native American/Alaskan"  = "Native American")) %>%
 
-# replace Race unspecified and Unknown race with NA
-d1$race <- lapply(d1$race, 
-                  function(x) replace(x, grepl("Race unspecified", x), NA))
-d2$`Victim's race` <- lapply(d2$`Victim's race`, 
-                             function(x) replace(x, grepl("Unknown race", x), NA))
+    mutate(name = gsub("[^[:alnum:] ]", "", name)) %>%
+    
+    mutate(age = replace(age, grepl("Unknown", age), NA)) %>%
+    
+    filter(complete.cases(mpv_data[-3])) # `aka` column
 
-# change the format of race
-d1$race <- lapply(d1$race, function(x) replace(x, grepl("African-American/Black", x), "Black"))
-d1$race <- lapply(d1$race, function(x) replace(x, grepl("European-American/White", x), "White"))
-d1$race <- lapply(d1$race, function(x) replace(x, grepl("Hispanic/Latino", x), "Hispanic"))
-d1$race <- lapply(d1$race, function(x) replace(x, grepl("Native American/Alaskan", x), "Native American"))
+kbp_data = kbp %>%
+    select(date_format, deceased_name, deceased_age, gender, race, state) %>%
+    
+    rename('date' = date_format,
+           'name' = deceased_name,
+           'age'  = deceased_age,
+           'sex'  = gender)%>%
+    
+    mutate(race = as.character(race)) %>%
+    
+    mutate(sex = as.character(sex)) %>%
+    
+    mutate(age = as.character(age)) %>%
+    
+    mutate(race = recode(race, "B" = "Black",
+                         "I" = "Native American",
+                         "L" = "Hispanic",
+                         "O" = 'NA',
+                         "PI" = "Asian/Pacific Islander",
+                         "W" = "White")) %>%
+    
+    mutate(sex = recode(sex, "F" = "Female",
+                        "M" = "Male",
+                        "T" = "Transgender")) %>%
+    
+    mutate(name = replace(name, name == "", NA)) %>%
+    
+    mutate(date = as.character(strptime(kbp$date, "%B %d, %Y"))) %>%
+    
+    filter(complete.cases(.))
 
-d1$race <- as.character(d1$race)
-d2$`Victim's race` <- as.character(d2$`Victim's race`)
+#mpv_data <- tibble::rowid_to_column(mpv_data, "parent_id")
 
-# ....Filter Unknown age....
-d2$`Victim's age` <- lapply(d2$`Victim's age`, function(x) replace(x, grepl("Unknown", x), NA))
-d2$`Victim's age` <- as.character(d2$`Victim's age`)
-
-# ....Format names to remove . and \" \" (non-alpha)....
-d1$name <- gsub("[^[:alnum:] ]", "", d1$name)
-d2$`Victim's name` <- gsub("[^[:alnum:] ]", "", d2$`Victim's name`)
-
-# ....Format date column....
-d1$dateMDY <- as.character(strptime(d1$dateMDY, "%m/%d/%Y"))
-d2$`Date of injury resulting in death (month/day/year)` <- as.character(strptime(d2$`Date of injury resulting in death (month/day/year)`, format = "%Y-%m-%d"))
 # ....Remove previous years....
-d1 <- dplyr::filter(d1, d1$year >= 2013)
+fe_data = fe_data %>%
+    filter(year >= 2013)
 
-# ....Finally, filter the non complete cases....
-d1 <- filter(d1, complete.cases(d1[-2]))
-d2 <- filter(d2, complete.cases(d2[-2]))
+cmp_fe_data = as.data.frame(fe_data[1:11])
+cmp_mpv_data = as.data.frame(mpv_data[2:12])
 
 # ....start computing the comparison weights....
 # block by address
-cmp.tmp <- RecordLinkage::compare.linkage(as.data.frame(d1[c(1, 3:11)]), as.data.frame(d2[c(1, 3:11)]), strcmp = TRUE, blockfld = c(6))[[3]]
+cmp_address <- RecordLinkage::compare.linkage(
+    cmp_fe_data, cmp_mpv_data, strcmp = TRUE, blockfld = c('address'))[[3]]
+
 # block by name
-cmp.tmp2 <- RecordLinkage::compare.linkage(as.data.frame(d1[c(1, 3:11)]), as.data.frame(d2[c(1, 3:11)]), strcmp = TRUE, blockfld = c(1))[[3]]
+cmp_name    <- RecordLinkage::compare.linkage(
+    cmp_fe_data, cmp_mpv_data, strcmp = TRUE, blockfld = c('name'))[[3]]
+
 # block by zip
-cmp.tmp3 <- RecordLinkage::compare.linkage(as.data.frame(d1[c(1, 3:11)]), as.data.frame(d2[c(1, 3:11)]), strcmp = TRUE, blockfld = c(9))[[3]]
+cmp_zip     <- RecordLinkage::compare.linkage(
+    cmp_fe_data, cmp_mpv_data, strcmp = TRUE, blockfld = c('zip'))[[3]]
+
 # block by sex and age
-cmp.tmp4 <- RecordLinkage::compare.linkage(as.data.frame(d1[c(1, 3:11)]), as.data.frame(d2[c(1, 3:11)]), strcmp = TRUE, blockfld = c(2, 3))[[3]]
+cmp_sex_age <- RecordLinkage::compare.linkage(
+    cmp_fe_data, cmp_mpv_data, strcmp = TRUE, blockfld = c('sex', 'age'))[[3]]
+
 # block by date
-cmp.tmp5 <- RecordLinkage::compare.linkage(as.data.frame(d1[c(1, 3:11)]), as.data.frame(d2[c(1, 3:11)]), strcmp = TRUE, blockfld = c(5))[[3]]
+cmp_date    <- RecordLinkage::compare.linkage(
+    cmp_fe_data, cmp_mpv_data, strcmp = TRUE, blockfld = c('date'))[[3]]
 
-cmp <- unique(rbind(cmp.tmp, cmp.tmp2), by = c("id1", "id2"))
-cmp <- unique(rbind(cmp, cmp.tmp3), by = c("id1", "id2"))
-cmp <- unique(rbind(cmp, cmp.tmp4), by = c("id1", "id2"))
-cmp <- unique(rbind(cmp, cmp.tmp5), by = c("id1", "id2"))
+cmp <- unique(rbind(cmp_address, cmp_name), by = c("ife_data", "impv_data"))
+cmp <- unique(rbind(cmp, cmp_zip), by = c("ife_data", "impv_data"))
+cmp <- unique(rbind(cmp, cmp_sex_age), by = c("ife_data", "impv_data"))
+cmp <- unique(rbind(cmp, cmp_date), by = c("ife_data", "impv_data"))
 
-cmp <- transform(cmp, new = (address + city + state + zip + county) / 5)
+cmp <- transform(cmp, new = (address + city + state + zip + county)/5)
 
-cmp <- cmp[c(-13:-8)]
+cmp <- cmp[c("ife_data", "impv_data", "name", "age", "sex", "race", "date", "new")]
 # ....Sort and filter matches and non-matches....
 one <- c(1, 1, 1, 1, 1, 1)
-zero <- c(0, 0, 0, 0, 0, 0)
-mat <- as.matrix(cmp[c(-1, -2)])
+mat <- as.matrix(cmp[-c(1, 2)])
 
-cmp$dist <- t(pracma::distmat(one, mat))[,1]
-cmp$dist2 <- t(pracma::distmat(zero, mat))[,1]
+cmp$dist_to_1 <- t(pracma::distmat(one, mat))[,1]
 
 # order the pairs by distance from one
-cmp.tmp6 <- cmp[order(cmp$dist),]
+cmp_order_1 <- cmp[order(cmp$dist_to_1),]
 
 # seed matches
-matches <- dplyr::filter(cmp.tmp6, dist <= 0.30)
+matches = cmp_order_1 %>%
+    filter(dist_to_1 <= 0.30)
 
 # TODO Explain this!!! May be active learning
 #matches <- rbind(matches, cmp[2792,])
@@ -111,10 +173,8 @@ matches <- dplyr::filter(cmp.tmp6, dist <= 0.30)
 # estimation ratio (true matches:true non-matches) r = 5207/(802617-5207) = 0.00653
 # hence for a seed match set of 3070, we must have 3070/0.00653 = 470,138
 
-# order the pairs by distance from zero
-cmp.tmp7 <- cmp[order(cmp$dist2),]
-
-nonmatches <- cmp.tmp7[1:470138,]
+nonmatches = cmp_order_1 %>%
+    filter(dist_to_1 > 0.30)
 
 # should be empty
 dim(dplyr::intersect(matches[1:2], nonmatches[1:2]))
@@ -123,74 +183,77 @@ dim(dplyr::intersect(matches[1:2], nonmatches[1:2]))
 matches$class <- "match"
 nonmatches$class <- "nonmatch"
 
-train.data <- rbind(matches, nonmatches)[c(-1,-2, -9, -10)]
+train_cols = c("name", "age", "sex", "race", "date", "new")
 
-library(e1071)
+train_data <- rbind(matches, nonmatches)[c(train_cols, "class")]
 
-svm.model <- svm(class ~ name + age + sex + race + dateMDY + new, data = train.data, type = "C-classification")
+svm_model <- svm(class ~ name + age + sex + race + date + new,
+                data = train_data, 
+                type = "C-classification")
 
-plot(svm.model, data = train.data, 
+plot(svm_model, data = train_data, 
      name ~ new, 
-     slice = list(age = 1, sex = 1, race = 1, dateMDY = 1))
-plot(svm.model, data = train.data, 
-     name ~ dateMDY, 
+     slice = list(age = 1, sex = 1, race = 1, date = 1))
+
+plot(svm_model, data = train_data, 
+     name ~ date, 
      slice = list(age = 1, sex = 1, race = 1, new = 1))
-plot(svm.model, data = train.data, 
+
+plot(svm_model, data = train_data, 
      name ~ race, 
-     slice = list(age = 1, sex = 1, new = 1, dateMDY = 1))
+     slice = list(age = 1, sex = 1, new = 1, date = 1))
 
-test <- cmp[c(-1, -2, -9,-10)]
+test <- cmp[train_cols]
 
-prediction <- predict(svm.model, test)
+prediction <- predict(svm_model, test)
 
 table(prediction)
 
-filtered.cmp <- cmp[] %>% na.omit
+filtered_cmp <- cmp[] %>% na.omit
 
-prediction <- cbind(filtered.cmp, as.data.frame(prediction))
+prediction <- cbind(filtered_cmp, as.data.frame(prediction))
 
-match.pred <- dplyr::filter(prediction, prediction == "match")
+match_pred = prediction %>%
+    filter(prediction == "match")
 
-d2[,"matching"] <- NA
+mpv_data[,"matching"] <- NA
 
-for (i in 1:length(d2[[1]])) {
-    d2[i,]$matching <- match.pred[match(i, match.pred$id2),]$id1
-}
+mpv_data[match_pred$impv_data, 'matching'] = match_pred$ife_data
 
-for (i in 1:length(d2[[1]])) {
-  if (complete.cases(d2[i, ][c(-2, -13)]) & is.na(d2[i, ]$matching)) {
-    d2[i,]$matching <- "nonmatching"
-  }
-}
+# Earlier, we filtered out all incomplete cases
+# Therefore, here, if soemthing hasn't been matched,
+# it is still complete, and therefore a nonmatch
+
+mpv_data[-match_pred$impv_data, 'matching'] = "nonmatching"
 
 # ....test on a random sample....
 set.seed(73051)
-tmp <- filter(d2, !is.na(matching))
+tmp <- filter(mpv_data, !is.na(matching))
 
 tmp1 <- filter(tmp, matching == "nonmatching")
-rand1 <- tmp1[sample(nrow(tmp1), 25), ]
+ranfe_data <- tmp1[sample(nrow(tmp1), 25), ]
 
 tmp2 <- filter(tmp, matching != "nonmatching")
-rand2 <- tmp2[sample(nrow(tmp2), 25), ]
+ranmpv_data <- tmp2[sample(nrow(tmp2), 25), ]
 
 # rand <- tmp[sample(nrow(tmp), 50), ]
 
 # RESULTS OF CLERICAL Review (old)
 #
 #   Sample size: 50
-#                         +-------------------+-------------------+
-#                         |  True matches     |  True non-matches |
-#                         +-------------------+-------------------+
-#    Algorithm matches    |         46        |         0         |
-#                         +-------------------+-------------------+
-#   Algorithm non-matches |         3         |         1         |
-#                         +-------------------+-------------------+
+#                       +-------------------+-------------------+
+#                       |  True matches     |  True non-matches |
+#                       +-------------------+-------------------+
+#    Algorithm matches    |        46        |        0        |
+#                       +-------------------+-------------------+
+#   Algorithm non-matches |        3        |        1        |
+#                       +-------------------+-------------------+
 #
 #   False cases (FE, MPV):
 #       False non-match: 
-#             - (3680, 2539), reason: address is severely different
-#             - (5456, 1069), reason: white vs. black race
-#             - (108, 5131), reason: Port Allen vs. Addis city
+#            - (3680, 2539), reason: address is severely different
+#            - (5456, 1069), reason: white vs. black race
+#            - (108, 5131), reason: Port Allen vs. Addis city
 #
 #   Sensitivity: 0.9387
 #   Specificity: 1
@@ -203,13 +266,13 @@ rand2 <- tmp2[sample(nrow(tmp2), 25), ]
 # RESULTS OF CLERICAL Review (new)
 #
 #   Sample size: 50 (stratified: 25 algorithm matches/ 25 algorithm nonmatches)
-#                         +-------------------+-------------------+
-#                         |  True matches     |  True non-matches |
-#                         +-------------------+-------------------+
-#    Algorithm matches    |         25        |         0         |
-#                         +-------------------+-------------------+
-#   Algorithm non-matches |         6         |         19        |
-#                         +-------------------+-------------------+
+#                       +-------------------+-------------------+
+#                       |  True matches     |  True non-matches |
+#                       +-------------------+-------------------+
+#    Algorithm matches    |        25        |        0        |
+#                       +-------------------+-------------------+
+#   Algorithm non-matches |        6        |        19        |
+#                       +-------------------+-------------------+
 #
 #   Sensitivity: 0.806
 #   Specificity: 1
@@ -220,50 +283,60 @@ rand2 <- tmp2[sample(nrow(tmp2), 25), ]
 # False cases:
 #
 #     Identified as non-match but are matches:
-#          - (5004, 951), reason: white vs. black race
-#          - (2099, 3323), reason: Sadiq A Ismail vs. Ismael Sadiq ..... may be handeled using phonetics
-#          - (5136, 834), reason: white vs. black race
-#          - (2624, 2933), reason: white vs. black race
-#          - (528, 4384), reason: black vs. white race
-#          - (3152, 2502), reason: white vs. black race
+#         - (5004, 951), reason: white vs. black race
+#         - (2099, 3323), reason: Sadiq A Ismail vs. Ismael Sadiq ..... may be handeled using phonetics
+#         - (5136, 834), reason: white vs. black race
+#         - (2624, 2933), reason: white vs. black race
+#         - (528, 4384), reason: black vs. white race
+#         - (3152, 2502), reason: white vs. black race
 
 
 #---------------------------------------Comparing FE vs. KBP-----------------------------------
 
 # ....filter KBP for necessary columns....
-d3 <- kbp[c(3, 8, 9, 10, 11, 15)]
+kpb_data = kbp %>%
+    select(date_format, deceased_name, deceased_age, gender, race, state) %>%
+    
+    rename('date' = date_format,
+        'name' = deceased_name,
+        'age'  = deceased_age,
+        'sex'  = gender)%>%
+    
+    mutate(race = as.character(race)) %>%
+    
+    mutate(sex = as.character(sex)) %>%
+    
+    mutate(age = as.character(age)) %>%
 
-d3$race <- lapply(d3$race, function(x) replace(x, grepl("\\bA\\b", x), "Asian/Pacific Islander"))
-d3$race <- lapply(d3$race, function(x) replace(x, grepl("\\bB\\b", x), "Black"))
-d3$race <- lapply(d3$race, function(x) replace(x, grepl("\\bI\\b", x), "Native American"))
-d3$race <- lapply(d3$race, function(x) replace(x, grepl("\\bL\\b", x), "Hispanic"))
-d3$race <- lapply(d3$race, function(x) replace(x, grepl("\\bO\\b", x), NA))
-d3$race <- lapply(d3$race, function(x) replace(x, grepl("\\bPI\\b", x), "Asian/Pacific Islander"))
-d3$race <- lapply(d3$race, function(x) replace(x, grepl("\\bW\\b", x), "White"))
-d3$race <- as.character(d3$race)
+    mutate(race = recode(race, "B" = "Black",
+                          "I" = "Native American",
+                          "L" = "Hispanic",
+                          "O" = 'NA',
+                         "PI" = "Asian/Pacific Islander",
+                          "W" = "White")) %>%
+    
+    mutate(sex = recode(sex, "F" = "Female",
+                     "M" = "Male",
+                     "T" = "Transgender")) %>%
+    
+    mutate(name = replace(name, name == "", NA)) %>%
+    
+    
+    mutate(date = as.character(strptime(kbp$date, "%B %d, %Y"))) %>%
+    
+    filter(complete.cases(.))
 
-d3$deceased_name <- as.character(lapply(d3$deceased_name, function(x) replace(x, x == "", NA)))
+cmp_fe_data = as.data.frame(fe_data)[colnames(kpb_data)]
+cmp_kpb_data = as.data.frame(kpb_data)
 
-d3 <- filter(d3, complete.cases(d3))
+cmp_tmp <- RecordLinkage::compare.linkage(cmp_fe_data, cmp_kpb_data, strcmp = TRUE, blockfld = c(1))[[3]]
+cmp_tmp2 <- RecordLinkage::compare.linkage(cmp_fe_data, cmp_kpb_data, strcmp = TRUE, blockfld = c(2))[[3]]
+cmp_tmp3 <- RecordLinkage::compare.linkage(cmp_fe_data, cmp_kpb_data, strcmp = TRUE, blockfld = c(3, 4))[[3]]
+cmp_tmp4 <- RecordLinkage::compare.linkage(cmp_fe_data, cmp_kpb_data, strcmp = TRUE, blockfld = c(5, 6))[[3]]
 
-d3$gender <- lapply(d3$gender, function(x) replace(x, grepl("F", x), "Female"))
-d3$gender <- lapply(d3$gender, function(x) replace(x, grepl("M", x), "Male"))
-d3$gender <- lapply(d3$gender, function(x) replace(x, grepl("T", x), "Transgender"))
-
-d3$gender <- as.character(d3$gender)
-
-d3$date_format <- as.character(strptime(d3$date_format, "%Y-%m-%d"))
-
-d3$deceased_age <- as.character(d3$deceased_age)
-
-cmp.tmp <- RecordLinkage::compare.linkage(as.data.frame(d1[c(6, 1, 3, 4, 5, 9)]), as.data.frame(d3), strcmp = TRUE, blockfld = c(1))[[3]]
-cmp.tmp2 <- RecordLinkage::compare.linkage(as.data.frame(d1[c(6, 1, 3, 4, 5, 9)]), as.data.frame(d3), strcmp = TRUE, blockfld = c(2))[[3]]
-cmp.tmp3 <- RecordLinkage::compare.linkage(as.data.frame(d1[c(6, 1, 3, 4, 5, 9)]), as.data.frame(d3), strcmp = TRUE, blockfld = c(3, 4))[[3]]
-cmp.tmp4 <- RecordLinkage::compare.linkage(as.data.frame(d1[c(6, 1, 3, 4, 5, 9)]), as.data.frame(d3), strcmp = TRUE, blockfld = c(5, 6))[[3]]
-
-cmp2 <- unique(rbind(cmp.tmp, cmp.tmp2), by = c("id1", "id2"))
-cmp2 <- unique(rbind(cmp2, cmp.tmp3), by = c("id1", "id2"))
-cmp2 <- unique(rbind(cmp2, cmp.tmp4), by = c("id1", "id2"))
+cmp2 <- unique(rbind(cmp_tmp, cmp_tmp2), by = c("ife_data", "impv_data"))
+cmp2 <- unique(rbind(cmp2, cmp_tmp3), by = c("ife_data", "impv_data"))
+cmp2 <- unique(rbind(cmp2, cmp_tmp4), by = c("ife_data", "impv_data"))
 
 one <- c(1, 1, 1, 1, 1, 1)
 zero <- c(0, 0, 0, 0, 0, 0)
@@ -274,19 +347,19 @@ cmp2$dist <- t(pracma::distmat(one, mat))[,1]
 cmp2$dist2 <- t(pracma::distmat(zero, mat))[,1]
 
 # order the pairs by distance from one
-cmp.tmp6 <- cmp2[order(cmp2$dist),]
+cmp_tmp6 <- cmp2[order(cmp2$dist),]
 
 # seed matches
-matches2 <- dplyr::filter(cmp.tmp6, dist <= 0.10)
+matches2 <- dplyr::filter(cmp_tmp6, dist <= 0.10)
 
 # seed non-matches
 # estimation ratio (true matches:true non-matches) r = 3907/(1338627-3907) = 0.00293
 # hence for a seed match set of 3907, we must have 3907/0.00293 = 1,333,447
 
 # order the pairs by distance from zero
-cmp.tmp7 <- cmp2[order(cmp2$dist2),]
+cmp_tmp7 <- cmp2[order(cmp2$dist2),]
 
-nonmatches2 <- cmp.tmp7[1:1333447,]
+nonmatches2 <- cmp_tmp7[1:1333447,]
 
 # should be empty
 dim(dplyr::intersect(matches2[1:2], nonmatches2[1:2]))
@@ -295,47 +368,47 @@ dim(dplyr::intersect(matches2[1:2], nonmatches2[1:2]))
 matches2$class <- "match"
 nonmatches2$class <- "nonmatch"
 
-train.data2 <- rbind(matches2, nonmatches2)
-train.data2 <- train.data2[c(-2, -1, -9, -10, -11)]
+train_data2 <- rbind(matches2, nonmatches2)
+train_data2 <- train_data2[c(-2, -1, -9, -10, -11)]
 
-svm.model2 <- svm(class ~ ., data = train.data2, 
-                  type = "C-classification")
+svm_model2 <- svm(class ~ ., data = train_data2, 
+                type = "C-classification")
 
-plot(svm.model2, data = train.data2, 
+plot(svm_model2, data = train_data2, 
      sex ~ age, 
-     slice = list(dateMDY = 1, name = 1, state = 1, race = 1))
+     slice = list(date = 1, name = 1, state = 1, race = 1))
 
 
 test2 <- cmp2[c(-1, -2, -9,-10, -11)]
 
-prediction2 <- predict(svm.model2, test2)
+prediction2 <- predict(svm_model2, test2)
 
 table(prediction2)
 
-filtered.cmp2 <- cmp2[-9] %>% na.omit
+filtered_cmp2 <- cmp2[-9] %>% na.omit
 
-prediction2 <- cbind(filtered.cmp2, as.data.frame(prediction2))
+prediction2 <- cbind(filtered_cmp2, as.data.frame(prediction2))
 
-match.pred2 <- dplyr::filter(prediction2, prediction2 == "match")
+match_prempv_data <- dplyr::filter(prediction2, prediction2 == "match")
 
-d3[,"matching"] <- NA
+kpb_data[,"matching"] <- NA
 
-for (i in 1:length(d3[[1]])) {
-  d3[i,]$matching <- match.pred2[match(i, match.pred2$id2),]$id1
+for (i in 1:length(kpb_data[[1]])) {
+    kpb_data[i,]$matching <- match_prempv_data[match(i, match_prempv_data$impv_data),]$ife_data
 }
 
-for (i in 1:length(d3[[1]])) {
-  if (complete.cases(d3[i, ][-7]) & is.na(d3[i, ]$matching)) {
-    d3[i,]$matching <- "nonmatching"
-  }
+for (i in 1:length(kpb_data[[1]])) {
+    if (complete.cases(kpb_data[i, ][-7]) & is.na(kpb_data[i, ]$matching)) {
+    kpb_data[i,]$matching <- "nonmatching"
+    }
 }
 
 # ....test on a random sample....
 set.seed(73051)
-tmp. <- filter(d3, !is.na(matching))
+tmp. <- filter(kpb_data, !is.na(matching))
 
 tmp3 <- filter(tmp., matching == "nonmatching")
-rand3 <- tmp3[sample(nrow(tmp3), 25), ]
+rankpb_data <- tmp3[sample(nrow(tmp3), 25), ]
 
 tmp4 <- filter(tmp., matching != "nonmatching")
 rand4 <- tmp4[sample(nrow(tmp4), 25), ]
@@ -343,13 +416,13 @@ rand4 <- tmp4[sample(nrow(tmp4), 25), ]
 # RESULTS OF CLERICAL Review (old)
 #
 #   Sample size: 50 (stratified: 25 algorithm matches/ 25 algorithm nonmatches)
-#                         +-------------------+-------------------+
-#                         |  Algo matches     |  Algo non-matches |
-#                         +-------------------+-------------------+
-#    True      matches    |         25        |         4         |
-#                         +-------------------+-------------------+
-#   True      non-matches |          0        |         21        |
-#                         +-------------------+-------------------+
+#                       +-------------------+-------------------+
+#                       |  Algo matches     |  Algo non-matches |
+#                       +-------------------+-------------------+
+#    True      matches    |        25        |        4        |
+#                       +-------------------+-------------------+
+#   True      non-matches |         0        |        21        |
+#                       +-------------------+-------------------+
 #
 #   Sensitivity: 0.862
 #   Specificity: 1
@@ -360,17 +433,17 @@ rand4 <- tmp4[sample(nrow(tmp4), 25), ]
 # False cases:
 #
 #     Identified as non-match but are matches:
-#               - (6565, 308), reason: White vs. Asian race
-#               - (1610, 3549), reason: 2014-02-26 vs. 2014-10-15 date
-#               - (2775, 3404), reason: White vs.Hispanic race
-#               - (3395, 2907), reason: White vs. Hispanic race
+#              - (6565, 308), reason: White vs. Asian race
+#              - (1610, 3549), reason: 2014-02-26 vs. 2014-10-15 date
+#              - (2775, 3404), reason: White vs.Hispanic race
+#              - (3395, 2907), reason: White vs. Hispanic race
 
 #-------------------------------------------Merge------------------------------------------------
 
-merged.data <- fe.clean
-to.add <- data.frame()
-for (i in 1:length(d2[[1]])) {
-  if (d2[i,]$matching == "nonmatching") {
-    to.add <- rbind(to.add, mpv[d2[i,]$parent_id,])
-  }
+merged_data <- fe.clean
+to_add <- data.frame()
+for (i in 1:length(mpv_data[[1]])) {
+    if (mpv_data[i,]$matching == "nonmatching") {
+    to_add <- rbind(to_add, mpv[mpv_data[i,]$parent_id,])
+    }
 }
