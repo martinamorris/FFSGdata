@@ -80,7 +80,7 @@ mpv_data = mpv %>%
     mutate(date = as.character(strptime(date, format = "%Y-%m-%d"))) %>%
     
     # reformat missing race to NA
-    mutate(race = replace(race, grepl("Race unspecified", race), NA)) %>%
+    mutate(race = replace(race, grepl("Unknown race", race), NA)) %>%
     
     # reformat missing age to NA
     mutate(age = replace(age, grepl("Unknown", age), NA)) %>%
@@ -89,7 +89,9 @@ mpv_data = mpv %>%
     mutate(race = recode(race, "African-American/Black"  = "Black",
                          "European-American/White"  = "White",
                          "Hispanic/Latino"          = "Hispanic",
-                         "Native American/Alaskan"  = "Native American")) %>%
+                         "Native American/Alaskan"  = "Native American",
+                         "Pacific Islander"         = "Asian/Pacific Islander",
+                         )) %>%
     
     # clear non alphanumeric names
     mutate(`name` = gsub("[^[:alnum:] ]", "", `name`)) %>%
