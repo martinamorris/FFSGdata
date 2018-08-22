@@ -51,18 +51,33 @@ source("interactivemap.R")
 
 
 
-ui <- navbarPage(
-  "FFSG",
-  tabPanel("About",
-           fluidPage(titlePanel("Fatal Force Study Group")),
+ui <- navbarPage(title = "FFSG", id = "navbar", 
+                 tagList(
+                 tags$script(type="text/javascript", src="alert.js"),
+                 tags$link(rel="stylesheet", type="text/css",href="style.css")
+                 ),
+
+  tabPanel(title = "About", value = "tab1",
+           fluidPage(fluidRow(
+             column(10,
+                    h1("Fatal Force Study Group")),
+             column(2,
+                    icon('question-circle', class='fa-2x helper-btn'),
+                    tags$div(class="helper-box", style="display:none",
+                             p('Upload a file of observed network data (must be of a supported type).',
+                               'Add custom attributes or symmetrize on the "Edit Network" tab.')),
+                    actionLink('abtleft', icon=icon('arrow-left', class='fa-2x'), label=NULL),
+                    actionLink('abtright', icon=icon('arrow-right', class='fa-2x'), label=NULL)
+                    
+             )
+             )),
            sidebarLayout(
              sidebarPanel(
                
                h3("Data Resources"),
-               actionLink("felink", "Fatal Encounters", onclick = "location.href='http://www.fatalencounters.org', '_blank)"),
-               h6("This data source has been collected since 2000 and is active until present day. As of the month of April there have been a total of 19,856 number of cases that are recorded. This database allows you to go in and download any data needed and also includes visualizations."),
-               actionLink("kbplink", "Killed By Police", onclick = "window.open('http://killedbypolice.net', '_blank)"),
-               h6("An open sourced data collection from an online anonymous source that dates back to May 1, 2013. The data set is still in continuation and the legitimacy of each data point is confirmed through actual online news articles of each fatality. Killed By Police has a number of 4,629 cases recorded."),
+               uiOutput("felink"),
+               #h6("This data source has been collected since 2000 and is active until present day. As of the month of April there have been a total of 19,856 number of cases that are recorded. This database allows you to go in and download any data needed and also includes visualizations."),
+               uiOutput("kbplink"),
                actionLink("moredata", "More"),
                
                h3("Aditional Information")
@@ -83,15 +98,20 @@ ui <- navbarPage(
     "Tables and Graphs",
     
     
-    tabPanel("Counts",
+    tabPanel(title = "Counts", value = "tab2",
              
              fluidPage(
                fluidRow(
                  column(10,
                         h1("Counting Fatal Encounters")),
                  column(2,
-                        actionBttn(inputId = "helpbutton1", label = icon(name = "question-circle"), size = "lg", style = "fill")#,
-                        #uiOutput("HelpBox1")
+                        div(id='plottabhelp', class='helper-btn', icon('question-circle', 'fa-2x')),
+                          div(class="helper-box", style="display:none",
+                                 p('Upload a file of observed network data (must be of a supported type).',
+                                   'Add custom attributes or symmetrize on the "Edit Network" tab.')),
+                        actionLink('cntleft', icon=icon('arrow-left', class='fa-2x'), label=NULL),
+                        actionLink('cntright', icon=icon('arrow-right', class='fa-2x'), label=NULL)
+                        
                  )
                )
              ),
@@ -131,15 +151,20 @@ ui <- navbarPage(
     ),
     
     
-    tabPanel("Descriptive Statistics",
+    tabPanel(title= "Descriptive Statistics", value="tab3",
              
              fluidPage(
                fluidRow(
                  column(10,
                         h1("Descriptive Statistics")),
                  column(2,
-                        actionButton(inputId = "helpbutton2", label = icon(name = "question-circle")),
-                        uiOutput("HelpBox2")
+                        icon('question-circle', class='fa-2x helper-btn'),
+                        tags$div(class="helper-box", style="display:none",
+                            p('Upload a file of observed network data (must be of a supported type).',
+                              'Add custom attributes or symmetrize on the "Edit Network" tab.')),
+                        actionLink('dsleft', icon=icon('arrow-left', class='fa-2x'), label=NULL),
+                        actionLink('dsright', icon=icon('arrow-right', class='fa-2x'), label=NULL)
+                                   
                  )
                )
              ),
@@ -159,15 +184,20 @@ ui <- navbarPage(
   
   navbarMenu("Maps",
              
-             tabPanel("Choropleth",
+             tabPanel(title = "Choropleth", value = "tab4",
                       
                       fluidPage(
                         fluidRow(
                           column(10,
                                  h1("Choropleth Map of Deaths per Capita")),
                           column(2,
-                                 actionButton(inputId = "helpbutton3", label = icon(name = "question-circle")),
-                                 uiOutput("HelpBox3")
+                                 icon('question-circle', class='fa-2x helper-btn'),
+                                 tags$div(class="helper-box", style="display:none",
+                                          p('Upload a file of observed network data (must be of a supported type).',
+                                            'Add custom attributes or symmetrize on the "Edit Network" tab.')),
+                                 actionLink('cpleft', icon=icon('arrow-left', class='fa-2x'), label=NULL),
+                                 actionLink('cpright', icon=icon('arrow-right', class='fa-2x'), label=NULL)
+                                 
                           )
                         )
                       ),        
@@ -186,15 +216,20 @@ ui <- navbarPage(
                         mainPanel(plotlyOutput("choropleth"))
                       )    
              ),
-             tabPanel("Cartogram",
+             tabPanel(title = "Cartogram", value = "tab5",
                       
                       fluidPage(
                         fluidRow(
                           column(10,
                                  h1("Cartogram of Deaths per Capita")),
                           column(2,
-                                 actionButton(inputId = "helpbutton4", label = icon(name = "question-circle")),
-                                 uiOutput("HelpBox4")
+                                 icon('question-circle', class='fa-2x helper-btn'),
+                                 tags$div(class="helper-box", style="display:none",
+                                          p('Upload a file of observed network data (must be of a supported type).',
+                                            'Add custom attributes or symmetrize on the "Edit Network" tab.')),
+                                 actionLink('crgleft', icon=icon('arrow-left', class='fa-2x'), label=NULL),
+                                 actionLink('crgright', icon=icon('arrow-right', class='fa-2x'), label=NULL)
+                                 
                           )
                         )
                       ),    
@@ -208,13 +243,18 @@ ui <- navbarPage(
              ),
              
              
-             tabPanel("Interactive",
+             tabPanel(title = "Interactive", value = "tab6",
                       fluidPage(
                         fluidRow(
                           column(10),
                           column(2,
-                                 actionButton(inputId = "helpbutton5", label = icon(name = "question-circle")),
-                                 uiOutput("HelpBox5")
+                                 icon('question-circle', class='fa-2x helper-btn'),
+                                 tags$div(class="helper-box", style="display:none",
+                                          p('Upload a file of observed network data (must be of a supported type).',
+                                            'Add custom attributes or symmetrize on the "Edit Network" tab.')),
+                                 actionLink('intleft', icon=icon('arrow-left', class='fa-2x'), label=NULL),
+                                 actionLink('intright', icon=icon('arrow-right', class='fa-2x'), label=NULL)
+                                 
                           )
                         ),
                         leafletOutput("intmap")
@@ -233,7 +273,25 @@ ui <- navbarPage(
 
 server <- function(input, output, session) {
   
-  
+  #update active tab in navbar when arrows are clicked
+  leftarrowclicks <- reactive({
+    input$abtleft+input$cntleft+input$dsleft+input$cpleft+input$crgleft+input$intleft
+  })
+  rightarrowclicks <- reactive({
+    input$abtright+input$cntright+input$dsright+input$cpright+input$crgright+input$intright
+  })
+  observe({
+    if(leftarrowclicks() == 0) {return()}
+    tabOptions <- c('tab1', 'tab2', 'tab3', 'tab4', 'tab5', 'tab6')
+    current <- isolate(which(input$navbar==tabOptions))
+    updateTabsetPanel(session, 'navbar', selected=tabOptions[current-1])
+  })
+  observe({
+    if(rightarrowclicks() == 0) {return()}
+    tabOptions <- c('tab1', 'tab2', 'tab3', 'tab4', 'tab5', 'tab6')
+    current <- isolate(which(input$navbar==tabOptions))
+    updateTabsetPanel(session, 'navbar', selected=tabOptions[current+1])
+  })
   
   output$permillplot <-
     renderPlot({
@@ -364,6 +422,14 @@ server <- function(input, output, session) {
       return()
     }
   })
-  }
+  
+  output$felink <- renderUI({
+    tagList(a("Fatal Encounters", href="http://www.fatalencounters.org"), "- This data source has been collected since 2000 and is active until present day. As of the month of April there have been a total of 19,856 number of cases that are recorded. This database allows you to go in and download any data needed and also includes visualizations.")
+  })
+  
+  output$kbplink <- renderUI({
+    tagList(a("Killed by Police", href="http://killedbypolice.net"), "- An open sourced data collection from an online anonymous source that dates back to May 1, 2013. The data set is still in continuation and the legitimacy of each data point is confirmed through actual online news articles of each fatality. Killed By Police has a number of 4,629 cases recorded.")
+  })
+}
 
 shinyApp(ui, server)
