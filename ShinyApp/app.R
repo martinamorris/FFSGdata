@@ -46,16 +46,12 @@ source("choroplethmapfunc.R")
 source("descstatfuncs.R")
 source("choroplethmapfunc.R")
 source("cartogramfunc.R")
-#source("runcart.R")
+source("runcart.R")
 source("interactivemap.R")
 
 
 
-ui <- navbarPage(title = "FFSG", id = "navbar", 
-                 tagList(
-                 tags$script(type="text/javascript", src="alert.js"),
-                 tags$link(rel="stylesheet", type="text/css",href="style.css")
-                 ),
+ui <- navbarPage(title = "FFSG", id = "navbar",
 
   tabPanel(title = "About", value = "tab1",
            fluidPage(fluidRow(
@@ -66,8 +62,8 @@ ui <- navbarPage(title = "FFSG", id = "navbar",
                     tags$div(class="helper-box", style="display:none",
                              p('Upload a file of observed network data (must be of a supported type).',
                                'Add custom attributes or symmetrize on the "Edit Network" tab.')),
-                    actionLink('abtleft', icon=icon('arrow-left', class='fa-2x'), label=NULL),
-                    actionLink('abtright', icon=icon('arrow-right', class='fa-2x'), label=NULL)
+                    actionLink('abtleft', class = 'larrow', icon=icon('arrow-left', class='fa-2x'), label=NULL),
+                    actionLink('abtright', class = 'rarrow', icon=icon('arrow-right', class='fa-2x'), label=NULL)
                     
              )
              )),
@@ -107,10 +103,12 @@ ui <- navbarPage(title = "FFSG", id = "navbar",
                  column(2,
                         div(id='plottabhelp', class='helper-btn', icon('question-circle', 'fa-2x')),
                           div(class="helper-box", style="display:none",
-                                 p('Upload a file of observed network data (must be of a supported type).',
-                                   'Add custom attributes or symmetrize on the "Edit Network" tab.')),
-                        actionLink('cntleft', icon=icon('arrow-left', class='fa-2x'), label=NULL),
-                        actionLink('cntright', icon=icon('arrow-right', class='fa-2x'), label=NULL)
+                                 p("View trends by state over the years
+                                    2000 to 2017. Plot and table tabs 
+                                    allow you to switch between viewing
+                                    the data in a line plot or in a table.")),
+                        actionLink('cntleft', class = 'larrow', icon=icon('arrow-left', class='fa-2x'), label=NULL),
+                        actionLink('cntright', class = 'rarrow', icon=icon('arrow-right', class='fa-2x'), label=NULL)
                         
                  )
                )
@@ -160,10 +158,11 @@ ui <- navbarPage(title = "FFSG", id = "navbar",
                  column(2,
                         icon('question-circle', class='fa-2x helper-btn'),
                         tags$div(class="helper-box", style="display:none",
-                            p('Upload a file of observed network data (must be of a supported type).',
-                              'Add custom attributes or symmetrize on the "Edit Network" tab.')),
-                        actionLink('dsleft', icon=icon('arrow-left', class='fa-2x'), label=NULL),
-                        actionLink('dsright', icon=icon('arrow-right', class='fa-2x'), label=NULL)
+                            p("Displays total counts of fatal 
+                              encounters in the US by demographic
+                              (race, age, or gender).")),
+                        actionLink('dsleft', class = 'larrow', icon=icon('arrow-left', class='fa-2x'), label=NULL),
+                        actionLink('dsright', class = 'rarrow', icon=icon('arrow-right', class='fa-2x'), label=NULL)
                                    
                  )
                )
@@ -193,10 +192,14 @@ ui <- navbarPage(title = "FFSG", id = "navbar",
                           column(2,
                                  icon('question-circle', class='fa-2x helper-btn'),
                                  tags$div(class="helper-box", style="display:none",
-                                          p('Upload a file of observed network data (must be of a supported type).',
-                                            'Add custom attributes or symmetrize on the "Edit Network" tab.')),
-                                 actionLink('cpleft', icon=icon('arrow-left', class='fa-2x'), label=NULL),
-                                 actionLink('cpright', icon=icon('arrow-right', class='fa-2x'), label=NULL)
+                                          p("Map displays distribution of fatal
+                                            events by state. States that are 
+                                            darker have more deaths per capita.
+                                            Hovering over a state displays
+                                            the state's name and number of
+                                            fatal events per capita.")),
+                                 actionLink('cpleft', class = 'larrow', icon=icon('arrow-left', class='fa-2x'), label=NULL),
+                                 actionLink('cpright', class = 'rarrow', icon=icon('arrow-right', class='fa-2x'), label=NULL)
                                  
                           )
                         )
@@ -225,10 +228,12 @@ ui <- navbarPage(title = "FFSG", id = "navbar",
                           column(2,
                                  icon('question-circle', class='fa-2x helper-btn'),
                                  tags$div(class="helper-box", style="display:none",
-                                          p('Upload a file of observed network data (must be of a supported type).',
-                                            'Add custom attributes or symmetrize on the "Edit Network" tab.')),
-                                 actionLink('crgleft', icon=icon('arrow-left', class='fa-2x'), label=NULL),
-                                 actionLink('crgright', icon=icon('arrow-right', class='fa-2x'), label=NULL)
+                                          p("Map displays distribution of fatal
+                                            events by state. States that are 
+                                            darker and bigger have more deaths 
+                                            per capita.")),
+                                 actionLink('crgleft', class = 'larrow', icon=icon('arrow-left', class='fa-2x'), label=NULL),
+                                 actionLink('crgright', class = 'rarrow', icon=icon('arrow-right', class='fa-2x'), label=NULL)
                                  
                           )
                         )
@@ -250,10 +255,14 @@ ui <- navbarPage(title = "FFSG", id = "navbar",
                           column(2,
                                  icon('question-circle', class='fa-2x helper-btn'),
                                  tags$div(class="helper-box", style="display:none",
-                                          p('Upload a file of observed network data (must be of a supported type).',
-                                            'Add custom attributes or symmetrize on the "Edit Network" tab.')),
-                                 actionLink('intleft', icon=icon('arrow-left', class='fa-2x'), label=NULL),
-                                 actionLink('intright', icon=icon('arrow-right', class='fa-2x'), label=NULL)
+                                          p("Map displays counts based on region 
+                                            clicking on bubbles or zooming in
+                                            breaks bubbles into smaller areas.
+                                            At lowest level individual cases
+                                            are showed and can be clicked on to
+                                            display more info in a pop-up.")),
+                                 actionLink('intleft', class = 'larrow', icon=icon('arrow-left', class='fa-2x'), label=NULL),
+                                 actionLink('intright', class = 'rarrow', icon=icon('arrow-right', class='fa-2x'), label=NULL)
                                  
                           )
                         ),
@@ -266,13 +275,16 @@ ui <- navbarPage(title = "FFSG", id = "navbar",
   tabPanel("Data Analytics"),
   
   tabPanel("Data Compiling"),
-  inverse = TRUE
+  inverse = TRUE,
+  tags$head(
+    tags$script(type="text/javascript", src="alert.js"),
+    tags$link(rel="stylesheet", type="text/css",href="style.css")
+  )
   
   
 )
 
 server <- function(input, output, session) {
-  
   #update active tab in navbar when arrows are clicked
   leftarrowclicks <- reactive({
     input$abtleft+input$cntleft+input$dsleft+input$cpleft+input$crgleft+input$intleft
