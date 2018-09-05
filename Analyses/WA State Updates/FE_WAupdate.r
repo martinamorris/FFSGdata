@@ -1,6 +1,7 @@
 # WA state updates for Fatal Encounters
 
 library(tidyr)
+library(tidyverse)
 
 mydir <- getwd()
 source(paste(mydir, '/Data/Scraping/MakeFEData.R', sep="/"))
@@ -34,7 +35,7 @@ print.data.frame(fewa.cumsum[thismonth,])
 matplot(x=fewa.MY[,1], y=fewa.MY[,2:11], 
         type='l', col='gold3', pch='*', lty=3,
         ylim = c(0, max(fewa.MY[,2:20])),
-        main="Monthly Fatal Police Killings in WA State: 2000-2018",
+        main="FE Monthly Fatal Police Killings in WA State: 2000-2018",
         xlab = "Month", ylab = "Monthly Number Killed",
         xaxt = "n", cex.axis = 0.7)
 matlines(x=fewa.MY[,1], y=fewa.MY[,12:thisyear], 
@@ -67,7 +68,7 @@ legend("topleft", cex=0.6,
 matplot(x=1:12, y=fewa.cumsum[,1:10], 
         type='l', col='gold3', pch='*', lty=3,
         ylim = c(0, max(fewa.cumsum)),
-        main= paste("Cumulative Fatal Police Killings by Month in WA State: 2000-",
+        main= paste("FE Cumulative Fatal Police Killings by Month in WA State: 2000-",
                     2000+thisyear-2, sep=""),
         xlab = "Month", ylab = "Cumulative Number Killed",
         xaxt = "n")

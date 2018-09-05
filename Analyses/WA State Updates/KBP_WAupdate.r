@@ -1,6 +1,7 @@
 # WA state updates for KBP
 
 library(tidyr)
+library(tidyverse)
 
 mydir <- getwd()
 source(paste(mydir, '/Data/Scraping/MakeKBPData.R', sep="/"))
@@ -25,7 +26,7 @@ print.data.frame(kbpwa.cumsum[thismonth,])
 
 matplot(x=kbpwa.MY[,1], y=kbpwa.MY[,2:(thisyear-1)], 
         type='l', col='grey', pch='*', lty=3,
-        main="Monthly Fatal Police Killings in WA State: 2013-2018",
+        main="KBP Monthly Fatal Police Killings in WA State: 2013-2018",
         xlab = "Month", ylab = "Monthly Number Killed",
         xaxt = "n", cex.axis = 0.7)
 
@@ -52,7 +53,7 @@ legend("topleft", cex=0.6,
 matplot(x=1:12, y=kbpwa.cumsum[,2:thisyear], 
         type='l', col='gold3', pch='*', lty=3,
         ylim = c(0, max(kbpwa.cumsum)),
-        main=paste("Cumulative Fatal Police Killings by Month in WA State: 2000-",
+        main=paste("KBP Cumulative Fatal Police Killings by Month in WA State: 2000-",
                    2013+thisyear-2, sep=""),
         xlab = "Month", ylab = "Cumulative Number Killed",
         xaxt = "n")
