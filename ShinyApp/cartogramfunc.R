@@ -26,12 +26,14 @@ ffcartogram <- function(year){
   # BM: add the p here, makes this fn more versatile
   year <- paste0('p', year)
   # make cartogram
-  ff_ctgm <- cartogram(usa, year, itermax=5)
+  ff_ctgm <- cartogram_cont(usa, year, itermax=5)
   
   # plot it
+  return(
   tm_shape(ff_ctgm) + 
     tm_fill(year, style="jenks") +
     tm_borders() + 
     tm_layout(frame=F)
+  )
   
 }

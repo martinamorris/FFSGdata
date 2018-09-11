@@ -45,8 +45,7 @@ source("permillgraphfunc.R")
 source("choroplethmapfunc.R")
 source("descstatfuncs.R")
 source("choroplethmapfunc.R")
-source("cartogramfunc.R")
-source("runcart.R")
+#source("cartogramfunc.R")
 source("interactivemap.R")
 
 
@@ -326,9 +325,10 @@ server <- function(input, output, session) {
       interactivemap
     })
   
-  output$cartogram <- renderPlot({
-    whichcart(input$yearcart) # BM: we capture the input value for the cartogram with the yearcart variable. 
-  })
+  output$cartogram <- renderImage({
+    filename <- normalizePath(file.path(paste('cartogramplots/cart', input$yearcart, '.jpg', sep="")))
+    list(src = filename)
+  }, deleteFile = FALSE)
   
   output$dstbl <- renderDataTable({
     dstable(input$dem)
@@ -338,64 +338,6 @@ server <- function(input, output, session) {
     dsplot(input$dem)
   })
   
-  observeEvent(input$helpbutton1, {
-    sendSweetAlert(
-      session = session,
-      title = "Help",
-      text = "View trends by state over the years
-      2000 to 2017. Plot and table tabs 
-      allow you to switch between viewing
-      the data in a line plot or in a table.",
-      type = "info"
-    )
-  })
-  
-  output$HelpBox2 = renderUI({
-    if (input$helpbutton2 %% 2 == 1){
-      helpText("Displays total counts of fatal 
-               encounters in the US by demographic
-               (race, age, or gender).")
-    }else{
-      return()
-    }
-  })
-  
-  output$HelpBox3 = renderUI({
-    if (input$helpbutton3 %% 2 == 1){
-      helpText("Map displays distribution of fatal
-               events by state. States that are 
-               darker have more deaths per capita.
-               Hovering over a state displays
-               the state's name and number of
-               fatal events per capita.")
-    }else{
-      return()
-    }
-  })
-  
-  output$HelpBox4 = renderUI({
-    if (input$helpbutton4 %% 2 == 1){
-      helpText("Map displays distribution of fatal
-               events by state. States that are 
-               darker and bigger have more deaths 
-               per capita.")
-    }else{
-      return()
-    }
-  })
-  
-  output$HelpBox5 = renderUI({
-    if (input$helpbutton5 %% 2 == 1){
-      helpText("Map displays counts based on region 
-               clicking on bubbles or zooming in
-               breaks bubbles into smaller areas.
-               At lowest level individual cases
-               are showed and can be clicked on to
-               display more info in a pop-up.")
-    }else{
-      return()
-    }
-  })
   
   output$HelpBoxsmall1 = renderUI({
     if (input$helpbuttonsmall1 %% 2 == 1){
