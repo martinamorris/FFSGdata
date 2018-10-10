@@ -17,6 +17,16 @@ load("fe.clean.Rdata")
 fatalencounters <- fe.clean
 #------------------------------function-----------------------------------------------
 
+#' PerMillCalc
+#' 
+#' Calculates the fatal encounters (per million population or total) for each state
+#' 
+#' @param x a data frame of individual fatal encounter cases, default uses fatalencounters
+#' @param capita a boolean, if TRUE evaluates cases per million population of each state, if FALSE just calculates total cases, default is TRUE
+#' @return table a data frame of fatalencounter per state (evaluated per capita or as totals based on capita param)
+#' 
+#' @export
+
 permillcalc <- function(x = fatalencounters, capita = TRUE){
   
   ##create table of state by year counts

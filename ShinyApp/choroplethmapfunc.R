@@ -1,5 +1,16 @@
 library(plotly)
 
+#' choroplethMap
+#' 
+#' Creates a choropleth map of fatal encounters for the given year
+#' 
+#' @param yeart an integer year between 2000 and 2017 or "mean", if blank calculates mean
+#' 
+#' @return a chloropleth for the entered year
+#' 
+#' @seealso \code{\link{plot_geo}}
+#' 
+#' @export
 choroplethmap <- function(yeart = "mean"){  
   df <- permillcalc()
   x <- df[,colnames(df) == yeart]

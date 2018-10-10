@@ -20,6 +20,19 @@ df$State <- factor(df$state) # BM: cartogram fn can't handle characters
 # from https://stackoverflow.com/a/3652472/1036500
 usa@data = data.frame(usa@data, df[match(usa@data[,'unique.IDs.'], tolower(df[,'state_name' ])),])
 
+
+#' ffCartogram
+#' 
+#' Creates a cartogram of fatal encounters for the given year
+#' 
+#' @param year an integer year between 2000 and 2017
+#' 
+#' @return a cartogram for the entered year
+#' 
+#' @seealso \code{\link{cartogram_cont}}
+#' 
+#' @export
+
 ffcartogram <- function(year){  
   # BM: add a little bit of error handling to help with testing
   if(!year %in% 2000:2017) stop("Please enter a year between 2000 and 2017")

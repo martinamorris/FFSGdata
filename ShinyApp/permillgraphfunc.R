@@ -1,4 +1,14 @@
-
+#' perMillGraph
+#' 
+#' Creates a graph of fatal encounters by state
+#' 
+#' @param state a state name, the state that is graphed or highlighted
+#' @param all a boolean, if TRUE graphs state over the data of other states, if FALSE graphs just the given state
+#' @param capita a boolean, if TRUE evaluates cases per million population of each state, if FALSE just calculates total cases
+#'
+#' @seealso \code{\link{permillcalc}} and \code{\link{permilltable}}
+#'  
+#' @export
 permillgraph <- function(state, all, capita) {
   df <- permillcalc(capita = capita)
   if(!capita){
@@ -16,7 +26,6 @@ permillgraph <- function(state, all, capita) {
       
       lines(2000:2017, df[df$state_name == state, 3:20],
             col = "red")
-      
       legend(
         "topright",
         legend = c(state, "United States", "Other States"),
