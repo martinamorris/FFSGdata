@@ -10,130 +10,18 @@ library(tidyverse)
 library(purrr)
 library(e1071)
 
+# Import Harmonization
+
 load(file.path(my_dir, "Data/Scraping/ScrapedFiles/fe.clean.Rdata"))
 load(file.path(my_dir, "Data/Scraping/ScrapedFiles/MPV.clean.Rdata"))
 load(file.path(my_dir, "Data/Scraping/ScrapedFiles/KBP.clean.Rdata"))
 
-# ----- Prepare / standardize data ------
-fe_data = fe.clean %>%
-    select("name", "age", "sex", "race", 
-         "dateMDY", "address", "city", 
-         "state", "zip", "county", "year") %>%
-  
-    rename('date' = dateMDY) %>%
-    
-    # remove no name
-    filter(name != "Name withheld by police") %>%
-  
-    # split the aka names
-    separate(col  = name, 
-          into = c("name", "aka"), 
-          sep  = " aka | or | transitioning from ") %>%
-  
-    # reformat date
-    mutate(date = as.character(strptime(date, format = "%m/%d/%Y"))) %>%
-  
-    # reformat missing race to NA
-    mutate(race = replace(race, grepl("Race unspecified", race), NA)) %>%
-    
-    # standardize names for race
-    mutate(race = recode(race, "African-American/Black"  = "Black",
-                        "European-American/White"  = "White",
-                        "Hispanic/Latino"          = "Hispanic",
-                        "Native American/Alaskan"  = "Native American")) %>%
-    
-    # clear non alphanumeric names
-    mutate(name = gsub("[^[:alnum:] ]", "", name)) %>%
-    
-    # filter for complete cases, excluding the column 'aka'
-    filter(complete.cases(.[-2])) # `aka` column
+# setwd("~/path/to/ffsg") 
+load("Data/Harmonization/HarmonizedFiles/HarmonizedDataSets.RData")
 
-mpv_data = mpv %>%
-    select("Victim's name", "Victim's age", 
-        "Victim's gender", "Victim's race" ,
-        "Date of injury resulting in death (month/day/year)" ,
-        "Location of injury (address)", 
-        "Location of death (city)" , "Location of death (state)",
-        "Location of death (zip code)" ,"Location of death (county)") %>%
-    
-    # rename columns
-    rename("name" = `Victim's name`,
-           "age" = `Victim's age`,
-           "gender" = `Victim's gender`,
-           "race" = `Victim's race`,
-           "date" = `Date of injury resulting in death (month/day/year)`,
-           "address" = `Location of injury (address)`,
-           "city" = `Location of death (city)`,
-           "state" = `Location of death (state)`,
-           "zip" = `Location of death (zip code)`,
-           "county" = `Location of death (county)`) %>%
-    
-    # ...remove no name...
-    filter(name != "Name withheld by police") %>%
-    
-    #  split the aka names 
-    separate(col  = name, 
-             into = c("name", "aka"), 
-             sep  = " aka | or | transitioning from ") %>%
-    
-    # reformat date
-    mutate(date = as.character(strptime(date, format = "%Y-%m-%d"))) %>%
-    
-    # reformat missing race to NA
-    mutate(race = replace(race, grepl("Unknown race", race), NA)) %>%
-    
-    # reformat missing age to NA
-    mutate(age = replace(age, grepl("Unknown", age), NA)) %>%
-    
-    # standardize names of races
-    mutate(race = recode(race, "African-American/Black"  = "Black",
-                         "European-American/White"  = "White",
-                         "Hispanic/Latino"          = "Hispanic",
-                         "Native American/Alaskan"  = "Native American",
-                         "Pacific Islander"         = "Asian/Pacific Islander",
-                         )) %>%
-    
-    # clear non alphanumeric names
-    mutate(`name` = gsub("[^[:alnum:] ]", "", `name`)) %>%
-    
-    # filter for complete cases, excluding the column 'aka'
-    filter(complete.cases(.[-2])) 
-
-kbp_data = kbp %>%
-    select(date_format, deceased_name, deceased_age, gender, race, state) %>%
-    
-    # rename columns
-    rename('date' = date_format,
-           'name' = deceased_name,
-           'age'  = deceased_age,
-           'sex'  = gender)%>%
-    
-    mutate(race = as.character(race)) %>%
-    
-    mutate(sex = as.character(sex)) %>%
-    
-    mutate(age = as.character(age)) %>%
-    
-    # standardize names of races
-    mutate(race = recode(race, "B" = "Black",
-                         "I" = "Native American",
-                         "L" = "Hispanic",
-                         "O" = 'NA',
-                         "PI" = "Asian/Pacific Islander",
-                         "W" = "White")) %>%
-    
-    # standardize names of sex
-    mutate(sex = recode(sex, "F" = "Female",
-                        "M" = "Male",
-                        "T" = "Transgender")) %>%
-    
-    # reformat missing names to NA
-    mutate(name = replace(name, name == "", NA)) %>%
-    
-    # reformat date
-    mutate(date = as.character(strptime(kbp$date, "%B %d, %Y"))) %>%
-    
-    filter(complete.cases(.))
+fe_data = fe_harmonized
+mpv_data = mpv_harmonized
+kbp_data = kbp_harmonized
 
 #mpv_data <- tibble::rowid_to_column(mpv_data, "parent_id")
 
