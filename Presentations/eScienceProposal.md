@@ -43,21 +43,21 @@ If necessary, is it permissible to copy or move the data to Studio resources, po
   Yes
 
 ## The justificaiton 
-Submit a 1-page summary of the project and objectives. You may paste free-form text here or click the upload button below to upload a file. *
+Submit a 1-page summary of the project and objectives. You may paste free-form text here or click the upload button below to upload a file. 
 
 If uploading a file, type File Uploaded in the text box.
-Upload a file here (pdf or docx)
-Browse Files
+- Every year, hundreds of people are killed by the people our society has promised will protect them. Fatal police violence is a salient and urgent issue. It’s a complex problem without a unilateral cause or solution. If want to address it, we need to better understand the victims and context their deaths take place within. One challenge is that there isn’t one, central source of truth for police shootings. Different data sets vary, all of them contain plenty of missing data, and none of them offer excellent statistical tools for diving into meaningful analyses.
+- Fatal Force Study Group (FFSG) seeks to help address this problem by aggregating multiples of sources of data on police violence into one central repository, and disseminating that repository to a wide audience of varying technical backgrounds. By leveraging multiple matched records, and further imputing variables, it’s possible to reduce some of the missingness which plagues existing data stores. We hope to provide the data and tools to help enable meaningful inferences which guide policy makers, assist community activists, and validate legitimate stakeholders.
+- TODO: extend this?
+	
 
-Which parts of the project require data science expertise beyond your team's capacity or knowledge base? *
+Which parts of the project require data science expertise beyond your team's capacity or knowledge base?
+- To accomplish our first goal of aggregating a central repository, we have selected three heterogenous sources of data on police shootings, and attempted to scrape, harmonize, merge, and impute those three data sources. We have been partially successful in each of these parts, but have found challenges in trying to choose which combination of both of record matching and imputation are best for our use case, as well as what the best choice of framework is for quantifying and conveying the uncertainty associated with these methods.
+	
 
-What language(s)/tool(s) have you used so far for the development of this project? What languages or tools do you hope to use during the Incubator? *
+What language(s)/tool(s) have you used so far for the development of this project? What languages or tools do you hope to use during the Incubator?
+- Everything has been accomplished through R
 
-If your project is successful how do you plan to use the results after the completion of the program? Include specific deliverables that will be produced if the project is successful such as papers, software, datasets, teaching materials, blog posts, visualizations, etc. and how they might affect future research. *
-
-Questions or Comments?
-
-Contact eScience Executive Directors at exec-director@escience.washington.edu
-
-Submit
+If your project is successful how do you plan to use the results after the completion of the program? Include specific deliverables that will be produced if the project is successful such as papers, software, datasets, teaching materials, blog posts, visualizations, etc. and how they might affect future research. 
+- ???
 
