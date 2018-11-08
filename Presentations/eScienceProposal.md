@@ -1,7 +1,7 @@
 # Data Science Incubator Application Winter 2019
 
 ## Project Title
-Enriching data on deadly police violence violence through imputation of multiple data sources
+Enhancing public access to data on persons killed by police
 
 ## Contact Info
 
