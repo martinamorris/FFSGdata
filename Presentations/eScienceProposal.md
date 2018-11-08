@@ -9,38 +9,38 @@ First Name: Martina
   
 Last Name: Morris
 
-Project Lead's home department: Sociology & Statistics
+Project Lead's home department: Sociology & Statistics joint appt
 
 Project Lead's UW title: Faculty
 
-Project Lead's email address: morrism@u.washington.edu
+Project Lead's email address: morrism@uw.edu
 
 ## The Team
 Names and affiliations of other project participants who will spend time in the Studio working on this project.
-- Vaughn Johnson
-- Maddi Cummins
-- TODO: more?
+- Ben Marwick, faculty in Anthropology UW
+- Vaughn Johnson, undergraduate Statistics/Computer Science major UW
+- Maddi Cummins, undergraduate UW
 
 ## The data
 If your proposal requires access to data, tell us about the datasets.
-- We are principally working with three online sources of fatal police violence: Mapping Police Violence, Fatal Encounters, & Killed By Police, as well as data from the US Census Bureau. The police violence data sets range from 500 to 22000 observations. Fatal Encounters began recording information in 2000, and the other two sources began in 2013. Each has demographic data on the age, sex, and race of the vicitim (though all of these variables are frequenly missing), as well as the location of the death and auxillary information such as the cause of death and urls relevant to the victim.
+- We are working to merge,  two independent online datasets that crowdsource information on persons killed during encounters with law enforcement: Fatal Encounters and Killed By Police.  There are other online sources (e.g., the Washington Post police shootings database, and and Mapping Police Violence) but they appear to be derivative of the two primary sources.  We also bring in data from the US Census Bureau, and we have been exploring another online dataset, the Officer Down Memorial Page that keeps records of all law enforcement officers who are killed on the job.
 
 Describe what is measured, the formats or file types currently used to store the data, and the approximate size of the data in terms of number bytes
-- We have the recorded deaths caused by police violence. Each victim's death is recorded as a row in an R dataframe, which itself is generated from scraping one of three websites. The three dataframes contain roughly 8.6 MB of information across three dataframes containing a combined 33812 rows.
+- Variables Measured:  The datasets on persons killed by police have demographic data on the age, sex, and race of the vicitim, the location (city, county, state, lat,long) of the death and additional information such as the cause of death and urls with pictures and news coverage relevant to case.  The census data provide yearly estimates of the population at the county level.
+- File formats: We have already developed tools to scrape the data into R.
+- Approximate size: Altogether, roughly 100 MB before cleaning.
 
 What is the current location of the data? (check all that apply if the data must be assembled from multiple sources) 
-- A private repository on Github
+- public repositories
 
 Who has access to the data currently?
-- There are 48 people who have access to the private repository
-- Of those 48, only 5 are contributors
-- Contributors include PL, Vaughn Johnson, Maddi Cummins, Jainul Vaghasia, and Wendy Liang
+- publicly available
  
 Are the data encumbered by license restrictions, IRB, FERPA, ITAR, or other legal restrictions?
 - No
 
 If necessary, is it permissible to copy or move the data to Studio resources, potentially including secure cloud resources? (Ignore technical constraints such as size and cost -- just consider legal or social restrictions.)
-  Yes
+ - Yes
 
 ## The justificaiton 
 Submit a 1-page summary of the project and objectives. You may paste free-form text here or click the upload button below to upload a file. 
