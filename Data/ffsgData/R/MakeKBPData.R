@@ -26,7 +26,6 @@ library(htmltab)
 #' @return Void. Saves the data to `save_file`.
 #' @export
 scrape_KBP_data <- function(save_file) {
-  save_file = file.path("./ScrapedFiles", save_file)
   this_year <- as.numeric(format(Sys.Date(), '%Y'))
 
   # killed by police, <https://killedbypolice.net/>

@@ -8,19 +8,22 @@
 library(readxl)
 library(dplyr)
 
-setwd('./ScrapedFiles/')
 
-# mapping police violence, <https://mappingpoliceviolence.org/>
-
-
-# get xlsx file and write
-url <- 'https://mappingpoliceviolence.org/s/MPVDatasetDownload-btzs.xlsx'
-download.file(url, destfile = 'MPV.xlsx')
-
-# View
-mpv <- read_xlsx('MPV.xlsx')
-file.remove("MPV.xlsx")
-
-glimpse(mpv)
-
-save.image("./MPV.clean.Rdata")
+#' Scrape the MPV database
+#' 
+#' @param url URL for MPV spreadsheet
+#' @param save_file filename to be saved in /ScrapedFiles/
+#' @return Void. Saves the data to `save_file`.
+#' @export
+scrape_MPV_data <- function(url, save_file) {
+  save_file = file.path("./ScrapedFiles", save_file)
+  TMP = "MPVTEMP"
+  # get xlsx file and write
+  download.file(url, destfile = TMP)
+  
+  # View
+  mpv <- read_xlsx(TMP)
+  file.remove(TMP)
+  
+  save.image("./MPV.clean.Rdata")
+}

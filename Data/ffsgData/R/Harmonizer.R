@@ -27,20 +27,25 @@
 #'      - Asian
 #'      - Pacific Islander
 
+#' This package always assumes you're in
+#' the top level directory for the package
+#' ie, where ffsg.Rproj is kept
+path_to_src = file.path('Data', 'ffsgData', 'R')
+
 library(dplyr)
 library(tidyverse)
 library(purrr)
 library(e1071)
 
-load("MasterScraper.R")
+source(file.path(path_to_src, "MasterScraper.R"))
 
 # Refresh data from all data sources
 scrape_all_data()
 
 scraped_files = c("fe.clean.Rdata", "MPV.clean.Rdata", "KBP.clean.Rdata")
-setwd("R")
+setwd("R") # TODO: fix this by use of `here`
 for (file in scraped_files) {
-  load(file.path("ScrapedFiles", file))
+  source(file.path(path_to_src, "ScrapedFiles", file))
 }
 
 #' Harmonize the various databases
@@ -196,7 +201,12 @@ kbp_harmonized = harmonize(kbp,
                 null_name,
                 null_age)
 
-save_file = "HarmonizedFiles/HarmonizedDataSets.RData"
+save_file = file.path("Data",
+                      "ffsgData",
+                      "R",
+                      "HarmonizedFiles",
+                      "HarmonizedDataSets.RData")
+
 save(fe_harmonized,
      mpv_harmonized,
      kbp_harmonized,

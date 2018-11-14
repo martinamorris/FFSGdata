@@ -18,9 +18,8 @@ library(rio)
 #' @param save_file
 #' @return Void. Saves the data to `save_file`.
 #' @export
-scrape_population_data <- function(state_urls, county_urls, save_file) {
-  save_file = file.path("./ScrapedFiles", save_file)
 
+scrape_population_data <- function(state_urls, county_urls, save_file) {
   ######################################################################
   #' state names and abbreviations
   
@@ -37,9 +36,10 @@ scrape_population_data <- function(state_urls, county_urls, save_file) {
   
   tmp1 <- rio::import(state_urls[1],
                       skip = 3)
-    
+  
+  print(state_urls[2])
   tmp2 <- rio::import(state_urls[2],
-                     skip = 3)
+                      skip = 3)
   
   #' check the structure of the data, 
   #' note rows 1-5 are US and regional totals and trailing rows 56+ are text

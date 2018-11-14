@@ -29,7 +29,6 @@ library(dplyr)
 #' @return Void. Saves the data to `save_file`.
 #' @export
 scrape_FE_data <- function(url, save_file) {
-  save_file = file.path("./ScrapedFiles", save_file)
   fe <- gs_read_csv(gs_url(url))
   
   ##################################################################################
