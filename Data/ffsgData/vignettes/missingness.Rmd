@@ -33,13 +33,15 @@ and naming conventions is accomplished in the `Harmonizer.R` and `MasterScraper.
 files. The sraped and harmonized dataframes are stored in the `HarmonizedFiles`
 directory. To refresh these documents, simply `source(Harmonizer.R)`.
 
+## The Goal
 This document seeks to address the next problem, which is missingness
-between these three datasets. We want to uncover
-
+between these three datasets. We want to uncover if there are any mechanisms
+behind missingness, and use that information to inform how we can impute missing 
+values, and also help with merging the three data sets.
 
 # The Datasets
 
-```{r}
+```{r, results="hide"}
 library(here)
 load(here::here(file.path("R", "HarmonizedFiles","HarmonizedDataSets.RData")))
 ```
@@ -87,14 +89,26 @@ colnames(info_table) = c('Name',
 knitr::kable(info_table)
 ```
 
-Table with common variables, columns for each data set, with
-3 Rows for each common variable:
+# Tabluating Missing Values
 
-Original name in dataset
-Original levels in dataset
-N missing
-Tables for unique variables for each data set, with columns for:
+```{r}
+mpv = mpv_harmonized
+kbp = kbp_harmonized
+fe  =  fe_harmonized
 
-Original name in dataset
-Original levels in dataset
-N missing
+mpv['source'] = 'mpv'
+kbp['source'] = 'kbp'
+ fe['source'] =  'fe'
+ 
+common_columns = c("source",
+                   "age", 
+                   "race",
+                   "sex",
+                   "date") # Name is also common, but won't be tabled
+
+all_datasets = rbind(mpv[, common_columns], 
+                 kbp[, common_columns], 
+                  fe[, common_columns])
+
+table(all_datasets)
+```
