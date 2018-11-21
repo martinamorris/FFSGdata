@@ -47,7 +47,8 @@ scrape_all_data()
 scraped_files = c("fe.clean.Rdata", "MPV.clean.Rdata", "KBP.clean.Rdata")
 
 for (file in scraped_files) {
-  source(file.path(path_to_src, "ScrapedFiles", file))
+  scraped_path = file.path(path_to_src, "ScrapedFiles", file)
+  load(scraped_path)
 }
 
 #' Harmonize the various databases
@@ -152,7 +153,7 @@ col_map = c("name" = "Victim's name",
             "age" = "Victim's age",
             "sex" = "Victim's gender",
             "race" = "Victim's race",
-            "date" = "Date of injury resulting in death (month/day/year)")
+            "date" = "Date of Incident (month/day/year)")
 
 race_encoding = c('Hispanic'        = NA,
                   'Native American' = "American Indian",
