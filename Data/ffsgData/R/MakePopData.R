@@ -115,5 +115,3 @@ scrape_population_data <- function(state_urls, county_urls, save_file) {
   
   save.image(save_file)
 }
-
-x = 10

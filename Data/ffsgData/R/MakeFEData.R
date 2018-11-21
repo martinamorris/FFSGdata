@@ -108,7 +108,6 @@ scrape_FE_data <- function(url, save_file) {
   }
   fe.clean$race <- as.character(lapply(fe.clean$race, replacement.2))
   
-  
   # save cleaned copy
-  save.image(save_file)
+  save(fe.clean, file=save_file)
 }

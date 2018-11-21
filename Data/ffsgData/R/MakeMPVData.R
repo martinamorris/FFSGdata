@@ -7,7 +7,7 @@
 #' This file scrapes the police killings data from <https://mappingpoliceviolence.org/>.
 library(readxl)
 library(dplyr)
-
+library(here)
 
 #' Scrape the MPV database
 #' 
@@ -16,7 +16,6 @@ library(dplyr)
 #' @return Void. Saves the data to `save_file`.
 #' @export
 scrape_MPV_data <- function(url, save_file) {
-  save_file = file.path("./ScrapedFiles", save_file)
   TMP = "MPVTEMP"
   # get xlsx file and write
   download.file(url, destfile = TMP)
@@ -25,5 +24,5 @@ scrape_MPV_data <- function(url, save_file) {
   mpv <- read_xlsx(TMP)
   file.remove(TMP)
   
-  save.image("./MPV.clean.Rdata")
+  save(mpv, file=save_file)
 }

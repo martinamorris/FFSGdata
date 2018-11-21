@@ -152,5 +152,5 @@ scrape_KBP_data <- function(save_file) {
 
   rm(list=ls(pattern="x"))
 
-  save.image(save_file)
+  save(kbp, file=save_file)
 }

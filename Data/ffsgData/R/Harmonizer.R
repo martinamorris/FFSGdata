@@ -30,12 +30,14 @@
 #' This package always assumes you're in
 #' the top level directory for the package
 #' ie, where ffsg.Rproj is kept
-path_to_src = file.path('Data', 'ffsgData', 'R')
 
 library(dplyr)
 library(tidyverse)
 library(purrr)
 library(e1071)
+library(here)
+
+path_to_src = here::here(file.path('Data', 'ffsgData', 'R'))
 
 source(file.path(path_to_src, "MasterScraper.R"))
 
@@ -43,7 +45,7 @@ source(file.path(path_to_src, "MasterScraper.R"))
 scrape_all_data()
 
 scraped_files = c("fe.clean.Rdata", "MPV.clean.Rdata", "KBP.clean.Rdata")
-setwd("R") # TODO: fix this by use of `here`
+
 for (file in scraped_files) {
   source(file.path(path_to_src, "ScrapedFiles", file))
 }
@@ -201,9 +203,7 @@ kbp_harmonized = harmonize(kbp,
                 null_name,
                 null_age)
 
-save_file = file.path("Data",
-                      "ffsgData",
-                      "R",
+save_file = file.path(path_to_src,
                       "HarmonizedFiles",
                       "HarmonizedDataSets.RData")
 
