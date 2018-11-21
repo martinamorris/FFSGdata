@@ -43,6 +43,8 @@ values, and also help with merging the three data sets.
 
 ```{r, results="hide"}
 library(here)
+## Uncomment to refresh 
+# source(here::here(file.path('R', 'Harmonizer.R')))
 load(here::here(file.path("R", "HarmonizedFiles","HarmonizedDataSets.RData")))
 ```
 
@@ -103,12 +105,27 @@ kbp['source'] = 'kbp'
 common_columns = c("source",
                    "age", 
                    "race",
-                   "sex",
-                   "date") # Name is also common, but won't be tabled
+                   "sex") # Name & Data are also common, but won't be tabled
 
 all_datasets = rbind(mpv[, common_columns], 
                  kbp[, common_columns], 
                   fe[, common_columns])
 
-table(all_datasets)
+for (column in common_columns[-1]) {
+    print(table(all_datasets[, c('source', column)]), usNA='always')
+}
 ```
+
+### Age analysis
+
+```{r}
+# Binned Age
+all_datasets[, 'age_bin'] = as.integer(as.numeric(all_datasets$age) / 10)
+print(table(all_datasets[, c('source', 'age_bin')]), usNA='always')
+
+# Ages that would need parsed / interpreted
+all_datasets[, 'simple_age'] =  grepl("^[0-9]{1,2}$", all_datasets$age)
+print(table(all_datasets[, c('source', 'simple_age')]), usNA='always')
+```
+
+

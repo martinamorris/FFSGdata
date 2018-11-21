@@ -37,7 +37,7 @@ library(purrr)
 library(e1071)
 library(here)
 
-path_to_src = here::here(file.path('Data', 'ffsgData', 'R'))
+path_to_src = here::here(file.path('R'))
 
 source(file.path(path_to_src, "MasterScraper.R"))
 
@@ -68,6 +68,7 @@ for (file in scraped_files) {
 harmonize <- function (df,
                    col_map,
                    race_encoding,
+                   sex_encoding,
                    date_format,
                    name_delim,
                    # TODO: make "nullification" more comprehensive,
@@ -108,11 +109,15 @@ harmonize <- function (df,
 
     # Harmonize nulls
     mutate(name = gsub("[^[:alnum:] ]", NA, name)) %>%
+      mutate(name = gsub("[^[0-9]]", NA, age)) %>%
     mutate(name = gsub(null_name, NA, name)) %>%
     mutate(age  = replace(age, grepl(null_age,   age), NA)) %>%
 
-    # Recode Race
-    mutate(race = recode(race, !!!race_encoding))
+    # Recode Columns
+    mutate(race = recode(race, !!!race_encoding)) %>%
+    mutate(sex  = recode( sex, !!!sex_encoding))
+
+
 
 
 
@@ -125,11 +130,20 @@ col_map = c('date' = 'dateMDY')
 
 race_encoding = c('African-American/Black' = 'Black',
                   'European-American/White' = 'White',
-                  'Hispanic/Latino' = NA,
+                  'Hispanic/Latino'         = NA,
                   'Native American/Alaskan' = "American Indian",
                   'Asian/Pacific Islander'  = NA,
                   'Middle Eastern'          = 'Asian',
-                  'Race unspecified'        = NA)
+                  'Race unspecified'        = NA,
+                  ' '                       = NA)
+
+sex_encoding = c(' ' = NA,
+                 'F' = 'Female',
+                 'M' = 'Male',
+                 'T' = 'Transgender',
+                 'Unknown' = NA,
+                 'W' = 'Female',
+                 'NULL' = NA)
 
 date_format = "%m/%d/%Y"
 name_delim  = " aka | or | transitioning from "
@@ -141,6 +155,7 @@ null_race = NA
 fe_harmonized = harmonize(fe.clean,
                           col_map,
                           race_encoding,
+                          sex_encoding,
                           date_format,
                           name_delim,
                           null_race,
@@ -157,7 +172,19 @@ col_map = c("name" = "Victim's name",
 
 race_encoding = c('Hispanic'        = NA,
                   'Native American' = "American Indian",
-                  'Unknown race'    = NA)
+                  'Unknown race'    = NA,
+                  'Unknown Race'    = NA,
+                  'Asian/Pacific Islander' = 'Pacific Islander',
+                  'Race unspecified'        = NA,
+                  ' '                       = NA)
+
+sex_encoding = c(' ' = NA,
+                 'F' = 'Female',
+                 'M' = 'Male',
+                 'T' = 'Transgender',
+                 'Unknown' = NA,
+                 'W' = 'Female',
+                 'NULL' = NA)
 
 date_format = "%Y-%m-%d"
 name_delim  = " aka | or | transitioning from "
@@ -169,6 +196,7 @@ null_race = NA
 mpv_harmonized = harmonize(mpv,
                           col_map,
                           race_encoding,
+                          sex_encoding,
                           date_format,
                           name_delim,
                           null_race,
@@ -186,7 +214,17 @@ race_encoding = c('B' = "Black",
                   'I' = "American Indian",
                   'PI'  = 'Pacific Islander',
                   'A' = 'Asian',
-                  'O' = NA)
+                  'O' = NA,
+                  'Race unspecified'        = NA,
+                  ' '                       = NA)
+
+sex_encoding = c(' ' = NA,
+                 'F' = 'Female',
+                 'M' = 'Male',
+                 'T' = 'Transgender',
+                 'Unknown' = NA,
+                 'W' = 'Female',
+                 'NULL' = NA)
 
 date_format = "%B %d, %Y"
 name_delim  = " aka | or | transitioning from "
@@ -198,6 +236,7 @@ null_race = NA
 kbp_harmonized = harmonize(kbp,
                 col_map,
                 race_encoding,
+                sex_encoding,
                 date_format,
                 name_delim,
                 null_race,
