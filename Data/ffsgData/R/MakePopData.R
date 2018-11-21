@@ -10,6 +10,7 @@ library(stringr)
 library(noncensus)
 library(plyr)
 library(rio)
+library(readxl)
 
 #' Scrape the Census Bureau's website for population data
 #' 
@@ -37,9 +38,23 @@ scrape_population_data <- function(state_urls, county_urls, save_file) {
   tmp1 <- rio::import(state_urls[1],
                       skip = 3)
   
-  print(state_urls[2])
-  tmp2 <- rio::import(state_urls[2],
-                      skip = 3)
+  # TODO:
+  # The Census Bureau's server returns
+  # an HTTP 304 error when you request 
+  # the link from R. This means, for some
+  # reason, the CB thinks we've cached the
+  # information on our side, and so is 
+  # trying to get us to pull from our own
+  # cache, instead of from the server.
+  # 
+  # The temporary hack here is to download
+  # the data via `curl` and the CL, and
+  # use that.
+  path = here::here(file.path("Data","ffsgData", "R", "censusExcelSheet", "nst-est2017-01.xlsx"))
+  tmp2 <- readxl::read_excel(path, skip=3)
+  
+  print(tmp1[1, ])
+  print(tmp2[1, ])
   
   #' check the structure of the data, 
   #' note rows 1-5 are US and regional totals and trailing rows 56+ are text

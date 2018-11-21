@@ -17,7 +17,7 @@
 #' @return Void. Adds all scraped data to /ScrapedFiles/ dir
 #' @exportdocument()
 
-path_to_src = file.path('Data', 'ffsgData', 'R')
+path_to_src = here::here(file.path('Data', 'ffsgData', 'R'))
 
 scrape_all_data <- function() {
   
@@ -25,6 +25,7 @@ scrape_all_data <- function() {
   source(file.path(path_to_src, "MakePopData.R"))
   state_urls  = c("https://www2.census.gov/programs-surveys/popest/tables/2000-2010/intercensal/state/st-est00int-01.xls",
                  "https://www2.census.gov/programs-surveys/popest/tables/2010-2017/state/totals/nst-est2017-01.xlsx")
+  
   county_urls = c("https://www2.census.gov/programs-surveys/popest/datasets/2000-2010/intercensal/county/co-est00int-tot.csv",
                   "https://www2.census.gov/programs-surveys/popest/datasets/2010-2016/counties/totals/co-est2016-alldata.csv")
   pop_save_file = file.path(path_to_src, "ScrapedFiles", "Pop.RData")
@@ -47,3 +48,5 @@ scrape_all_data <- function() {
   kbp_save_file = file.path(path_to_src, "ScrapedFiles", "KBP.clean.Rdata")
   scrape_KBP_data(kbp_save_file)
 }
+
+scrape_all_data()
