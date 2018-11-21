@@ -1,0 +1,100 @@
+---
+title: "Missingness"
+author: "Vaughn Johnson"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+FFSG has currently collected data from 4 data sources
+
+1. The US Census
+2. Fatal Encounters
+3. Mapping Police Violence
+4. Killed By Police
+
+The first data source is, generally speaking, complete and valid. Our challenge
+lies in the remaining three. Each data set contains information on police violence,
+where each row in the data set is a person who was killed by police, with information
+related to the deceased such as sex, race, age, as well as information
+relevant to their death, such as time of death and location. The challenge of
+collecting and harmonizing these three data sets so they follow similar coding
+and naming conventions is accomplished in the `Harmonizer.R` and `MasterScraper.R`
+files. The sraped and harmonized dataframes are stored in the `HarmonizedFiles`
+directory. To refresh these documents, simply `source(Harmonizer.R)`.
+
+This document seeks to address the next problem, which is missingness
+between these three datasets. We want to uncover
+
+
+# The Datasets
+
+```{r}
+library(here)
+load(here::here(file.path("R", "HarmonizedFiles","HarmonizedDataSets.RData")))
+```
+
+Here's a table summarizing some information about the datasets
+
+|Name|Abbreviation|Source URL|Live or archival|
+|---|---|---|---|---|---|---|---|
+|Killed By Police|`kbp`|http://www.killedbypolice.net/|Archival|
+|Mapping Police Violence|`mpv`|https://mappingpoliceviolence.org/s/MPVDatasetDownload.xlsx|Live|
+|Fatal Encounters|`fe`|https://docs.google.com/spreadsheets/d/1dKmaV_JiWcG8XBoRgP8b4e9Eopkpgt7FL7nyspvzAsE/edit#gid=0|Live|
+
+And here's another table with information about the dimensionality of the datasets.
+
+```{r, results="hide"}
+info_table = matrix(nrow=3, ncol=5)
+info_table[1,] = c('Name',
+                   'Start Year',
+                   'End Year',
+                   'Number of Rows',
+                   'Number of Columns')
+
+get_data_set_info <- function(dataset) {
+    return( c(NA,
+              min(dataset$date, na.rm = T),
+              max(dataset$date, na.rm = T),
+              nrow(dataset),
+              ncol(dataset)))
+}
+
+info_table[1, ] = print(get_data_set_info(mpv_harmonized))
+info_table[2, ] = print(get_data_set_info(kbp_harmonized))
+info_table[3, ] = print(get_data_set_info(fe_harmonized))
+info_table[, 1] = c("MPV", "KBP", "FE")
+
+info_table = data.frame(info_table)
+colnames(info_table) = c('Name',
+                         'Start Date',
+                         'End Date',
+                         'Number of Rows',
+                         'Number of Columns')
+```
+
+```{r, results = "asis"}
+knitr::kable(info_table)
+```
+
+Table with common variables, columns for each data set, with
+3 Rows for each common variable:
+
+Original name in dataset
+Original levels in dataset
+N missing
+Tables for unique variables for each data set, with columns for:
+
+Original name in dataset
+Original levels in dataset
+N missing
