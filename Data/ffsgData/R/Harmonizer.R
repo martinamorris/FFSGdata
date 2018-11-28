@@ -39,10 +39,9 @@ library(here)
 
 path_to_src = here::here(file.path('R'))
 
-source(file.path(path_to_src, "MasterScraper.R"))
+#source(file.path(path_to_src, "MasterScraper.R"))
 
 # Refresh data from all data sources
-scrape_all_data()
 
 scraped_files = c("fe.clean.Rdata", "MPV.clean.Rdata", "KBP.clean.Rdata")
 
@@ -109,8 +108,8 @@ harmonize <- function (df,
 
     # Harmonize nulls
     mutate(name = gsub("[^[:alnum:] ]", NA, name)) %>%
-      mutate(name = gsub("[^[0-9]]", NA, age)) %>%
-    mutate(name = gsub(null_name, NA, name)) %>%
+
+    mutate(age = gsub("[^[0-9]]", NA, age)) %>%
     mutate(age  = replace(age, grepl(null_age,   age), NA)) %>%
 
     # Recode Columns
@@ -128,7 +127,7 @@ harmonize <- function (df,
 ### Fatal Encounters
 col_map = c('date' = 'dateMDY')
 
-race_encoding = c('African-American/Black' = 'Black',
+race_encoding = c('African-American/Black'  = 'Black',
                   'European-American/White' = 'White',
                   'Hispanic/Latino'         = NA,
                   'Native American/Alaskan' = "American Indian",
@@ -138,6 +137,7 @@ race_encoding = c('African-American/Black' = 'Black',
                   ' '                       = NA)
 
 sex_encoding = c(' ' = NA,
+                 'NA' = NA,
                  'F' = 'Female',
                  'M' = 'Male',
                  'T' = 'Transgender',
@@ -179,6 +179,7 @@ race_encoding = c('Hispanic'        = NA,
                   ' '                       = NA)
 
 sex_encoding = c(' ' = NA,
+                 'NA' = NA,
                  'F' = 'Female',
                  'M' = 'Male',
                  'T' = 'Transgender',
@@ -219,6 +220,7 @@ race_encoding = c('B' = "Black",
                   ' '                       = NA)
 
 sex_encoding = c(' ' = NA,
+                 'NA' = NA,
                  'F' = 'Female',
                  'M' = 'Male',
                  'T' = 'Transgender',
@@ -229,7 +231,7 @@ sex_encoding = c(' ' = NA,
 date_format = "%B %d, %Y"
 name_delim  = " aka | or | transitioning from "
 
-null_name = ""
+null_name = "NULL"
 null_age = NA
 null_race = NA
 
