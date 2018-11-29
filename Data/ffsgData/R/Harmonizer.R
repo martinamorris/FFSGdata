@@ -18,6 +18,7 @@
 #'     sex: The gender of the victim
 #'     race: The race of the victim
 #'     date: The date of the victim's death
+#'     zip: The zipcode of the victim's death
 #'
 #'   race names:
 #'      U.S. Census Bureau's names and defintion
@@ -39,9 +40,9 @@ library(here)
 
 path_to_src = here::here(file.path('R'))
 
-#source(file.path(path_to_src, "MasterScraper.R"))
-
 # Refresh data from all data sources
+# source(file.path(path_to_src, "MasterScraper.R"))
+
 
 scraped_files = c("fe.clean.Rdata", "MPV.clean.Rdata", "KBP.clean.Rdata")
 
@@ -61,8 +62,8 @@ for (file in scraped_files) {
 #' @param date_format a regex string representing the way the date is formatted in df
 #' @param name_delim a regex string representing the delimiter
 #'   between a person name and alias
-#' @param  null_name the symbol used to signify null name
-#' @param  null_race the symbol used to signify null race
+#' @param  null_names the symbol used to signify null name
+#' @param  null_races the symbol used to signify null race
 #' @param  null_age the symbol used to signify null age
 harmonize <- function (df,
                    col_map,
@@ -72,12 +73,12 @@ harmonize <- function (df,
                    name_delim,
                    # TODO: make "nullification" more comprehensive,
                    # and more general
-                   null_name,
-                   null_race,
+                   null_names,
+                   null_races,
                    null_age) {
 
-
   canon_cols = c("name", "age", "sex", "race", "date")
+
   canon_races = c("White", "Black", NA,
                   "American Indian", "Asian", "Pacific Islander")
 
@@ -87,9 +88,7 @@ harmonize <- function (df,
 
   # Assert that our data frame has the right columns
   # And arguments ahve right fomrat
-  stopifnot(all(names(col_map) %in% canon_cols))
   stopifnot(all(race_encoding %in% canon_races))
-  stopifnot(length(relevant_cols) == length(canon_cols))
 
   # Columns left unchanged
   irrelevant_cols = setdiff(colnames(df), relevant_cols)
@@ -107,10 +106,11 @@ harmonize <- function (df,
     mutate(date = as.character(strptime(date, format = date_format))) %>%
 
     # Harmonize nulls
+    mutate(name  = replace(name, name %in% null_names, NA)) %>%
+    mutate(race  = replace(race, race %in% null_races, NA)) %>%
     mutate(name = gsub("[^[:alnum:] ]", NA, name)) %>%
+    mutate(age  = gsub("[^[0-9]]", NA, age)) %>%
 
-    mutate(age = gsub("[^[0-9]]", NA, age)) %>%
-    mutate(age  = replace(age, grepl(null_age,   age), NA)) %>%
 
     # Recode Columns
     mutate(race = recode(race, !!!race_encoding)) %>%
@@ -118,11 +118,13 @@ harmonize <- function (df,
 
 
 
-
-
   harmonized_df[irrelevant_cols] = df[irrelevant_cols]
   return(harmonized_df)
 }
+
+
+
+
 
 ### Fatal Encounters
 col_map = c('date' = 'dateMDY')
@@ -148,9 +150,9 @@ sex_encoding = c(' ' = NA,
 date_format = "%m/%d/%Y"
 name_delim  = " aka | or | transitioning from "
 
-null_name = "Name withheld by police"
+null_names = c('Name withheld by police', "")
 null_age = NA
-null_race = NA
+null_races= c(" ")
 
 fe_harmonized = harmonize(fe.clean,
                           col_map,
@@ -158,8 +160,8 @@ fe_harmonized = harmonize(fe.clean,
                           sex_encoding,
                           date_format,
                           name_delim,
-                          null_race,
-                          null_name,
+                          null_names,
+                          null_races,
                           null_age)
 
 
@@ -168,7 +170,8 @@ col_map = c("name" = "Victim's name",
             "age" = "Victim's age",
             "sex" = "Victim's gender",
             "race" = "Victim's race",
-            "date" = "Date of Incident (month/day/year)")
+            "date" = "Date of Incident (month/day/year)",
+            "zip" = "Zipcode")
 
 race_encoding = c('Hispanic'        = NA,
                   'Native American' = "American Indian",
@@ -190,9 +193,10 @@ sex_encoding = c(' ' = NA,
 date_format = "%Y-%m-%d"
 name_delim  = " aka | or | transitioning from "
 
-null_name = "Name withheld by police"
+null_names = c("Name withheld by police",
+               "Unknown name")
 null_age  = NA
-null_race = NA
+null_races= c(" ")
 
 mpv_harmonized = harmonize(mpv,
                           col_map,
@@ -200,9 +204,13 @@ mpv_harmonized = harmonize(mpv,
                           sex_encoding,
                           date_format,
                           name_delim,
-                          null_race,
-                          null_name,
+                          null_names,
+                          null_races,
                           null_age)
+
+
+
+
 
 ### Killed By Police
 col_map = c('name' = 'deceased_name',
@@ -231,9 +239,9 @@ sex_encoding = c(' ' = NA,
 date_format = "%B %d, %Y"
 name_delim  = " aka | or | transitioning from "
 
-null_name = "NULL"
+null_names = c(" ", "", "NULL")
 null_age = NA
-null_race = NA
+null_races= c(" ")
 
 kbp_harmonized = harmonize(kbp,
                 col_map,
@@ -241,9 +249,10 @@ kbp_harmonized = harmonize(kbp,
                 sex_encoding,
                 date_format,
                 name_delim,
-                null_race,
-                null_name,
+                null_names,
+                null_races,
                 null_age)
+
 
 save_file = file.path(path_to_src,
                       "HarmonizedFiles",

@@ -41,91 +41,109 @@ values, and also help with merging the three data sets.
 
 # The Datasets
 
-```{r, results="hide"}
+```{r, results="hide", message=FALSE}
 library(here)
-## Uncomment to refresh 
-# source(here::here(file.path('R', 'Harmonizer.R')))
+library(DT)
+library(tidyr)
+
+source(here::here(file.path('R', 'Harmonizer.R')))
 load(here::here(file.path("R", "HarmonizedFiles","HarmonizedDataSets.RData")))
+
+fe  =  fe_harmonized
+mpv = mpv_harmonized
+kbp = kbp_harmonized
+
 ```
 
-Here's a table summarizing some information about the datasets
+Here are the three data scoures on Police Violence
 
 |Name|Abbreviation|Source URL|Live or archival|
 |---|---|---|---|---|---|---|---|
-|Killed By Police|`kbp`|http://www.killedbypolice.net/|Archival|
-|Mapping Police Violence|`mpv`|https://mappingpoliceviolence.org/s/MPVDatasetDownload.xlsx|Live|
-|Fatal Encounters|`fe`|https://docs.google.com/spreadsheets/d/1dKmaV_JiWcG8XBoRgP8b4e9Eopkpgt7FL7nyspvzAsE/edit#gid=0|Live|
+|Killed By Police|`kbp`|[link](http://www.killedbypolice.net/)|Archival|
+|Mapping Police Violence|`mpv`|[link](https://mappingpoliceviolence.org/s/MPVDatasetDownload.xlsx)|Live|
+|Fatal Encounters|`fe`|[link](https://docs.google.com/spreadsheets/d/1dKmaV_JiWcG8XBoRgP8b4e9Eopkpgt7FL7nyspvzAsE/edit#gid=0)|Live|
 
 And here's another table with information about the dimensionality of the datasets.
 
-```{r, results="hide"}
-info_table = matrix(nrow=3, ncol=5)
-info_table[1,] = c('Name',
-                   'Start Year',
-                   'End Year',
-                   'Number of Rows',
-                   'Number of Columns')
+```{r, results="hide", echo=FALSE}
+cols = c('Name',
+         'Start Date',
+         'End Date',
+         'Number of Rows',
+         'Number of Columns',
+         'Fraction of dataset missing')
+
+info_table = data.frame(matrix(nrow=3, ncol=length(cols)))
+
+info_table = setNames(info_table, cols)
 
 get_data_set_info <- function(dataset) {
     return( c(NA,
               min(dataset$date, na.rm = T),
               max(dataset$date, na.rm = T),
               nrow(dataset),
-              ncol(dataset)))
+              ncol(dataset),
+              sum(is.na(dataset)) / (nrow(dataset) * ncol(dataset))))
 }
 
-info_table[1, ] = print(get_data_set_info(mpv_harmonized))
-info_table[2, ] = print(get_data_set_info(kbp_harmonized))
-info_table[3, ] = print(get_data_set_info(fe_harmonized))
-info_table[, 1] = c("MPV", "KBP", "FE")
+info_table[1, ] = get_data_set_info(mpv)
+info_table[2, ] = get_data_set_info(kbp)
+info_table[3, ] = get_data_set_info(fe)
+info_table$Name = c("MPV", "KBP", "FE")
+info_table[, c('Number of Rows', 'Number of Columns', 'Fraction of dataset missing')] =     lapply(info_table[, c('Number of Rows', 'Number of Columns', 'Fraction of dataset missing')], as.numeric)
+info_table$`Fraction of dataset missing` = round(info_table$`Fraction of dataset missing`, 3)
 
-info_table = data.frame(info_table)
-colnames(info_table) = c('Name',
-                         'Start Date',
-                         'End Date',
-                         'Number of Rows',
-                         'Number of Columns')
+info_table
 ```
 
-```{r, results = "asis"}
+```{r, results = "asis", echo=FALSE}
 knitr::kable(info_table)
 ```
 
-# Tabluating Missing Values
-
 ```{r}
-mpv = mpv_harmonized
-kbp = kbp_harmonized
-fe  =  fe_harmonized
-
-mpv['source'] = 'mpv'
-kbp['source'] = 'kbp'
- fe['source'] =  'fe'
- 
-common_columns = c("source",
-                   "age", 
-                   "race",
-                   "sex") # Name & Data are also common, but won't be tabled
-
-all_datasets = rbind(mpv[, common_columns], 
-                 kbp[, common_columns], 
-                  fe[, common_columns])
-
-for (column in common_columns[-1]) {
-    print(table(all_datasets[, c('source', column)]), usNA='always')
+make_freq_table <- function(field, precision) {
+    freq_table = plyr::count(field)
+    
+    freq_table$'proportion' =  freq_table$freq / sum(freq_table$freq)
+    freq_table$'proportion' = round(freq_table$'proportion', 2)
+    
+    freq_table$'cumulative' = cumsum(freq_table$'proportion')
+    freq_table$'cumulative' =  round(freq_table$'cumulative', 2)
+    
+    return(freq_table)
 }
 ```
 
-### Age analysis
 
+## Fatal Encounters
 ```{r}
-# Binned Age
-all_datasets[, 'age_bin'] = as.integer(as.numeric(all_datasets$age) / 10)
-print(table(all_datasets[, c('source', 'age_bin')]), usNA='always')
-
-# Ages that would need parsed / interpreted
-all_datasets[, 'simple_age'] =  grepl("^[0-9]{1,2}$", all_datasets$age)
-print(table(all_datasets[, c('source', 'simple_age')]), usNA='always')
+datatable(make_freq_table(fe$name, 3))
+datatable(make_freq_table(fe$age, 3))
+datatable(make_freq_table(fe$race, 3))
+datatable(make_freq_table(fe$sex, 3))
+datatable(make_freq_table(fe$zip, 3))
+datatable(make_freq_table(fe$date, 3))
 ```
+
+## Mapping Police Violence
+```{r}
+datatable(make_freq_table(mpv$name, 3))
+datatable(make_freq_table(mpv$age, 3))
+datatable(make_freq_table(mpv$race, 3))
+datatable(make_freq_table(mpv$sex, 3))
+datatable(make_freq_table(mpv$zip, 3))
+datatable(make_freq_table(mpv$date, 3))
+```
+
+## Killed By Police
+```{r}
+datatable(make_freq_table(kbp$name, 3))
+datatable(make_freq_table(kbp$age, 3))
+datatable(make_freq_table(kbp$race, 3))
+datatable(make_freq_table(kbp$sex, 3))
+datatable(make_freq_table(kbp$zip, 3))
+datatable(make_freq_table(kbp$date, 3))
+```
+
 
 
