@@ -112,37 +112,40 @@ make_freq_table <- function(field, precision) {
     
     return(freq_table)
 }
+
+display <- function(source, field) {
+    return(datatable(make_freq_table(source[,field], 3)))
+}
 ```
 
 
 ## Fatal Encounters
 ```{r}
-datatable(make_freq_table(fe$name, 3))
-datatable(make_freq_table(fe$age, 3))
-datatable(make_freq_table(fe$race, 3))
-datatable(make_freq_table(fe$sex, 3))
-datatable(make_freq_table(fe$zip, 3))
-datatable(make_freq_table(fe$date, 3))
+display(fe, 'name')
+display(fe, 'age')
+display(fe, 'race')
+display(fe, 'sex')
+display(fe, 'zip')
+display(fe, 'date')
 ```
 
 ## Mapping Police Violence
 ```{r}
-datatable(make_freq_table(mpv$name, 3))
-datatable(make_freq_table(mpv$age, 3))
-datatable(make_freq_table(mpv$race, 3))
-datatable(make_freq_table(mpv$sex, 3))
-datatable(make_freq_table(mpv$zip, 3))
-datatable(make_freq_table(mpv$date, 3))
+display(mpv, 'name')
+display(mpv, 'age')
+display(mpv, 'race')
+display(mpv, 'sex')
+display(mpv, 'zip')
+display(mpv, 'date')
 ```
 
 ## Killed By Police
 ```{r}
-datatable(make_freq_table(kbp$name, 3))
-datatable(make_freq_table(kbp$age, 3))
-datatable(make_freq_table(kbp$race, 3))
-datatable(make_freq_table(kbp$sex, 3))
-datatable(make_freq_table(kbp$zip, 3))
-datatable(make_freq_table(kbp$date, 3))
+display(kbp, 'name')
+display(kbp, 'age')
+display(kbp, 'race')
+display(kbp, 'sex')
+display(kbp, 'date')
 ```
 
 
