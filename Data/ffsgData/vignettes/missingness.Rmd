@@ -1,4 +1,4 @@
----
+devtools::use_vignette("my-vignette")---
 title: "Missingness"
 author: "Vaughn Johnson"
 date: "`r Sys.Date()`"
@@ -100,53 +100,18 @@ info_table
 knitr::kable(info_table)
 ```
 
+# Data Munging and Concatenation
+To describe missingness a little better, I'm going to take the field which are
+common between the three shooting datasets, and concatenate them, with an additional
+column remembering which rows belong to which data sets.
+
 ```{r}
-make_freq_table <- function(field, precision) {
-    freq_table = plyr::count(field)
-    
-    freq_table$'proportion' =  freq_table$freq / sum(freq_table$freq)
-    freq_table$'proportion' = round(freq_table$'proportion', 2)
-    
-    freq_table$'cumulative' = cumsum(freq_table$'proportion')
-    freq_table$'cumulative' =  round(freq_table$'cumulative', 2)
-    
-    return(freq_table)
-}
+common_cols = c('source', 'name', 'age', 'sex', 'race', 'date')
+fe['source'] = 'fe'
+mpv['source'] = 'mpv'
+kbp['source'] = 'kbp'
 
-display <- function(source, field) {
-    return(datatable(make_freq_table(source[,field], 3)))
-}
+combined = rbind(fe[common_cols], mpv[common_cols], kbp[common_cols])
+
+table(combined[c('source','race')], useNA = 'always') / sum(table(combined[c('source','race')], useNA = 'always'))
 ```
-
-
-## Fatal Encounters
-```{r}
-display(fe, 'name')
-display(fe, 'age')
-display(fe, 'race')
-display(fe, 'sex')
-display(fe, 'zip')
-display(fe, 'date')
-```
-
-## Mapping Police Violence
-```{r}
-display(mpv, 'name')
-display(mpv, 'age')
-display(mpv, 'race')
-display(mpv, 'sex')
-display(mpv, 'zip')
-display(mpv, 'date')
-```
-
-## Killed By Police
-```{r}
-display(kbp, 'name')
-display(kbp, 'age')
-display(kbp, 'race')
-display(kbp, 'sex')
-display(kbp, 'date')
-```
-
-
-

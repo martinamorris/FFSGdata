@@ -71,8 +71,6 @@ harmonize <- function (df,
                    sex_encoding,
                    date_format,
                    name_delim,
-                   # TODO: make "nullification" more comprehensive,
-                   # and more general
                    null_names,
                    null_races,
                    null_age) {
