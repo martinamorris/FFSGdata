@@ -1,0 +1,1 @@
+This folder will hold the public-facing pages for the FFSG repository.
