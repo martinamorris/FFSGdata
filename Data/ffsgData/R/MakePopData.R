@@ -50,8 +50,10 @@ scrape_population_data <- function(state_urls, county_urls, save_file) {
   # The temporary hack here is to download
   # the data via `curl` and the CL, and
   # use that.
-  path = here::here(file.path("R", "censusExcelSheet", "nst-est2017-01.xlsx"))
-  tmp2 <- readxl::read_excel(path, skip=3)
+  #path = here::here(file.path("R", "censusExcelSheet", "nst-est2017-01.xlsx"))
+  #tmp2 <- readxl::read_excel(path, skip=3)
+  tmp2 <- rio::import(state_urls[2],
+                      skip = 3)
 
   print(tmp1[1, ])
   print(tmp2[1, ])
