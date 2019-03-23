@@ -211,9 +211,11 @@ mpv_harmonized = harmonize(mpv,
 
 
 ### Killed By Police
-col_map = c('name' = 'deceased_name',
-            'age'  = 'deceased_age',
-            'sex'  = 'gender')
+col_map = c('name' = 'Name',
+            'age'  = 'Age',
+            'sex'  = 'Gender',
+            'race' = 'Race',
+            'date' = 'Date')
 
 race_encoding = c('B' = "Black",
                   'W' = 'White',

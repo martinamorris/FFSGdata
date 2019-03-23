@@ -55,27 +55,28 @@ scrape_population_data <- function(state_urls, county_urls, save_file) {
   tmp2 <- rio::import(state_urls[2],
                       skip = 3)
 
-  print(tmp1[1, ])
-  print(tmp2[1, ])
-
   #' check the structure of the data,
   #' note rows 1-5 are US and regional totals and trailing rows 56+ are text
-  #' so
 
   pop_all <- filter(tmp1, row_number() %in% 1:56) %>%
 
     full_join(filter(tmp2, row_number() %in% 1:56)) %>%
 
-    mutate(state_name = gsub("\\.", "", X__1)) %>%
+    mutate(state_name = gsub("\\.", "", "..1")) %>%
 
-    left_join(state_id) %>%
+    left_join(state_id)
 
-    rename_all(~sub('20', 'p20', .x)) %>%
+  year_cols = names(pop_all)[grepl("20", names(pop_all))]
 
-    select(state_name, state_abb, p2000:p2009, p2010:p2017)
+  pop_all = pop_all %>%
+      select(c("state_name", "state_abb", year_cols))
 
-  pop_region <- pop_all[2:5,-2]
-  pop_state <- pop_all[6:56,]
+  #' Again, note rows 1-5 are US and regional
+  #' totals and trailing rows 56+ are text
+  region_rows = 2:5
+  state_rows = 6:56
+  pop_region <- pop_all[region_rows,-2]
+  pop_state <- pop_all[state_rows,]
 
 
   ####################################################################
@@ -84,8 +85,9 @@ scrape_population_data <- function(state_urls, county_urls, save_file) {
   tmp1 <- rio::import(county_urls[1])
   tmp2 <- rio::import(county_urls[2])
 
-  pop_county <- select(tmp1,-POPESTIMATE2010) %>%
-    full_join(tmp2,
+  pop_county = tmp1 %>%
+        select(-POPESTIMATE2010) %>%
+        full_join(tmp2,
               by=c("SUMLEV",
                    "REGION",
                    "DIVISION",
@@ -94,22 +96,21 @@ scrape_population_data <- function(state_urls, county_urls, save_file) {
                    "STNAME",
                    "CTYNAME")) %>%
 
-    filter(CTYNAME != 0) %>%
+        filter(CTYNAME != 0) %>%
 
-    mutate(county_num = COUNTY,
-           county = gsub(" County", "", CTYNAME),
-           state_name = STNAME,
-           state_num = STATE
-           ) %>%
+        mutate(county_num = COUNTY,
+               county = gsub(" County", "", CTYNAME),
+               state_name = STNAME,
+               state_num = STATE
+               ) %>%
 
-    left_join(state_id) %>%
+        left_join(state_id)
 
-    rename_all(~sub('POPESTIMATE', 'p', .x)) %>%
+  year_cols = names(pop_county)[grepl("20", names(pop_county))]
 
-    select(state_name, state_abb, state_num, county, county_num,
-           p2000:p2009, p2010:p2016)
-
-  table(pop_county$state_num)
+  pop_county = pop_county %>%
+      select(c("state_name", "state_abb", "state_num", "county", "county_num",
+           year_cols))
 
   pop_county_list <- dlply(pop_county, "state_name", identity)
 

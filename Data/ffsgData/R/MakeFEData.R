@@ -11,7 +11,7 @@ library(googlesheets)
 library(dplyr)
 
 # assumes current dir is local repo dir.
-# Don't need this anymore -- best not to setwd to play nice with sourcing from 
+# Don't need this anymore -- best not to setwd to play nice with sourcing from
 # other files. Instead use mydir and paste to save out.
 #setwd(paste(mydir, 'Data/Scraping/ScrapedFiles/', sep="/"))
 
@@ -23,56 +23,78 @@ library(dplyr)
 # note you can retrieve/view parsing problems with problems(fe)
 
 #' Scrape the Census Bureau's website for population data
-#' 
+#'
 #' @param url URL for Fatal Encounters spreadsheet
 #' @param save_file filename to be saved in /ScrapedFiles/
 #' @return Void. Saves the data to `save_file`.
 #' @export
 scrape_FE_data <- function(url, save_file) {
   fe <- gs_read_csv(gs_url(url))
-  
+
   ##################################################################################
-  
-  
-  # remove non-pertinent columns; these include columns "read me", 
+
+
+  # remove non-pertinent columns; these include columns "read me",
   # undocumented columns with only one data point, and a duplicate ID col
-  fe <- fe[,c(-1, -28, -26, -25, -23, -22)]
-  
+  irrelevant_cols = c("Unique ID",
+                      "Unique identifier (redundant)",
+                      "Unique ID formula",
+                      "Were police aware of symptoms of mental illness before interaction? INTERNAL USE, NOT FOR ANALYSIS",
+                      "Video")
+  fe = fe %>% select(-irrelevant_cols)
+
   # Clean up column names
-  colnames(fe) <- c('name', 'age', 'sex', 'race', 'URLpic', 'dateMDY', 'address',
-                    'city', 'state',	'zip', 'county',	'fullAddress', 'latitude', 'longitude',
-                    'agency', 'causeOfDeath', 'circumstances', 
-                    'officialDisposition', 'URLarticle', 'mentalIllness',
-                    'Description','year')
-  
+
+  new_names = list("Subject's name" = 'name',
+                   "Subject's age" = 'age',
+                   "Subject's race" = 'race',
+                   "Subject's gender" = 'sex',
+                   "URL of image of deceased" = 'URLpic',
+                   "Date of injury resulting in death (month/day/year)" = 'dateMDY',
+                   "Location of injury (address)" = 'address',
+                   "Location of death (city)" ='city',
+                   "Location of death (state)" = 'state',
+                   "Location of death (zip code)" = 'zip',
+                   "Location of death (county)" = 'county',
+                   "Full Address" = 'fullAddress',
+                   "Latitude" = 'latitude',
+                   "Longitude" = 'longitude',
+                   "Agency(ies) involved in death" = 'agency',
+                    "Cause of death" = 'causeOfDeath',
+                    "A brief description of the circumstances surrounding the death" = 'circumstances',
+                   "Official disposition of death (justified or other) INTERNAL USE, NOT FOR ANALYSIS" = 'officialDisposition',
+            "Link to news article or photo of official document" = 'URLarticle',
+                    "Date&Description" = 'Description',
+                    "Date (Year)" = 'year')
+
+  fe = fe %>% rename(new_names)
+
   # remove data points that are not fact-checked
-  boundary <- which(fe$name == "Items below this row have not been fact-checked.")
-  fe <- filter(fe, row_number() < boundary)
-  
-  dim(fe)
-  
+  fe = fe %>% filter(fe$name == "Items below this row have not been fact-checked.")
+
   # ID non-police-shootings
   suicidal.causes <- c("Drug overdose",
-                       "Murder-suicide", 
-                       "Murder/suicide", 
-                       "Ruled an overdose", 
-                       "Ruled natural causes", 
-                       "Ruled suicide", 
-                       "Substance use", 
+                       "Murder-suicide",
+                       "Murder/suicide",
+                       "Ruled an overdose",
+                       "Ruled natural causes",
+                       "Ruled suicide",
+                       "Substance use",
                        "suicide")
-  fe$kbp.filter <- ifelse(toupper(fe$`officialDisposition`) 
-                               %in% toupper(suicidal.causes), 
+
+  fe$kbp.filter <- ifelse(toupper(fe$`officialDisposition`)
+                               %in% toupper(suicidal.causes),
                                "killed by self", "killed by police")
-  
+
   # Filter out non-police-shootings and write out clean FE csv
   fe.clean <- filter(fe, kbp.filter == "killed by police")
-  
-  
+
+
   ## Clean up field entries
-  
+
   # clean up year, using dateMDY variable -- this will fix the parsing errors
   fe.clean$year <- as.numeric(substr(fe.clean$dateMDY,7,10))
-  
+
   # fix spelling errors in gender and race
   replacement <- function(x) {
     if (is.na(x)) {
@@ -85,7 +107,7 @@ scrape_FE_data <- function(url, save_file) {
     }
   }
   fe.clean$sex <- as.character(lapply(fe.clean$sex, replacement))
-  
+
   replacement.2 <- function(x) {
     if (is.na(x)) {
       return(NA)
@@ -104,10 +126,10 @@ scrape_FE_data <- function(url, save_file) {
       return("Native American/Alaskan")
     } else if (RecordLinkage::jarowinkler(x, "Race unspecified") >= 0.9) {
       return("Race unspecified")
-    } 
+    }
   }
   fe.clean$race <- as.character(lapply(fe.clean$race, replacement.2))
-  
+
   # save cleaned copy
   save(fe.clean, file=save_file)
 }
