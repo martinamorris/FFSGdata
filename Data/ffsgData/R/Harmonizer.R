@@ -41,7 +41,7 @@ library(here)
 path_to_src = here::here(file.path('R'))
 
 # Refresh data from all data sources
-# source(file.path(path_to_src, "MasterScraper.R"))
+source(file.path(path_to_src, "MasterScraper.R"))
 
 
 scraped_files = c("fe.clean.Rdata", "MPV.clean.Rdata", "KBP.clean.Rdata")
