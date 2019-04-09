@@ -5,9 +5,8 @@
 #' ---
 
 #' This file scrapes the police killings data from <https://fatalencounters.org/>.
+#'
 
-#install.packages(c('googlesheets', 'RecordLinkage'))
-# library(googlesheets)
 library(RecordLinkage)
 library(dplyr)
 library(rio)
