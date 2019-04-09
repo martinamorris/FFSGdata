@@ -7,8 +7,10 @@
 #' This file scrapes the police killings data from <https://fatalencounters.org/>.
 
 #install.packages(c('googlesheets', 'RecordLinkage'))
-library(googlesheets)
+# library(googlesheets)
+library(RecordLinkage)
 library(dplyr)
+library(rio)
 
 # assumes current dir is local repo dir.
 # Don't need this anymore -- best not to setwd to play nice with sourcing from
@@ -29,10 +31,9 @@ library(dplyr)
 #' @return Void. Saves the data to `save_file`.
 #' @export
 scrape_FE_data <- function(url, save_file) {
-  fe <- gs_read_csv(gs_url(url))
+  fe <- rio::import(url, sep=",")
 
   ##################################################################################
-
 
   # remove non-pertinent columns; these include columns "read me",
   # undocumented columns with only one data point, and a duplicate ID col
@@ -41,6 +42,7 @@ scrape_FE_data <- function(url, save_file) {
                       "Unique ID formula",
                       "Were police aware of symptoms of mental illness before interaction? INTERNAL USE, NOT FOR ANALYSIS",
                       "Video")
+
   fe = fe %>% select(-irrelevant_cols)
 
   # Clean up column names
@@ -70,7 +72,7 @@ scrape_FE_data <- function(url, save_file) {
   fe = fe %>% rename(new_names)
 
   # remove data points that are not fact-checked
-  fe = fe %>% filter(fe$name == "Items below this row have not been fact-checked.")
+  fe = fe %>% filter(fe$name != "Items below this row have not been fact-checked.")
 
   # ID non-police-shootings
   suicidal.causes <- c("Drug overdose",
@@ -89,7 +91,6 @@ scrape_FE_data <- function(url, save_file) {
   # Filter out non-police-shootings and write out clean FE csv
   fe.clean <- filter(fe, kbp.filter == "killed by police")
 
-
   ## Clean up field entries
 
   # clean up year, using dateMDY variable -- this will fix the parsing errors
@@ -106,6 +107,7 @@ scrape_FE_data <- function(url, save_file) {
       return("Male")
     }
   }
+
   fe.clean$sex <- as.character(lapply(fe.clean$sex, replacement))
 
   replacement.2 <- function(x) {

@@ -39,7 +39,10 @@ scrape_all_data <- function() {
 
   #' Fatal Encounters
   source(file.path(path_to_src, "MakeFEData.R"))
-  url = 'https://docs.google.com/spreadsheets/d/1dKmaV_JiWcG8XBoRgP8b4e9Eopkpgt7FL7nyspvzAsE/export?format=csv&id=1dKmaV_JiWcG8XBoRgP8b4e9Eopkpgt7FL7nyspvzAsE&gid=0'
+  doc_id = "1dKmaV_JiWcG8XBoRgP8b4e9Eopkpgt7FL7nyspvzAsE"
+  url_tempalte = 'https://docs.google.com/spreadsheets/d/DOC_ID/export?format=tsv'
+  url = sub("(*.)DOC_ID(*.)", paste("\\1", doc_id, "\\2", sep=""), url_tempalte)
+
   fe_save_file = file.path(path_to_src, "ScrapedFiles", "fe.clean.Rdata")
   scrape_FE_data(url, fe_save_file)
 

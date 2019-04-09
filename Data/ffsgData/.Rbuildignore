@@ -1,2 +1,4 @@
 ^ffsgData\.Rproj$
 ^\.Rproj\.user$
+^packrat/
+^\.Rprofile$
