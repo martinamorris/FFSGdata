@@ -21,7 +21,6 @@ source(file.path(path_to_src, "MasterScraper.R"))
 source(file.path(path_to_src, "Harmonizer.R"))
 ```
 
-
 ```{r, warnings = FALSE}
 load(file.path(path_to_src, "HarmonizedFiles", "HarmonizedDataSets.RData"))
 
