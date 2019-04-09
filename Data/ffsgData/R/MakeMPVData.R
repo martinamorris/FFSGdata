@@ -10,7 +10,7 @@ library(dplyr)
 library(here)
 
 #' Scrape the MPV database
-#' 
+#'
 #' @param url URL for MPV spreadsheet
 #' @param save_file filename to be saved in /ScrapedFiles/
 #' @return Void. Saves the data to `save_file`.
@@ -19,10 +19,10 @@ scrape_MPV_data <- function(url, save_file) {
   TMP = "MPVTEMP"
   # get xlsx file and write
   download.file(url, destfile = TMP)
-  
+
   # View
   mpv <- read_xlsx(TMP)
   file.remove(TMP)
-  
+
   save(mpv, file=save_file)
 }

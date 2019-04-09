@@ -66,5 +66,5 @@ scrape_KBP_data <- function(save_file) {
         kbp = rbind(kbp, table)
     }
 
-  save(kbp, file=save_file)
+    save(kbp, file=save_file)
 }
