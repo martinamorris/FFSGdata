@@ -258,6 +258,10 @@ save_file = file.path(path_to_src,
                       "HarmonizedFiles",
                       "HarmonizedDataSets.RData")
 
+if(!file.exists(file.path(path_to_src, "HarmonizedFiles"))) {
+    dir.create(save_file, recursive=T)
+}
+
 save(fe_harmonized,
      mpv_harmonized,
      kbp_harmonized,
