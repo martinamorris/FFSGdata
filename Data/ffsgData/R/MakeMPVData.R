@@ -16,14 +16,6 @@ library(here)
 #' @return Void. Saves the data to `save_file`.
 #' @export
 scrape_MPV_data <- function(url, save_file) {
-    TMP = "MPVTEMP"
-
-    # get xlsx file and write
-    download.file(url, destfile = TMP, mode='wb')
-
-    # View
-    mpv <- read_xlsx(TMP)
-    file.remove(TMP)
-
+    mpv = rio::import(url)
     save(mpv, file=save_file)
 }

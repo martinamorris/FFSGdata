@@ -236,12 +236,12 @@ sex_encoding = c(' ' = NA,
                  'W' = 'Female',
                  'NULL' = NA)
 
-date_format = "%B %d, %Y"
+date_format = "%m/%d/%Y"
 name_delim  = " aka | or | transitioning from "
 
-null_names = c(" ", "", "NULL")
+null_names = c(" ", "", "NULL", "An unidentified person")
 null_age = NA
-null_races= c(" ")
+null_races= c(" ", "")
 
 kbp_harmonized = harmonize(kbp,
                 col_map,

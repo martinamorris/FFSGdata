@@ -8,9 +8,12 @@
 
 library(dplyr)
 library(here)
-library(fastLink)
+library(RecordLinkage)
 
 path_to_src = here::here(file.path('R'))
 load(file.path(path_to_src,
                "HarmonizedFiles",
                "HarmonizedDataSets.RData"))
+
+compare.dedup(kbp_harmonized, phonetic='name')
+kbp_harmonized
