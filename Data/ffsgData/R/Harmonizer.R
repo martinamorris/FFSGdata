@@ -41,10 +41,10 @@ library(here)
 path_to_src = here::here(file.path('R'))
 
 # Refresh data from all data sources
-# source(file.path(path_to_src, "MasterScraper.R"))
+source(file.path(path_to_src, "MasterScraper.R"))
 
 
-scraped_files = c("fe.clean.Rdata", "MPV.clean.Rdata", "KBP.clean.Rdata")
+scraped_files = c("fe.clean.Rdata", "MPV.clean.Rdata", "KBP.clean.Rdata", "WaPo.clean.Rdata")
 
 for (file in scraped_files) {
   scraped_path = file.path(path_to_src, "ScrapedFiles", file)
@@ -119,8 +119,6 @@ harmonize <- function (df,
   harmonized_df[irrelevant_cols] = df[irrelevant_cols]
   return(harmonized_df)
 }
-
-
 
 
 
@@ -208,8 +206,6 @@ mpv_harmonized = harmonize(mpv,
 
 
 
-
-
 ### Killed By Police
 col_map = c('name' = 'Name',
             'age'  = 'Age',
@@ -254,6 +250,43 @@ kbp_harmonized = harmonize(kbp,
                 null_age)
 
 
+
+### Washington Post
+col_map = c('sex' = 'gender')
+
+
+race_encoding = c('B' = "Black",
+                  'W' = 'White',
+                  'L' = NA,
+                  'N' = "American Indian",
+                  'A' = 'Asian',
+                  'O' = NA,
+                  'None' = NA,
+                  'H' = NA)
+
+sex_encoding = c('NA' = NA,
+                 'F' = 'Female',
+                 'M' = 'Male',
+                 'None' = NA)
+
+date_format = "%Y-%m-%d"
+name_delim  = " aka | or | transitioning from "
+
+null_names = c(" ", "", "NULL", "An unidentified person")
+null_age = NA
+null_races= c(" ", "")
+
+wapo_harmonized = harmonize(wapo,
+                           col_map,
+                           race_encoding,
+                           sex_encoding,
+                           date_format,
+                           name_delim,
+                           null_names,
+                           null_races,
+                           null_age)
+
+
 save_file = file.path(path_to_src,
                       "HarmonizedFiles",
                       "HarmonizedDataSets.RData")
@@ -265,4 +298,5 @@ if(!file.exists(file.path(path_to_src, "HarmonizedFiles"))) {
 save(fe_harmonized,
      mpv_harmonized,
      kbp_harmonized,
+     wapo_harmonized,
      file=save_file)

@@ -16,4 +16,3 @@ load(file.path(path_to_src,
                "HarmonizedDataSets.RData"))
 
 compare.dedup(kbp_harmonized, phonetic='name')
-kbp_harmonized
