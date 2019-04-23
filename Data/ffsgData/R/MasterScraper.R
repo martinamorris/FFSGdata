@@ -26,15 +26,15 @@ scrape_all_data <- function() {
         dir.create(save_file, recursive=T)
     }
 
-    #' Census Data
-    source(file.path(path_to_src, "MakePopData.R"))
-    state_urls  = c("https://www2.census.gov/programs-surveys/popest/tables/2000-2010/intercensal/state/st-est00int-01.xls",
-                 "https://www2.census.gov/programs-surveys/popest/tables/2010-2017/state/totals/nst-est2017-01.xlsx")
-
-    county_urls = c("https://www2.census.gov/programs-surveys/popest/datasets/2000-2010/intercensal/county/co-est00int-tot.csv",
-                  "https://www2.census.gov/programs-surveys/popest/datasets/2010-2016/counties/totals/co-est2016-alldata.csv")
-    pop_save_file = file.path(path_to_src, "ScrapedFiles", "Pop.RData")
-    scrape_population_data(state_urls, county_urls, pop_save_file)
+    #' #' Census Data
+    #' source(file.path(path_to_src, "MakePopData.R"))
+    #' state_urls  = c("https://www2.census.gov/programs-surveys/popest/tables/2000-2010/intercensal/state/st-est00int-01.xls",
+    #'              "https://www2.census.gov/programs-surveys/popest/tables/2010-2017/state/totals/nst-est2017-01.xlsx")
+    #'
+    #' county_urls = c("https://www2.census.gov/programs-surveys/popest/datasets/2000-2010/intercensal/county/co-est00int-tot.csv",
+    #'               "https://www2.census.gov/programs-surveys/popest/datasets/2010-2016/counties/totals/co-est2016-alldata.csv")
+    #' pop_save_file = file.path(path_to_src, "ScrapedFiles", "Pop.RData")
+    #' scrape_population_data(state_urls, county_urls, pop_save_file)
 
     #' Mapping Police Violence
     source(file.path(path_to_src, "MakeMPVData.R"))

@@ -5,7 +5,6 @@
 #' ---
 
 #' This file scrapes the police killings data from <https://mappingpoliceviolence.org/>.
-library(readxl)
 library(dplyr)
 library(here)
 

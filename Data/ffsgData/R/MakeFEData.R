@@ -68,7 +68,8 @@ scrape_FE_data <- function(url, save_file) {
                     "Date&Description" = 'Description',
                     "Date (Year)" = 'year')
 
-  fe = fe %>% rename(new_names)
+  # Dp
+  fe = fe %>% plyr::rename(new_names)
 
   # remove data points that are not fact-checked
   fe = fe %>% filter(fe$name != "Items below this row have not been fact-checked.")
