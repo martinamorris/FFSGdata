@@ -15,10 +15,20 @@ load(file.path(path_to_src,
                "HarmonizedFiles",
                "HarmonizedDataSets.RData"))
 
-test_idx = sample(1:(nrow(kbp_harmonized)/3), 250, replace=T)
-table(test_idx)
-matches = compare.dedup(kbp_harmonized[test_idx, ], identity=test_idx, strcmp = T)
-results = classifySupv(trainSupv(matches, method='svm'), matches)
-truth = results$pairs$is_match == 1
-pred  = results$prediction == 'L'
-sum(xor(truth, pred))
+#
+common_cols = intersect(colnames(kbp_harmonized),
+                        colnames(wapo_harmonized))
+
+kbp_link = kbp_harmonized %>% select(common_cols)
+wapo_link = wapo_harmonized %>% select(common_cols)
+
+pairs = compare.linkage(kbp_link, wapo_link, blockfld = c('state'), phonetic = F)
+results = emWeights(pairs)$pairs # Non match weights are all NA
+results[!is.na(results$is_match), ]
+
+
+common_names = intersect( kbp_harmonized$name,
+                        wapo_harmonized$name)
+
+ kbp_harmonized %>% filter(name == "Terry Lee Cockrell")
+wapo_harmonized %>% filter(name == "Terry Lee Cockrell")

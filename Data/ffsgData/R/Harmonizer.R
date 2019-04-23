@@ -211,7 +211,8 @@ col_map = c('name' = 'Name',
             'age'  = 'Age',
             'sex'  = 'Gender',
             'race' = 'Race',
-            'date' = 'Date')
+            'date' = 'Date',
+            'state' = 'State')
 
 race_encoding = c('B' = "Black",
                   'W' = 'White',
