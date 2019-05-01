@@ -25,8 +25,9 @@ load(file.path(path_to_src,
 common_cols = intersect(colnames(kbp_harmonized),
                         colnames(wapo_harmonized))
 
- kbp_link = kbp_harmonized %>% select(common_cols)
-wapo_link = wapo_harmonized %>% select(common_cols)
+common_cols = c("name")
+ kbp_link = kbp_harmonized %>% select(common_cols) %>% filter(!is.na(name))
+wapo_link = wapo_harmonized %>% select(common_cols) %>% filter(!is.na(name))
 ```
 
 ## Confirm at least one observation is shared
@@ -47,14 +48,14 @@ wapo_harmonized %>% filter(name == "Terry Lee Cockrell")
 ## Trying Linkage
 ```{r}
 links = compare.linkage(kbp_link, wapo_link,
-                        blockfld = c('state'), 
+                        #blockfld = c('state'), 
                         phonetic = T)
 
 # Build similarity weights
 # between 0 and 1 for each candidate pair
 results = emWeights(links)
 
-head(results$pairs)
+table(results$pairs)
 ```
 
 This is where we begin to run into problems:
