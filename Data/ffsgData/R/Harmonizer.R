@@ -161,51 +161,6 @@ fe_harmonized = harmonize(fe.clean,
                           null_age)
 
 
-### Mapping Police Violence
-col_map = c("name" = "Victim's name",
-            "age" = "Victim's age",
-            "sex" = "Victim's gender",
-            "race" = "Victim's race",
-            "date" = "Date of Incident (month/day/year)",
-            "zip" = "Zipcode")
-
-race_encoding = c('Hispanic'        = NA,
-                  'Native American' = "American Indian",
-                  'Unknown race'    = NA,
-                  'Unknown Race'    = NA,
-                  'Asian/Pacific Islander' = 'Pacific Islander',
-                  'Race unspecified'        = NA,
-                  ' '                       = NA)
-
-sex_encoding = c(' ' = NA,
-                 'NA' = NA,
-                 'F' = 'Female',
-                 'M' = 'Male',
-                 'T' = 'Transgender',
-                 'Unknown' = NA,
-                 'W' = 'Female',
-                 'NULL' = NA)
-
-date_format = "%Y-%m-%d"
-name_delim  = " aka | or | transitioning from "
-
-null_names = c("Name withheld by police",
-               "Unknown name")
-null_age  = NA
-null_races= c(" ")
-
-mpv_harmonized = harmonize(mpv,
-                          col_map,
-                          race_encoding,
-                          sex_encoding,
-                          date_format,
-                          name_delim,
-                          null_names,
-                          null_races,
-                          null_age)
-
-
-
 ### Killed By Police
 col_map = c('name' = 'Name',
             'age'  = 'Age',
@@ -250,6 +205,49 @@ kbp_harmonized = harmonize(kbp,
                 null_races,
                 null_age)
 
+
+### Mapping Police Violence
+col_map = c("name" = "Victim's name",
+            "age" = "Victim's age",
+            "sex" = "Victim's gender",
+            "race" = "Victim's race",
+            "date" = "Date of Incident (month/day/year)",
+            "zip" = "Zipcode")
+
+race_encoding = c('Hispanic'        = NA,
+                  'Native American' = "American Indian",
+                  'Unknown race'    = NA,
+                  'Unknown Race'    = NA,
+                  'Asian/Pacific Islander' = 'Pacific Islander',
+                  'Race unspecified'        = NA,
+                  ' '                       = NA)
+
+sex_encoding = c(' ' = NA,
+                 'NA' = NA,
+                 'F' = 'Female',
+                 'M' = 'Male',
+                 'T' = 'Transgender',
+                 'Unknown' = NA,
+                 'W' = 'Female',
+                 'NULL' = NA)
+
+date_format = "%Y-%m-%d"
+name_delim  = " aka | or | transitioning from "
+
+null_names = c("Name withheld by police",
+               "Unknown name")
+null_age  = NA
+null_races= c(" ")
+
+mpv_harmonized = harmonize(mpv,
+                           col_map,
+                           race_encoding,
+                           sex_encoding,
+                           date_format,
+                           name_delim,
+                           null_names,
+                           null_races,
+                           null_age)
 
 
 ### Washington Post

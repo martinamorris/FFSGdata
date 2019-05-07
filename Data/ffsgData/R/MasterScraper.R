@@ -36,12 +36,6 @@ scrape_all_data <- function() {
     #' pop_save_file = file.path(path_to_src, "ScrapedFiles", "Pop.RData")
     #' scrape_population_data(state_urls, county_urls, pop_save_file)
 
-    #' Mapping Police Violence
-    source(file.path(path_to_src, "MakeMPVData.R"))
-    mpv_url = 'https://mappingpoliceviolence.org/s/MPVDatasetDownload.xlsx'
-    mpv_save_file = file.path(path_to_src, "ScrapedFiles", "MPV.clean.Rdata")
-    scrape_MPV_data(mpv_url, mpv_save_file)
-
     #' Fatal Encounters
     source(file.path(path_to_src, "MakeFEData.R"))
     doc_id = "1dKmaV_JiWcG8XBoRgP8b4e9Eopkpgt7FL7nyspvzAsE"
@@ -55,6 +49,12 @@ scrape_all_data <- function() {
     source(file.path(path_to_src, "MakeKBPData.R"))
     kbp_save_file = file.path(path_to_src, "ScrapedFiles", "KBP.clean.Rdata")
     scrape_KBP_data(kbp_save_file)
+
+    #' Mapping Police Violence
+    source(file.path(path_to_src, "MakeMPVData.R"))
+    mpv_url = 'https://mappingpoliceviolence.org/s/MPVDatasetDownload.xlsx'
+    mpv_save_file = file.path(path_to_src, "ScrapedFiles", "MPV.clean.Rdata")
+    scrape_MPV_data(mpv_url, mpv_save_file)
 
     #' Washington Post
     source(file.path(path_to_src, "MakeWaPoData.R"))
