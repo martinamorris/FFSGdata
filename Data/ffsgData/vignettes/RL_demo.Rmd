@@ -28,18 +28,22 @@ common_cols = intersect(colnames(kbp_harmonized),
 ```
 
 ```{r}
+colinear = c("aka", 'name', 'date', 'str_age')
 common_cols = intersect(colnames(kbp_harmonized),
                         colnames(wapo_harmonized))
 
-kbp_link  =  kbp_harmonized %>% select(common_cols) %>% select(-c("aka"))
-wapo_link = wapo_harmonized %>% select(common_cols) %>% select(-c("aka"))
+kbp_link  =  kbp_harmonized %>% 
+                select(common_cols) %>% select(-colinear)
+  
+wapo_link = wapo_harmonized %>% 
+                select(common_cols) %>% select(-colinear)
+
 ```
 
-Here, we confirm there is at least 1 record linked between the two datasets
+Here, we confirm there is at least 1 person with the same name in both records
 ```{r}
 ### Confirm at least one person is present in both data sets
-kbp_harmonized %>% filter(name == "Terry Lee Cockrell")
-wapo_harmonized %>% filter(name == "Terry Lee Cockrell")
+intersect(wapo_link[c('firstname', 'lastname')], kbp_link[c('firstname', 'lastname')])
 ```
 
 # Beginning the Record Linkage
@@ -88,37 +92,37 @@ likely a match.
 ```{r}
 blank_linkage_object = compare.linkage(kbp_link, 
                                  wapo_link, 
-                                 blockfld = c('state'), 
+                                 blockfld = c('year'), 
                                  phonetic = T,
-                                 strcmp =T)
+                                 strcmp = T)
+```
 
+```{r}
 EM_linkage_object = emWeights(blank_linkage_object)
-em_weights = EM_linkage_object$Wdata
-name_match = EM_linkage_object$pairs$name == 1
-weight_names = data.frame(em_weights, name_match)
+classify_object = emClassify(EM_linkage_object)
 
-ggplot(weight_names, aes(x=em_weights, group=name_match, fill=name_match)) + 
+preds = data.frame(weights = classify_object$Wdata, pred=classify_object$prediction)
+
+ggplot(preds, aes(x=weights, group=pred, fill=pred)) + 
     geom_histogram(bins=50) +
-    scale_y_log10() +
     ggtitle("Histogram of Weights assigned to record pairs, log scale")
 ```
 
 ## Clerical Review
 
 ```{r}
-
-record_pairs = EM_linkage_object$pairs %>% select(c('id1', 'id2'))
-
-record_pairs$weight = EM_linkage_object$Wdata
-
-record_pairs$name_1 = EM_linkage_object$data1[record_pairs$id1, 'name']
-record_pairs$name_2 = EM_linkage_object$data1[record_pairs$id2, 'name']
-
-
-record_pairs %>% filter(weight > 0 & weight < 20) %>% head()
+ps = classify_object$pairs
+same_names = ps['firstname'] == 1 & ps['lastname'] == 1 & !is.na(ps['firstname'] == 1 & ps['lastname'] == 1)
+diff_name_match = !same_names & classify_object$prediction == 'L'
+kbp_link[ps[diff_name_match, 'id1'], ]
+wapo_link[ps[diff_name_match, 'id2'], ]
 ```
 
+# Deduplication
 
+```{r}
+
+```
 
 
 

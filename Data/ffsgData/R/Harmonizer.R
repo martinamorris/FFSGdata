@@ -14,11 +14,14 @@
 #'
 #'   column names:
 #'     name: The name of the victim
+#'        -fist, middle, last - name
 #'     age: The age of the victim
 #'     sex: The gender of the victim
 #'     race: The race of the victim
 #'     date: The date of the victim's death
+#'        Year, month, day
 #'     zip: The zipcode of the victim's death
+#'
 #'
 #'   race names:
 #'      U.S. Census Bureau's names and defintion
@@ -65,6 +68,40 @@ for (file in scraped_files) {
 #' @param  null_names the symbol used to signify null name
 #' @param  null_races the symbol used to signify null race
 #' @param  null_age the symbol used to signify null age
+
+get_name <- function(name, order=NA) {
+  if(is.na(name)) {
+    return(NA)
+  }
+
+  stopifnot(order %in% c("first", "last", "middle"))
+
+  names = strsplit(name, fixed=T, " ")[[1]]
+  n = length(names)
+  if (order == 'first') {
+    return(names[1])
+  } else
+
+  if (order == 'last') {
+    if (n > 1) {
+      return(names[length(names)])
+    } else {
+      return(NA)
+    }
+  } else
+
+  if (order == 'middle') {
+    if (n > 2) {
+      middle_idx = 2:(length(names) - 1)
+      return(paste(names[middle_idx], collapse=" "))
+    } else {
+      return(NA)
+    }
+  }
+}
+
+get_name = Vectorize(get_name)
+
 harmonize <- function (df,
                    col_map,
                    race_encoding,
@@ -80,20 +117,13 @@ harmonize <- function (df,
   canon_races = c("White", "Black", NA,
                   "American Indian", "Asian", "Pacific Islander")
 
-  # Get the columns that will be mutated
-  relevant_cols = setdiff(canon_cols, names(col_map))
-  relevant_cols = c(relevant_cols, col_map)
-
   # Assert that our data frame has the right columns
   # And arguments ahve right fomrat
   stopifnot(all(race_encoding %in% canon_races))
 
-  # Columns left unchanged
-  irrelevant_cols = setdiff(colnames(df), relevant_cols)
-
   harmonized_df = df %>%
     # This automatically renames the columns
-     select(relevant_cols) %>%
+    rename(!!!col_map) %>%
 
     # split names and aliases
     separate(col  = name,
@@ -102,25 +132,32 @@ harmonize <- function (df,
 
     # reformat date
     mutate(date = as.character(strptime(date, format = date_format))) %>%
+    mutate(date = as.Date(date)) %>%
 
-    # Harmonize nulls
+    mutate(year  = as.numeric(format(date,'%Y'))) %>%
+    mutate(month = as.numeric(format(date,'%m'))) %>%
+    mutate(day   = as.numeric(format(date,'%d'))) %>%
+
+    # # Harmonize nulls
     mutate(name  = replace(name, name %in% null_names, NA)) %>%
+
+    mutate(firstname  = get_name(name, 'first')) %>%
+    mutate(lastname   = get_name(name, 'last')) %>%
+    mutate(middlename = get_name(name, 'middle')) %>%
+
     mutate(race  = replace(race, race %in% null_races, NA)) %>%
     mutate(name = gsub("[^[:alnum:] ]", NA, name)) %>%
-    mutate(age  = gsub("[^[0-9]]", NA, age)) %>%
-
+    mutate(str_age = age) %>%
+    mutate(age  = as.numeric(
+                    gsub("[^[0-9]]", NA, age)
+                            )) %>%
 
     # Recode Columns
     mutate(race = recode(race, !!!race_encoding)) %>%
     mutate(sex  = recode( sex, !!!sex_encoding))
 
-
-
-  harmonized_df[irrelevant_cols] = df[irrelevant_cols]
   return(harmonized_df)
 }
-
-
 
 ### Fatal Encounters
 col_map = c('date' = 'dateMDY')
@@ -249,7 +286,6 @@ kbp_harmonized = harmonize(kbp,
                 null_names,
                 null_races,
                 null_age)
-
 
 
 ### Washington Post
