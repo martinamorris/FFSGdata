@@ -29,6 +29,10 @@ load(here::here(file.path("R", "HarmonizedFiles","HarmonizedDataSets.RData")))
 fe  =  fe_harmonized
 mpv = mpv_harmonized
 kbp = kbp_harmonized
+wapo_harmonized
+min(fe_harmonized$date, na.rm=T)
+fe_harmonized[10:15, ]
+
 ```
 
 

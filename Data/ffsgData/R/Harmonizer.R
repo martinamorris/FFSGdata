@@ -103,14 +103,15 @@ get_name <- function(name, order=NA) {
 get_name = Vectorize(get_name)
 
 harmonize <- function (df,
-                   col_map,
-                   race_encoding,
-                   sex_encoding,
-                   date_format,
-                   name_delim,
-                   null_names,
-                   null_races,
-                   null_age) {
+                       source_name,
+                       col_map,
+                       race_encoding,
+                       sex_encoding,
+                       date_format,
+                       name_delim,
+                       null_names,
+                       null_races,
+                       null_age) {
 
   canon_cols = c("name", "age", "sex", "race", "date")
 
@@ -123,7 +124,7 @@ harmonize <- function (df,
 
   harmonized_df = df %>%
     # This automatically renames the columns
-    rename(!!!col_map) %>%
+    dplyr::rename(!!!col_map) %>%
 
     # split names and aliases
     separate(col  = name,
@@ -156,6 +157,7 @@ harmonize <- function (df,
     mutate(race = recode(race, !!!race_encoding)) %>%
     mutate(sex  = recode( sex, !!!sex_encoding))
 
+  harmonized_df['source'] = source_name
   return(harmonized_df)
 }
 
@@ -188,6 +190,7 @@ null_age = NA
 null_races= c(" ")
 
 fe_harmonized = harmonize(fe.clean,
+                          "fe",
                           col_map,
                           race_encoding,
                           sex_encoding,
@@ -196,6 +199,7 @@ fe_harmonized = harmonize(fe.clean,
                           null_names,
                           null_races,
                           null_age)
+
 
 
 ### Killed By Police
@@ -230,9 +234,10 @@ name_delim  = " aka | or | transitioning from "
 
 null_names = c(" ", "", "NULL", "An unidentified person")
 null_age = NA
-null_races= c(" ", "")
+null_races= c(" ", "", "M", "H")
 
 kbp_harmonized = harmonize(kbp,
+                           "kbp",
                 col_map,
                 race_encoding,
                 sex_encoding,
@@ -249,7 +254,8 @@ col_map = c("name" = "Victim's name",
             "sex" = "Victim's gender",
             "race" = "Victim's race",
             "date" = "Date of Incident (month/day/year)",
-            "zip" = "Zipcode")
+            "zip" = "Zipcode",
+            "state" = "State")
 
 race_encoding = c('Hispanic'        = NA,
                   'Native American' = "American Indian",
@@ -277,6 +283,7 @@ null_age  = NA
 null_races= c(" ")
 
 mpv_harmonized = harmonize(mpv,
+                           "mpv",
                            col_map,
                            race_encoding,
                            sex_encoding,
@@ -312,6 +319,7 @@ null_age = NA
 null_races= c(" ", "")
 
 wapo_harmonized = harmonize(wapo,
+                            "wapo",
                            col_map,
                            race_encoding,
                            sex_encoding,
@@ -320,7 +328,6 @@ wapo_harmonized = harmonize(wapo,
                            null_names,
                            null_races,
                            null_age)
-
 
 save_file = file.path(path_to_src,
                       "HarmonizedFiles",

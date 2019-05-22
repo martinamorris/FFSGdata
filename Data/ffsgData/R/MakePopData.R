@@ -115,5 +115,7 @@ scrape_population_data <- function(state_urls, county_urls, save_file) {
 
   rm(list=ls(pattern="tmp"))
 
-  save.image(save_file)
+  save(pop_state,  file = file.path(save_file, "StatePop.RData"))
+  save(pop_region, file = file.path(save_file, "RegionPop.RData"))
+  save(pop_county, file = file.path(save_file, "CountyPop.RData"))
 }

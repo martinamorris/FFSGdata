@@ -137,4 +137,56 @@ Analysis of a Probabilistic Record Linkage Technique without Human Review
 - Parameter fitting in EM in "METHODS" section
 
 
+```{r}
+common_cols = Reduce(intersect, list(colnames(kbp_harmonized),
+                                     colnames(fe_harmonized),
+                                     colnames(mpv_harmonized),
+                                     colnames(wapo_harmonized)))
 
+colinear = c("aka", 'name', 'date', 'str_age')
+
+combined_harmonized = plyr::rbind.fill(kbp_harmonized,
+                                       fe_harmonized,
+                                       mpv_harmonized,
+                                       wapo_harmonized) %>% 
+                                       select(common_cols) %>% 
+                                       select(-colinear)
+
+comb_sample = combined_harmonized %>% sample_n(1000)
+
+blank_dedup_object = compare.dedup(comb_sample, 
+                                   #blockfld = c('state'), 
+                                   phonetic = T,
+                                   strcmp = T)
+
+EM_dedup_object = emWeights(blank_dedup_object)
+classify  = emClassify(EM_dedup_object)
+
+display_matches = function(classifyObject) {
+  links = classifyObject$prediction == 'L'
+  num_matches = sum(links)
+  ncols = ncol(classifyObject$data)
+  df = data.frame(matrix(nrow = 3 * num_matches, ncol= ncols))
+  colnames(df) = colnames(classifyObject$data)
+  left  = classifyObject$pairs[links, 'id1']
+  right = classifyObject$pairs[links, 'id2']
+  print(num_matches)
+  idx1 = 3 * (0:(num_matches -1))
+  idx2  = idx1 + 1
+  blank = idx1 + 2
+  
+  df[idx1  + 1, ] = classifyObject$data[left, ]
+  df[idx2  + 1, ] = classifyObject$data[right, ]
+  df[blank + 1, ] = c(rep("", ncols))
+  
+  return(df)
+}
+
+
+preds = data.frame(weights = classify$Wdata, pred=classify$prediction)
+
+ggplot(preds, aes(x=weights, group=pred, fill=pred)) + 
+    geom_histogram(bins=50) +
+    scale_y_log10() +
+    ggtitle("Histogram of Weights assigned to record pairs, log scale")
+```
