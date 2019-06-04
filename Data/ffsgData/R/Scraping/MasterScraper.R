@@ -17,7 +17,7 @@
 #' @return Void. Adds all scraped data to /ScrapedFiles/ dir
 #' @exportdocument()
 
-path_to_src = here::here(file.path('R'))
+path_to_src = here::here(file.path('R', "Scraping"))
 
 scrape_all_data <- function() {
 
@@ -28,13 +28,17 @@ scrape_all_data <- function() {
 
     #' Census Data
     source(file.path(path_to_src, "MakePopData.R"))
-    state_urls  = c("https://www2.census.gov/programs-surveys/popest/tables/2000-2010/intercensal/state/st-est00int-01.xls",
-                 "https://www2.census.gov/programs-surveys/popest/tables/2010-2017/state/totals/nst-est2017-01.xlsx")
+    county_urls = c("2000-2010"="https://www2.census.gov/programs-surveys/popest/datasets/2000-2010/intercensal/county/co-est00int-tot.csv",
+                    "2010-2018"="https://www2.census.gov/programs-surveys/popest/datasets/2010-2018/counties/totals/co-est2018-alldata.csv")
+    pop_save_dir = file.path(path_to_src, "ScrapedFiles", "Populations")
 
-    county_urls = c("https://www2.census.gov/programs-surveys/popest/datasets/2000-2010/intercensal/county/co-est00int-tot.csv",
-                  "https://www2.census.gov/programs-surveys/popest/datasets/2010-2016/counties/totals/co-est2016-alldata.csv")
-    pop_save_file = file.path(path_to_src, "ScrapedFiles", "Populations")
-    scrape_population_data(state_urls, county_urls, pop_save_file)
+    if(!dir.exists(pop_save_dir)) {
+        dir.create(pop_save_dir)
+    }
+
+    scrape_population_data(county_urls, pop_save_dir)
+
+
 
     #' Fatal Encounters
     source(file.path(path_to_src, "MakeFEData.R"))
@@ -45,16 +49,22 @@ scrape_all_data <- function() {
     fe_save_file = file.path(path_to_src, "ScrapedFiles", "fe.clean.Rdata")
     scrape_FE_data(fe_url, fe_save_file)
 
+
+
     #' Killed By Police
     source(file.path(path_to_src, "MakeKBPData.R"))
     kbp_save_file = file.path(path_to_src, "ScrapedFiles", "KBP.clean.Rdata")
     scrape_KBP_data(kbp_save_file)
+
+
 
     #' Mapping Police Violence
     source(file.path(path_to_src, "MakeMPVData.R"))
     mpv_url = 'https://mappingpoliceviolence.org/s/MPVDatasetDownload.xlsx'
     mpv_save_file = file.path(path_to_src, "ScrapedFiles", "MPV.clean.Rdata")
     scrape_MPV_data(mpv_url, mpv_save_file)
+
+
 
     #' Washington Post
     source(file.path(path_to_src, "MakeWaPoData.R"))
@@ -63,5 +73,6 @@ scrape_all_data <- function() {
     wapo_url = "https://raw.githubusercontent.com/washingtonpost/data-police-shootings/master/fatal-police-shootings-data.csv"
     scrape_WaPo(wapo_url, wapo_save_file)
 }
+
 
 scrape_all_data()

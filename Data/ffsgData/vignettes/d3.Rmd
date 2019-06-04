@@ -12,6 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 library(purrr)
 library(dplyr)
+library(tidyr)
 library(ggplot2)
 library(venn)
 library(igraph)
@@ -89,11 +90,11 @@ for (link in unique_links) {
 }
 
 combined_harmonized = combined_harmonized[-drop_rows, ] %>%
-                        select(-c("source))
+                        select(-c("source"))
 ```
 
 ```{r}
-venn( 1 * combined_harmonized[, c('in_fe', 'in_wapo', 'in_kbp', 'in_mpv')])
+venn( 1 * combined_harmonized[, c('fe', 'wapo', 'kbp', 'mpv')])
 ```
 
 ```{r}
@@ -107,6 +108,10 @@ load(file=file.path(path_to_src,
                          "FinalClassification",
                          "full_combined_harmonized.RData"))
 
+collaps_vals = function(x) {
+    return(x[!is.na(x)][1])
+}
+
 # This would break if the max row wasn't linked to anything
 combined_harmonized['component'] = components(link_graph, mode="weak")$membership
 
@@ -120,18 +125,41 @@ write.csv(x, file=con)
 ```
 
 ```{r}
+y = x[, c('fe', 'wapo', 'kbp', 'mpv', 'year')]
+y = data.frame(!is.na(y %>% filter(year > 2015) %>% select(c('fe', 'wapo', 'kbp', 'mpv'))))
+
+venn(y, zcolor=c("black", "black", "black", "black"), opacity=.1)
+```
+
+```{r}
 load(file=file.path(path_to_src,
                          "ScrapedFiles",
-                         "Pop.RData"))
+                         "Populations",
+                         "CountyPop.RData"))
+
+states = pop_county %>% 
+    filter(county_num == 0) %>%
+    select(c('state_abb', pop_estimate_cols)) %>%
+    gather('year', 'population', pop_estimate_cols) %>%
+    mutate(year = gsub(".*(20[0-9]+)", "\\1", year))
+
+pop_estimate_cols = colnames(states)[grepl("POPESTIMATE", colnames(states))]
 
 # This would break if the max row wasn't linked to anything
 combined_harmonized['component'] = components(link_graph, mode="weak")$membership
 
-x = combined_harmonized %>% 
+final_combo = combined_harmonized %>% 
     group_by(component) %>%
     spread(source, source) %>%
     summarise_all(collaps_vals)
 
-con = file('~/Desktop/police_shootings', encoding="UTF-8")
-write.csv(x, file=con)
+con = file('~/Desktop/police_shootings.csv', encoding="UTF-8")
+write.csv(final_combo, file=con)
+
+
+con = file('~/Desktop/state_pops.csv', encoding="UTF-8")
+write.csv(states, file=con)
+
+library(jsonlite)
+states %>% toJSON() %>% write_lines("~/Desktop/state_pops.json")
 ```

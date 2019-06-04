@@ -38,19 +38,18 @@
 library(dplyr)
 library(tidyverse)
 library(purrr)
-library(e1071)
 library(here)
 
-path_to_src = here::here(file.path('R'))
+path_to_src = here::here(file.path('R', 'Harmonizing'))
 
 # Refresh data from all data sources
-source(file.path(path_to_src, "MasterScraper.R"))
+source(file.path(here::here(), 'R', 'Scraping', "MasterScraper.R"))
 
 
 scraped_files = c("fe.clean.Rdata", "MPV.clean.Rdata", "KBP.clean.Rdata", "WaPo.clean.Rdata")
 
 for (file in scraped_files) {
-  scraped_path = file.path(path_to_src, "ScrapedFiles", file)
+  scraped_path = file.path(path_to_src, '..', 'Scraping', "ScrapedFiles", file)
   load(scraped_path)
 }
 
@@ -333,8 +332,9 @@ save_file = file.path(path_to_src,
                       "HarmonizedFiles",
                       "HarmonizedDataSets.RData")
 
-if(!file.exists(file.path(path_to_src, "HarmonizedFiles"))) {
-    dir.create(save_file, recursive=T)
+if(!file.exists(save_file)) {
+
+    file.create(save_file, recursive=T)
 }
 
 save(fe_harmonized,
