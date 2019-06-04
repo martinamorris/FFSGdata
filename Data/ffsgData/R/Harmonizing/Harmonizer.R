@@ -114,11 +114,12 @@ harmonize <- function (df,
 
   canon_cols = c("name", "age", "sex", "race", "date")
 
-  canon_races = c("White", "Black", NA,
-                  "American Indian", "Asian", "Pacific Islander")
+  canon_races = c("Black", "White", "Hispanic",
+                  'NA_PI', "Asian", "Other")
+
 
   # Assert that our data frame has the right columns
-  # And arguments ahve right fomrat
+  # And arguments have right format
   stopifnot(all(race_encoding %in% canon_races))
 
   harmonized_df = df %>%
@@ -165,20 +166,20 @@ col_map = c('date' = 'dateMDY')
 
 race_encoding = c('African-American/Black'  = 'Black',
                   'European-American/White' = 'White',
-                  'Hispanic/Latino'         = NA,
-                  'Native American/Alaskan' = "American Indian",
-                  'Asian/Pacific Islander'  = NA,
-                  'Middle Eastern'          = 'Asian',
+                  'Hispanic/Latino'         = 'Hispanic',
+                  'Native American/Alaskan' = 'NA_PI',
+                  'Asian/Pacific Islander'  = 'Asian',
+                  'Middle Eastern'          = 'Other',
                   'Race unspecified'        = NA,
                   ' '                       = NA)
 
-sex_encoding = c(' ' = NA,
-                 'NA' = NA,
-                 'F' = 'Female',
+sex_encoding = c('F' = 'Female',
+                 'W' = 'Female',
                  'M' = 'Male',
                  'T' = 'Transgender',
                  'Unknown' = NA,
-                 'W' = 'Female',
+                 ' ' = NA,
+                 'NA' = NA,
                  'NULL' = NA)
 
 date_format = "%m/%d/%Y"
@@ -211,21 +212,21 @@ col_map = c('name' = 'Name',
 
 race_encoding = c('B' = "Black",
                   'W' = 'White',
-                  'L' = NA,
-                  'I' = "American Indian",
-                  'PI'  = 'Pacific Islander',
+                  'L' = 'Hispanic',
+                  'I' = 'NA_PI',
+                  'PI'  = 'NA_PI',
                   'A' = 'Asian',
-                  'O' = NA,
-                  'Race unspecified'        = NA,
-                  ' '                       = NA)
+                  'O' = 'Other',
+                  'Race unspecified'= NA,
+                  ' '               = NA)
 
-sex_encoding = c(' ' = NA,
-                 'NA' = NA,
-                 'F' = 'Female',
+sex_encoding = c('F' = 'Female',
+                 'W' = 'Female',
                  'M' = 'Male',
                  'T' = 'Transgender',
                  'Unknown' = NA,
-                 'W' = 'Female',
+                 ' ' = NA,
+                 'NA' = NA,
                  'NULL' = NA)
 
 date_format = "%m/%d/%Y"
@@ -256,21 +257,22 @@ col_map = c("name" = "Victim's name",
             "zip" = "Zipcode",
             "state" = "State")
 
-race_encoding = c('Hispanic'        = NA,
-                  'Native American' = "American Indian",
+race_encoding = c('Hispanic'        = 'Hispanic',
+                  'Native American' = 'NA_PI',
+                  'Asian/Pacific Islander' = 'NA_PI',
+                  'Race unspecified'= NA,
+                  ' '               = NA,
                   'Unknown race'    = NA,
                   'Unknown Race'    = NA,
-                  'Asian/Pacific Islander' = 'Pacific Islander',
-                  'Race unspecified'        = NA,
-                  ' '                       = NA)
+                  'Female'          = NA)
 
-sex_encoding = c(' ' = NA,
-                 'NA' = NA,
-                 'F' = 'Female',
+sex_encoding = c('F' = 'Female',
+                 'W' = 'Female',
                  'M' = 'Male',
                  'T' = 'Transgender',
+                 ' ' = NA,
+                 'NA' = NA,
                  'Unknown' = NA,
-                 'W' = 'Female',
                  'NULL' = NA)
 
 date_format = "%Y-%m-%d"
@@ -298,12 +300,13 @@ col_map = c('sex' = 'gender')
 
 race_encoding = c('B' = "Black",
                   'W' = 'White',
-                  'L' = NA,
-                  'N' = "American Indian",
+                  'L' = 'Hispanic',
+                  'H' = 'Hispanic',
+                  'N' = 'NA_PI',
                   'A' = 'Asian',
-                  'O' = NA,
-                  'None' = NA,
-                  'H' = NA)
+                  'O' = 'Other',
+                  'None' = NA,)
+
 
 sex_encoding = c('NA' = NA,
                  'F' = 'Female',
