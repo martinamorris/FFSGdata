@@ -62,15 +62,15 @@ collaps_vals = function(x) {
 }
 
 # This would break if the max row wasn't linked to anything
-combined_harmonized['component'] = components(link_graph, mode="weak")$membership
+combined_harmonized['person'] = components(link_graph, mode="weak")$membership
 ```
 
 # Create Race Vector
 ```{r warning=FALSE}
-race_source = combined_harmonized[c('component', 'race', 'source')]
+race_source = combined_harmonized[c('person', 'race', 'source')]
 race_source['race'] = !is.na(race_source['race'])
 
-race_vectors = dcast(race_source, component ~ source) %>%
+race_vectors = dcast(race_source, person ~ source) %>%
                     unite(vector, c('fe', 'kbp', 'mpv', 'wapo'), sep="")
 ```
 

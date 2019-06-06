@@ -45,9 +45,9 @@ collaps_vals = function(x) {
 }
 
 # This would break if the max row wasn't linked to anything
-combined_harmonized['component'] = components(link_graph, mode="weak")$membership
+combined_harmonized['person'] = components(link_graph, mode="weak")$membership
 
 final_merged = combined_harmonized %>%
-                group_by(component) %>%
+                group_by(person) %>%
                 spread(source, source) %>%
                 summarise_all(collaps_vals)
