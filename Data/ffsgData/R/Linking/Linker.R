@@ -30,7 +30,7 @@ combined_harmonized = plyr::rbind.fill(kbp_harmonized,
                                        fe_harmonized,
                                        mpv_harmonized,
                                        wapo_harmonized) %>%
-                                       mutate("uid" = 1:nrow(.))
+                                       mutate("uid" = 1:nrow(.)) %>% sample_n(100)
 
 combined_link = combined_harmonized %>%
                     select(c(common_cols, 'uid'))
@@ -50,10 +50,14 @@ threshold = 6
 
 classification = emClassify(EM_dedup_object, threshold.upper = 6)
 
-save(classification, file=file.path(path_to_src,
-                                     "FinalClassification",
-                                     "full_classification.RData"))
+save_dir = file.path(path_to_src, 'FinalClassification')
 
-save(combined_harmonized, file=file.path(path_to_src,
-                                    "FinalClassification",
-                                    "full_combined_harmonized.RData"))
+if(!dir.exists(save_dir)) {
+    dir.create(save_dir, recursive=T)
+}
+
+save(classification,
+     file = file.path(save_dir, "full_classification.RData"))
+
+save(combined_harmonized,
+     file = file.path(save_dir, "full_combined_harmonized.RData"))
