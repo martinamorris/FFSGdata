@@ -316,13 +316,17 @@ wapo_harmonized = harmonize(wapo,
                            null_names,
                            null_age)
 
-save_file = file.path(path_to_src,
-                      "HarmonizedFiles",
-                      "HarmonizedDataSets.RData")
+save_dir = file.path(path_to_src,
+                      "HarmonizedFiles")
+
+save_file = file.path(save_dir, "HarmonizedDataSets.RData")
+
+if(!dir.exists(save_file)) {
+  dir.create(save_dir, recursive=T)
+}
 
 if(!file.exists(save_file)) {
-
-    file.create(save_file, recursive=T)
+  file.create(save_file)
 }
 
 save(fe_harmonized,
