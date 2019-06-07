@@ -42,7 +42,7 @@ library(here)
 
 path_to_src = here::here(file.path('R', 'Harmonizing'))
 
-# Refresh data from all data sources
+# Refresh data from all data sources#
 source(file.path(here::here(), 'R', 'Scraping', "MasterScraper.R"))
 
 
@@ -109,7 +109,6 @@ harmonize <- function (df,
                        date_format,
                        name_delim,
                        null_names,
-                       null_races,
                        null_age) {
 
   canon_cols = c("name", "age", "sex", "race", "date")
@@ -120,7 +119,7 @@ harmonize <- function (df,
 
   # Assert that our data frame has the right columns
   # And arguments have right format
-  stopifnot(all(race_encoding %in% canon_races))
+  # stopifnot(all(race_encoding %in% canon_races))
 
   harmonized_df = df %>%
     # This automatically renames the columns
@@ -146,7 +145,6 @@ harmonize <- function (df,
     mutate(lastname   = get_name(name, 'last')) %>%
     mutate(middlename = get_name(name, 'middle')) %>%
 
-    mutate(race  = replace(race, race %in% null_races, NA)) %>%
     mutate(name = gsub("[^[:alnum:] ]", NA, name)) %>%
     mutate(str_age = age) %>%
     mutate(age  = as.numeric(
@@ -170,8 +168,7 @@ race_encoding = c('African-American/Black'  = 'Black',
                   'Native American/Alaskan' = 'NA_PI',
                   'Asian/Pacific Islander'  = 'Asian',
                   'Middle Eastern'          = 'Other',
-                  'Race unspecified'        = NA,
-                  ' '                       = NA)
+                  '.default'                = NA_character_)
 
 sex_encoding = c('F' = 'Female',
                  'W' = 'Female',
@@ -187,7 +184,6 @@ name_delim  = " aka | or | transitioning from "
 
 null_names = c('Name withheld by police', "")
 null_age = NA
-null_races= c(" ")
 
 fe_harmonized = harmonize(fe.clean,
                           "fe",
@@ -197,7 +193,6 @@ fe_harmonized = harmonize(fe.clean,
                           date_format,
                           name_delim,
                           null_names,
-                          null_races,
                           null_age)
 
 
@@ -217,8 +212,7 @@ race_encoding = c('B' = "Black",
                   'PI'  = 'NA_PI',
                   'A' = 'Asian',
                   'O' = 'Other',
-                  'Race unspecified'= NA,
-                  ' '               = NA)
+                  '.default' = NA_character_)
 
 sex_encoding = c('F' = 'Female',
                  'W' = 'Female',
@@ -227,14 +221,14 @@ sex_encoding = c('F' = 'Female',
                  'Unknown' = NA,
                  ' ' = NA,
                  'NA' = NA,
-                 'NULL' = NA)
+                 'NULL' = NA,
+                 'H' = NA)
 
 date_format = "%m/%d/%Y"
 name_delim  = " aka | or | transitioning from "
 
 null_names = c(" ", "", "NULL", "An unidentified person")
 null_age = NA
-null_races= c(" ", "", "M", "H")
 
 kbp_harmonized = harmonize(kbp,
                            "kbp",
@@ -244,7 +238,6 @@ kbp_harmonized = harmonize(kbp,
                 date_format,
                 name_delim,
                 null_names,
-                null_races,
                 null_age)
 
 
@@ -260,11 +253,7 @@ col_map = c("name" = "Victim's name",
 race_encoding = c('Hispanic'        = 'Hispanic',
                   'Native American' = 'NA_PI',
                   'Asian/Pacific Islander' = 'NA_PI',
-                  'Race unspecified'= NA,
-                  ' '               = NA,
-                  'Unknown race'    = NA,
-                  'Unknown Race'    = NA,
-                  'Female'          = NA)
+                  '.default'                = NA_character_)
 
 sex_encoding = c('F' = 'Female',
                  'W' = 'Female',
@@ -281,7 +270,6 @@ name_delim  = " aka | or | transitioning from "
 null_names = c("Name withheld by police",
                "Unknown name")
 null_age  = NA
-null_races= c(" ")
 
 mpv_harmonized = harmonize(mpv,
                            "mpv",
@@ -291,7 +279,6 @@ mpv_harmonized = harmonize(mpv,
                            date_format,
                            name_delim,
                            null_names,
-                           null_races,
                            null_age)
 
 ### Washington Post
@@ -305,7 +292,7 @@ race_encoding = c('B' = "Black",
                   'N' = 'NA_PI',
                   'A' = 'Asian',
                   'O' = 'Other',
-                  'None' = NA,)
+                  '.default' = NA_character_)
 
 
 sex_encoding = c('NA' = NA,
@@ -318,7 +305,6 @@ name_delim  = " aka | or | transitioning from "
 
 null_names = c(" ", "", "NULL", "An unidentified person")
 null_age = NA
-null_races= c(" ", "")
 
 wapo_harmonized = harmonize(wapo,
                             "wapo",
@@ -328,7 +314,6 @@ wapo_harmonized = harmonize(wapo,
                            date_format,
                            name_delim,
                            null_names,
-                           null_races,
                            null_age)
 
 save_file = file.path(path_to_src,
