@@ -30,7 +30,7 @@ combined_harmonized = plyr::rbind.fill(kbp_harmonized,
                                        fe_harmonized,
                                        mpv_harmonized,
                                        wapo_harmonized) %>%
-                                       mutate("uid" = 1:nrow(.)) %>% sample_n(100)
+                                       mutate("uid" = 1:nrow(.))
 
 combined_link = combined_harmonized %>%
                     select(c(common_cols, 'uid'))

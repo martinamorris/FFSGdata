@@ -66,8 +66,6 @@ for (file in scraped_files) {
 #'   between a person name and alias
 #' @param  null_names the symbol used to signify null name
 #' @param  null_races the symbol used to signify null race
-#' @param  null_age the symbol used to signify null age
-
 get_name <- function(name, order=NA) {
   if(is.na(name)) {
     return(NA)
@@ -108,8 +106,7 @@ harmonize <- function (df,
                        sex_encoding,
                        date_format,
                        name_delim,
-                       null_names,
-                       null_age) {
+                       null_names) {
 
   canon_cols = c("name", "age", "sex", "race", "date")
 
@@ -138,14 +135,14 @@ harmonize <- function (df,
     mutate(month = as.numeric(format(date,'%m'))) %>%
     mutate(day   = as.numeric(format(date,'%d'))) %>%
 
-    # # Harmonize nulls
+    # Harmonize nulls
     mutate(name  = replace(name, name %in% null_names, NA)) %>%
+    mutate(name = gsub("[^[:alnum:] ]", NA, name)) %>%
 
     mutate(firstname  = get_name(name, 'first')) %>%
     mutate(lastname   = get_name(name, 'last')) %>%
     mutate(middlename = get_name(name, 'middle')) %>%
 
-    mutate(name = gsub("[^[:alnum:] ]", NA, name)) %>%
     mutate(str_age = age) %>%
     mutate(age  = as.numeric(
                     gsub("[^[0-9]]", NA, age)
@@ -158,6 +155,8 @@ harmonize <- function (df,
   harmonized_df['source'] = source_name
   return(harmonized_df)
 }
+
+
 
 ### Fatal Encounters
 col_map = c('date' = 'dateMDY')
@@ -174,16 +173,12 @@ sex_encoding = c('F' = 'Female',
                  'W' = 'Female',
                  'M' = 'Male',
                  'T' = 'Transgender',
-                 'Unknown' = NA,
-                 ' ' = NA,
-                 'NA' = NA,
-                 'NULL' = NA)
+                 '.default' = NA_character_)
 
 date_format = "%m/%d/%Y"
 name_delim  = " aka | or | transitioning from "
 
 null_names = c('Name withheld by police', "")
-null_age = NA
 
 fe_harmonized = harmonize(fe.clean,
                           "fe",
@@ -192,8 +187,7 @@ fe_harmonized = harmonize(fe.clean,
                           sex_encoding,
                           date_format,
                           name_delim,
-                          null_names,
-                          null_age)
+                          null_names)
 
 
 
@@ -218,17 +212,12 @@ sex_encoding = c('F' = 'Female',
                  'W' = 'Female',
                  'M' = 'Male',
                  'T' = 'Transgender',
-                 'Unknown' = NA,
-                 ' ' = NA,
-                 'NA' = NA,
-                 'NULL' = NA,
-                 'H' = NA)
+                 '.default'  = NA_character_)
 
 date_format = "%m/%d/%Y"
 name_delim  = " aka | or | transitioning from "
 
 null_names = c(" ", "", "NULL", "An unidentified person")
-null_age = NA
 
 kbp_harmonized = harmonize(kbp,
                            "kbp",
@@ -237,8 +226,9 @@ kbp_harmonized = harmonize(kbp,
                 sex_encoding,
                 date_format,
                 name_delim,
-                null_names,
-                null_age)
+                null_names)
+
+
 
 
 ### Mapping Police Violence
@@ -253,23 +243,19 @@ col_map = c("name" = "Victim's name",
 race_encoding = c('Hispanic'        = 'Hispanic',
                   'Native American' = 'NA_PI',
                   'Asian/Pacific Islander' = 'NA_PI',
-                  '.default'                = NA_character_)
+                  '.default'   = NA_character_)
 
 sex_encoding = c('F' = 'Female',
                  'W' = 'Female',
                  'M' = 'Male',
                  'T' = 'Transgender',
-                 ' ' = NA,
-                 'NA' = NA,
-                 'Unknown' = NA,
-                 'NULL' = NA)
+                 '.default'     = NA_character_)
 
 date_format = "%Y-%m-%d"
 name_delim  = " aka | or | transitioning from "
 
 null_names = c("Name withheld by police",
                "Unknown name")
-null_age  = NA
 
 mpv_harmonized = harmonize(mpv,
                            "mpv",
@@ -278,12 +264,13 @@ mpv_harmonized = harmonize(mpv,
                            sex_encoding,
                            date_format,
                            name_delim,
-                           null_names,
-                           null_age)
+                           null_names)
+
+
+
 
 ### Washington Post
 col_map = c('sex' = 'gender')
-
 
 race_encoding = c('B' = "Black",
                   'W' = 'White',
@@ -295,16 +282,14 @@ race_encoding = c('B' = "Black",
                   '.default' = NA_character_)
 
 
-sex_encoding = c('NA' = NA,
-                 'F' = 'Female',
+sex_encoding = c('F' = 'Female',
                  'M' = 'Male',
-                 'None' = NA)
+                '.default'   = NA_character_))
 
 date_format = "%Y-%m-%d"
 name_delim  = " aka | or | transitioning from "
 
 null_names = c(" ", "", "NULL", "An unidentified person")
-null_age = NA
 
 wapo_harmonized = harmonize(wapo,
                             "wapo",
@@ -313,8 +298,10 @@ wapo_harmonized = harmonize(wapo,
                            sex_encoding,
                            date_format,
                            name_delim,
-                           null_names,
-                           null_age)
+                           null_names)
+
+
+#### SAVE ####
 
 save_dir = file.path(path_to_src,
                       "HarmonizedFiles")

@@ -51,3 +51,12 @@ final_merged = combined_harmonized %>%
                 group_by(person) %>%
                 spread(source, source) %>%
                 summarise_all(collaps_vals)
+
+save_dir = file.path(path_to_src, 'Merged')
+
+if(!dir.exists(save_dir)) {
+    dir.create(save_dir, recursive=T)
+}
+
+save(final_merged,
+     file = file.path(save_dir, "final_merged.RData"))
