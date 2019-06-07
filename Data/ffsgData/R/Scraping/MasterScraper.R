@@ -23,7 +23,7 @@ scrape_all_data <- function() {
 
     # save cleaned copy
     if(!file.exists(file.path(path_to_src, "ScrapedFiles"))) {
-        dir.create(save_file, recursive=T)
+        dir.create(path_to_src, recursive=T)
     }
 
     #' Census Data
