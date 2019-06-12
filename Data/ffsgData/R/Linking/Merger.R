@@ -37,20 +37,27 @@ sources = unique(combined_harmonized[, 'source'])
 
 for (source in sources) {
     col_name = paste0("in_", source)
-    combined_harmonized[col_name] = combined_harmonized[, 'source'] == source
+    combined_harmonized[col_name] = ifelse(combined_harmonized[, 'source'] == source, TRUE, NA)
 }
 
 collaps_vals = function(x) {
     return(x[!is.na(x)][1])
 }
 
-# This would break if the max row wasn't linked to anything
-combined_harmonized['person'] = components(link_graph, mode="weak")$membership
+# Pad end components
+max_comp = length(components(link_graph, mode="weak")$membership)
+max_id   = nrow(combined_harmonized['uid'])
+end_cap = 1:(max_id - max_comp) + max_comp
+combined_harmonized['person'] = c(components(link_graph, mode="weak")$membership,
+                                  end_cap)
 
 final_merged = combined_harmonized %>%
                 group_by(person) %>%
-                spread(source, source) %>%
-                summarise_all(collaps_vals)
+                summarise_all(collaps_vals) %>%
+                mutate(in_mpv  = ifelse(is.na(in_mpv),  0, 1)) %>%
+                mutate(in_fe   = ifelse(is.na(in_fe),   0, 1)) %>%
+                mutate(in_kbp  = ifelse(is.na(in_kbp),  0, 1)) %>%
+                mutate(in_wapo = ifelse(is.na(in_wapo), 0, 1))
 
 save_dir = file.path(path_to_src, 'Merged')
 

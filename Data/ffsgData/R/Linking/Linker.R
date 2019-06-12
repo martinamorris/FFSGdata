@@ -13,7 +13,7 @@ library(RecordLinkage)
 
 path_to_src = here::here(file.path('R', 'Linking'))
 harmonizer_src = file.path(here::here(), 'R', 'Harmonizing')
-source(file.path(harmonizer_src, "Harmonizer.R"))
+# source(file.path(harmonizer_src, "Harmonizer.R"))
 
 load(file.path(harmonizer_src,
                "HarmonizedFiles",
