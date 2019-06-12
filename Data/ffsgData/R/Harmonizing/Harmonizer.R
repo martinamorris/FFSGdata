@@ -281,10 +281,11 @@ race_encoding = c('B' = "Black",
                   'O' = 'Other',
                   '.default' = NA_character_)
 
+# Change?
 
 sex_encoding = c('F' = 'Female',
                  'M' = 'Male',
-                '.default'   = NA_character_))
+                '.default'   = NA_character_)
 
 date_format = "%Y-%m-%d"
 name_delim  = " aka | or | transitioning from "
