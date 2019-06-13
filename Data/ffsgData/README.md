@@ -14,7 +14,7 @@ Each of these have their own directory which hold both the source code and the d
 The linking process generally takes around 45 minutes on my 2 GHz, 8 GB RAM computer. Because of this long run time, the Merging script does *not* automatically run the prior scripts.
 
 # Scraping
-Scraping is composed of five scraping scripts and one master script. The master script sources the content of all four scraping scripts. Four of the scraping scripts scrape the police shooting datasets, and the fifth scraping script scrapes the US census. Upon running, each scripts saves its dataset in `R/Scraping/ScrapedFiles`. In the case of the census script, it saves both county and state datasets in `R/Scraping/ScrapedFiles/Populations`. To run all 5 scripts, simply run `MasterScraper.R`
+Scraping is composed of five scraping scripts and one master script. The master script sources the content of all five scraping scripts. Four of the scraping scripts scrape the police shooting datasets, and the fifth scraping script scrapes the US census. Upon running, each scripts saves its dataset in `R/Scraping/ScrapedFiles`. In the case of the census script, it saves both county and state datasets in `R/Scraping/ScrapedFiles/Populations`. To run all 5 scripts, simply run `MasterScraper.R`
 
 # Harmonizing
 Harmonizing is organized slightly differently than Scraping. Harmonizer only has one script, Harmonizer.R, which Harmonizes all 4 datasets (it does nothing to the census datasets). Upon completion, it saves all 4 datasets in a single file `HarmonizedDataSets.RData` in the folder `R/Harmonizing/HarmonizedFiles`. If a new dataset is ever added, it should relatively straight forward to follow the example of existing datasets in `Harmonizer.R`.
