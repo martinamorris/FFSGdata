@@ -5,15 +5,15 @@ library(ggplot2)
 library(venn)
 library(igraph)
 
-path_to_src = file.path(here::here(), 'R', 'Linking')
+path_to_src  = file.path(here::here(), 'R', 'Harmonizing')
+path_to_link = file.path(here::here(), 'R', 'Linking')
 # source(file.path(path_to_src, 'Linker.R'))
 
-
-load(file=file.path(path_to_src,
+load(file=file.path(path_to_link,
                     "FinalClassification",
                     "full_classification.RData"))
 
-load(file=file.path(path_to_src,
+load(file=file.path(path_to_link,
                     "FinalClassification",
                     "full_combined_harmonized.RData"))
 
