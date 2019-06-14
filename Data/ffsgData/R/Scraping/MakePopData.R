@@ -48,8 +48,8 @@ scrape_population_data <- function(county_urls, save_file) {
         stop()
     }
 
-    censuses = list("2000-2010"=rio::import(county_urls["2000-2010"]),
-                  "2010-2018"=rio::import(county_urls["2010-2018"]))
+    censuses = list("2000-2010"=read.csv(county_urls["2000-2010"]),
+                  "2010-2018"=read.csv(county_urls["2010-2018"]))
 
     states = list()
     counties = list()

@@ -11,7 +11,7 @@ library(dplyr)
 library(here)
 library(RecordLinkage)
 
-path_to_src = here::here(file.path('R'))
+path_to_src = here::here(file.path('R', 'Harmonizing'))
 source(file.path(path_to_src, "Harmonizer.R"))
 
 load(file.path(path_to_src,
