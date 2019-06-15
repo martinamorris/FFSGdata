@@ -1,0 +1,18 @@
+---
+title: "Fall 2018 Report"
+output: html_notebook
+---
+###Madeline Cummins
+  This quarter the focus of the project was turning the current project into a package and beginning to finalize it. The first part was to give the project all the necessary files for it to be a package. This includes creating the DESCRIPTION file which I then filled in with the details of the project. The DESCRIPTION file also contains the packages our package depends on (shiny), suggests (knitr, rmarkdown), and imports which includes all of the packages used for data manipulation and visualization used in the app or functions run by the app. I also organized all of the R files into a folder called R and all the data files into a folder called data.
+<br />
+<br />
+  The next step was documenting the R code that I had written. This started with making manuals for all the functions I had created. I did this using roxygen and writing comments above all the functions which included the function’s inputs, outputs, and/or purpose as well as any of the other functions it was related to (ie permillgraphfunc references permillcalculation). The comments were then ran and compiled as manuals in the “man” folder. Each function has it’s own manual in the proper format for an R package.
+<br />
+<br />
+  The harder part was then deciding how to document the Shiny App. We decided that the best method would be to create a vignette that walks the user through the shiny app. The vignette was created in rmarkdown and it includes basic uses and navigation of the app as well as a special description for each page. Besides the about page, which is just represented with a brief explanation and screenshot, each page includes a list of their inputs and outputs. I then connected shiny to be ran within the vignette so the user can interact with the data in the same ways that they would with the app.
+<br />
+<br />
+  I have now begun looking at how to make the package finalized. R keeps not recognizing the package as a package so I need to figure out how to run diagnostics to determine how to fix this issue. I believe it is most likely incorrect formatting that I may have unintentionally done within the DESCRIPTION or other files. Or it could be due to a missing file necessary for a package. I have found some ways to run diagnostics through 3rd party companies but I also believe R studio provides some information in it’s build tab, however I still need to do some research to figure out how to use it. The app also still has some minor issues that need to be fixed before the shiny app can be considered a final project. One of these things includes figuring out why the small help buttons’ help boxes disappear within the second they are opened. I also want to edit the function names and page names of the shiny app so they are better descriptions of the purpose of the function or page.  
+<br />
+For next quarter I would also like to begin to look at shiny dashboard to see if we can use it to help create a more intuitive, prettier, or better way for users to interact with the shiny resources. We are getting closer and closer to a final project and mainly need to do a lot of aesthetic edits.
+
