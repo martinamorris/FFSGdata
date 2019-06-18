@@ -34,3 +34,4 @@ http://v-neck.github.io/final/
 https://docs.google.com/presentation/d/19XFzorND9YIxosJm74sgS-We_qJSvCoGWwsGXubt-N0/edit?usp=sharing
 
 ## Old Tabulations
+https://github.com/statnet/ffsg/tree/master/Data/ffsgData/vignettes/Autumn%202018%20Reports
