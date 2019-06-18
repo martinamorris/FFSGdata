@@ -27,3 +27,10 @@ Linkage also consists of `Linker.R`, which is the script that runs the Fellegi a
 
 # Merging
 Merging consists of one file: `Merging.R`. It takes the contents of `full_classification`, which is a set of links between rows in `full_combined_harmonized`, and turns those links into a graph. It then uses that graph to find which sets of records are all linked together, indicating we think they are the same person. It then collapses `full_combined_harmonized` by the sets of linked records by naively choosing the first non-null value it finds to be the representive for that person. It also adds four columsn which indicate which datasets that person was originally found in. It outputs this new, collapsed file in `R/Merging/Merged`.
+
+# Existing Work
+http://v-neck.github.io
+http://v-neck.github.io/final/
+https://docs.google.com/presentation/d/19XFzorND9YIxosJm74sgS-We_qJSvCoGWwsGXubt-N0/edit?usp=sharing
+
+## Old Tabulations
