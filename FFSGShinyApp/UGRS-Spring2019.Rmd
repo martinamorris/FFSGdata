@@ -1,0 +1,34 @@
+---
+title: "Presentation"
+author: "Maddi Cummins"
+date: "May 7, 2019"
+output: html_document
+---
+
+##Mission Statement
+The goal of our project is to compile data on Fatal Encounters with Police and put it together on an app that would allow anyone to investigate and better understand fatal encounters with police.
+
+##Why is this important?
+* Recent News and high profile instances of people dying by police
+* To understand who is most affected by fatal encounters with police
+* To understand how geography may have an effect on fatal encounters with police
+* To humanize the victims and understand why this is a problem
+
+##How..
+In our project we used R to create our data visuals. R is a statistical programming language which paired with RStudio has a large user base with several packages built to help analyze data. In this project we utilized the "Shiny" package in order to create our app. Shiny is a powerful tool that helps create an user interface to interact with underlying R code so users can explore the data with the variables they want to see.
+
+Our code is stored on git hub and will be published as an R package for investigating fatal encounters with police. Once we publish we will make our project public and open sourced. This means that other people who are interested in the project can fork our repo to make their own additions which can even be pushed back and included in our repo.
+
+##Washington
+```{r, echo=FALSE}
+source("R/permillgraphfunc.R")
+permillgraph("Washington", capita = TRUE, all = TRUE)
+```
+
+```{r, echo=FALSE}
+source("R/StateReportCalcs.R")
+Metric_DT
+```
+
+##RAce
+Race is missing at an incredibly high rate. Why we need to look at race per capita. RAce hard bruh.

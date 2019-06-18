@@ -1,0 +1,25 @@
+---
+title: "FFSG Shiny App R Notebook"
+output: html_notebook
+---
+
+###<strong>Work Completed Spring 2017 - Summer 2018</strong>
+
+* Created R code for:
+  1. Putting Fatal Encounters data into a table with states and total fatal events then calculating per capita using census data
+  1. Taking total or per capita values for the table created and graphing them or putting them in a DT data table
+  1. Creating a bar graph or DT data table of the data based on a demographic: either race, age, or gender
+  1. Creating a choropleth map of per capita values by state for either the mean or by year
+  1. Creating a cartogram map of per capita values by state by year
+  1. Creating an interactive map which allows a useer to click and narrow in on specific events by location
+  
+* Made a shiny app that compiles all the R code above to be in one easy to use interactive app.
+
+* Create accompanying css and www files to make the shiny app look nice and run well
+
+###<strong>Work Completed Fall 2018</strong>
+
+* Moved project to make it a package and organized files in "data" and "R" files
+* Created manuals for all functions using roxygen (in man folder)
+* Created and filled in DESCRIPTION file
+* Wrote vignette connected with shiny so users can interact with what the different pages' functionalities are

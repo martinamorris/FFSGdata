@@ -1,0 +1,106 @@
+# Data Sources
+
+##Overview
+In this section of the book, you will find all the sources of our data.
+Our application is mainly depending on [Fatal Encounters] and [killed By Police]
+While going through each source you should keep in mind that these sources are not official and are limited in the sense that there are some missing data.\n
+The table below is an overview of all the sources used in this project. For more information about the sources, click on the desired one.
+
+| source name                                 | Active | Years covered  | Cases  | Public |
+|---------------------------------------------|--------|----------------|--------|--------|
+| [Fatal Encounters]                            | YES    | 2000-present   | 19 856 | YES    |
+| [Killed By Police ]                           | YES    | 2013-present   | 4629   | NO     |
+| [Washington Post]                             | YES    | 2015-present   | 2271   | YES    |
+| [Mapping Police Violence ]                    | YES    | 2011-present   | 2192   | N/A    |
+| [CDC National Violent Death Reporting System] | YES    | 2003-2014      | 1552   | NO     |
+| [The Guardian]                                | NO     | 2015-2016      | 1092   | N/A    |
+| [CDC Vital Statistics]                        | YES    | N/A            | 906    | N/A    |
+| [FBI Supplementary Homicide Reports]          | YES    | N/A            | 742    | N/A    |
+| [Seattle Times ]                              | NO     | 2005-2014      | 213    | N/A    |
+| [Seattle Police Department]                   | YES    | 2005-present   | 93     | YES    |
+| [Phil Stinson]                                | YES    | 2004-present   | N/A    | NO     |
+| [BJS:  arrest related deaths]                 | N/A    | N/A            | N/A    | N/A    |
+| [BJS:  law officers killed/ Harmed]            | N/A    | N/A            | N/A    | N/A    |
+| [Officer Down Memorial Page]                  | YES    | 1791-present   | 23294  | N/A    
+##Main sources
+
+### Fatal Encounters
+*Time covered*: 2000-present</br> 
+This data source has been collected since 2000 and is active until present day. As of the month of April there have been a total of 19,856 number of cases that are recorded. This database allows you to go in and download any data needed and also includes visualizations.</br>
+[http://www.fatalencounters.org](http://www.fatalencounters.org)
+
+
+###Killed By Police
+*Time covered*: 2013-2018 <br/>
+An open sourced data collection from an online anonymous source that dates back to May 1, 2013. The data set is still in continuation and the legitimacy of each data point is confirmed through actual online news articles of each fatality. Killed By Police has a number of 4,629 cases recorded. 
+[http://killedbypolice.net](http://killedbypolice.net)</br>
+
+
+
+
+
+##Government sources
+
+### CDC National Violent Death Reporting System 
+The system gives readers a clear understanding about how many people are killed by violent death with exact data. NVDRS \(National Violent Death Reporting System\) is the only state-based surveillance system that converts data on violent deaths from other sources into anonymous data. This also covers all types of deaths including homicides and suicides.</br>
+[https://www.cdc.gov/violenceprevention/nvdrs/index.html](https://www.cdc.gov/violenceprevention/nvdrs/index.html) 
+
+###CDC Vital Statistics 
+Within this dataset collected by the Centers for Disease Control and Prevention and national Center for Health Statistics is a list of 906 cases. Their website provides information pertaining to data collection, data processing, information for Data Analysis and Micro-data. It is public information and has a continuous data collection process. </br>
+[https://www.cdc.gov/nchs/nvss/mortality\_methods.html](%20https://www.cdc.gov/nchs/nvss/mortality_methods.html)
+
+
+###FBI Supplementary Homicide Reports 
+This reports provide dataset of the circumstances under violent death with details. The reports provide details of the circumstances like type of weapon, age, sex, race, etc. Also, the reports provide what violent code is used. The reports help to search database for records of violent death.</br>
+[https://ucr.fbi.gov/nibrs/addendum-for-submitting-cargo-theft-data/shr](https://ucr.fbi.gov/nibrs/addendum-for-submitting-cargo-theft-data/shr)
+
+
+
+###Seattle Police Department 
+Seattle Police Department provides a dataset of firearms cases prior to 2014. The dataset includes date, time, blurred address, and number of case. The department also provides use of force data, crisis contacts, bias crime unit, terry stops, tweets by beat. There are not only dataset, but also there are maps and graphs to show the dataset as visuals for a clear understanding.</br>
+[http://www.seattle.gov/police/information-and-data/use-of-force-data/ois-dataset](http://www.seattle.gov/police/information-and-data/use-of-force-data/ois-dataset)
+
+###BJS: Law Officers Killed/ Harmed 
+*Time covered*: 2015<br/>
+A dataset of law enforcement officers killed and assaulted in 2015. Data is from UCR Program's National incident Based Reporting System for incidents, offenses, victims, offenders, and arrestees. There are four types of dataset such are officers feloniously killed, officers accidently killed, officers assaulted, and federal officers killed and assaulted.<br/>
+[https://ucr.fbi.gov/leoka/2015](https://ucr.fbi.gov/leoka/2015) 
+
+###BJS: Arrest Related Deaths 
+Arrest related deaths is a census data of people who died while in a process of arrest or while in the custody of the state. The ARD program collects data of deaths that is relating to any use of force by law enforcement such as drowning, cardiac arrest, gunshot wound.</br>
+[https://www.bjs.gov/index.cfm?ty=dcdetail&iid=428](https://www.bjs.gov/index.cfm?ty=dcdetail&iid=428)
+
+
+
+
+##Media
+
+###Washington Post 
+*Time covered*: 2016-present 
+Washington Post Fatal Force page includes data on fatal force situations based on news, reports, public records, social media, and other source. Data has been collected for this set since 2016 and is still active until present day. Since 2016 there have a recorded number of 2,271 cases.</br>
+[https://www.washingtonpost.com/graphics/national/police-shootings-2016](https://www.washingtonpost.com/graphics/national/police-shootings-2016)
+
+### The Guardian 
+*Time covered*: 2015- 2016 
+The Guardian is a news source that was collecting data on people killed by law enforcement from 2015 to 2016 and has not further data collected since then. Within this set there are a total of 1092 cases recorded. In this set they also included stories of who they were and established the trends in how they died.</br>
+[https://www.theguardian.com/us-news/series/counted-us-police-killings](https://www.theguardian.com/us-news/series/counted-us-police-killings)
+
+### Seattle Times 
+Seattle Times provide a dataset of deadly force data, laws, weapons. The deadly force data shows informations of victims like name, type of weapon, age, race, gender, date, and what county he or she lives. The laws dataset shows if each state in U.S agree or does not agree on law1, law2, law3, law4, law5. The weapons dataset shows if the weapon was fake or firearm and type of the weapon.</br>
+[https://github.com/seattletimes/police-killings](https://github.com/seattletimes/police-killings) 
+
+
+##Others
+
+###Phil Stinson 
+It is an article written by FiveThirtyEight about ex cop who has the country's best data set on police misconduct. The name of ex cop is Philip M. Stinson. He has built database with 48 Google Alerts that Stinson set up in 2005. This system adds up to a data set of alleged police misconduct unmatched by anything created inside or outside of government which uses Google Alert to catch these cases.</br>
+[https://fivethirtyeight.com/features/an-ex-cop-keeps-the-countrys-best-data-set-on-police-misconduct/](https://fivethirtyeight.com/features/an-ex-cop-keeps-the-countrys-best-data-set-on-police-misconduct/) 
+
+###Officer Down Memorial Page 
+This data set is from the Officer Down Memorial Page, Inc., a non-profit organization that honors American law enforcement that died in the line of duty. The page provides an on-going archive of fatalities, including when, who, what, why, and how each death occurred. Many of the sources are very detailed, although requires one of the researchers from the UW FFRG to create an algorithm to format the data points so it is easier to aggregate with R.</br>
+[https://www.odmp.org](https://www.odmp.org) 
+
+###Mapping Police Violence 
+*Time covered*: 2011, 2013- present</br> 
+In Mapping Police Violence has data that is represented on their site accounting for people killed by police since 2013. This set remains active and continuously recording data until present day. They have recorded a total number of 1,179 people killed by police over the time period recorded. There are a few cases that are recorded in 2011 in this dataset.</br>
+[https://mappingpoliceviolence.org/aboutthedata/](https://mappingpoliceviolence.org/aboutthedata/) 
+
