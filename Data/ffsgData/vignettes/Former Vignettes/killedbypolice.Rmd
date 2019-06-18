@@ -23,8 +23,8 @@ library(here)
 library(DT)
 library(tidyr)
 
-source(here::here(file.path('R', 'Harmonizer.R')))
-load(here::here(file.path("R", "HarmonizedFiles","HarmonizedDataSets.RData")))
+source(here::here(file.path('R', 'Harmonizing', 'Harmonizer.R')))
+load(here::here(file.path("R", 'Harmonizing', "HarmonizedFiles","HarmonizedDataSets.RData")))
 
 fe  =  fe_harmonized
 mpv = mpv_harmonized
