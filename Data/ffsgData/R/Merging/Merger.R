@@ -51,6 +51,10 @@ end_cap = 1:(max_id - max_comp) + max_comp
 combined_harmonized['person'] = c(components(link_graph, mode="weak")$membership,
                                   end_cap)
 
+colnames(combined_harmonized)[colnames(combined_harmonized)=="..25"] =  "m25"
+
+
+
 final_merged = combined_harmonized %>%
                 group_by(person) %>%
                 summarise_all(collaps_vals) %>%
@@ -67,3 +71,5 @@ if(!dir.exists(save_dir)) {
 
 save(final_merged,
      file = file.path(save_dir, "final_merged.RData"))
+
+
