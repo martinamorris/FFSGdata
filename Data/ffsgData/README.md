@@ -23,7 +23,13 @@ Harmonizing is organized slightly differently than Scraping. Harmonizer only has
 # Linking
 Linkage consists of two scripts: `Linker.R` and `ClericalReview.R`. `ClericalReview.R` is a script which lets a user estimate a good threshold for a weight cuttoff. You can run the script, follow the instructions, and get an estimate of how to set the cutoff. Through my trials, I've found 6 to be reasonable.
 
-Linkage also consists of `Linker.R`, which is the script that runs the Fellegi and Sunter algorithm to actually find links between the records. It produced two files: `full_classification.RData` and `full_combined_harmonized.RData`. `full_classification` contains the output of running record linkage, which you can read about on page 11 [here](https://cran.r-project.org/web/packages/RecordLinkage/RecordLinkage.pdf). `full_comboined_harmonized` contains a giant dataframe where each of the harmonized datasets is stacked rowwise. The columns each dataset has in common are not duplicated. For the columns that are present in some datasets but not others `NA` is filled in for the rows of the datasets that are missing that column.
+Linkage also consists of `Linker.R`, which is the script that runs the Fellegi and Sunter algorithm to actually find links between the records. It produced two files: `full_classification.RData` and `full_combined_harmonized.RData`. `full_classification` contains the output of running record linkage, which you can read about on page 11 [here](https://cran.r-project.org/web/packages/RecordLinkage/RecordLinkage.pdf). 
+
+the output _`full_classification.RData`_ named classification is a list of 10 elements: data, pairs, frequencies, type, M, U, W, Wdata, prediction, threshold.
+Data and pairs are data frame. Frequencies, M, U, W, Wdata are vectors. type is a character and prediction is a factor.
+
+
+`full_combined_harmonized` contains a giant dataframe where each of the harmonized datasets is stacked rowwise. The columns each dataset has in common are not duplicated. For the columns that are present in some datasets but not others `NA` is filled in for the rows of the datasets that are missing that column. 
 
 # Merging
 Merging consists of one file: `Merging.R`. It takes the contents of `full_classification`, which is a set of links between rows in `full_combined_harmonized`, and turns those links into a graph. It then uses that graph to find which sets of records are all linked together, indicating we think they are the same person. It then collapses `full_combined_harmonized` by the sets of linked records by naively choosing the first non-null value it finds to be the representive for that person. It also adds four columsn which indicate which datasets that person was originally found in. It outputs this new, collapsed file in `R/Merging/Merged`.
