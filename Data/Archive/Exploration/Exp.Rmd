@@ -1,6 +1,8 @@
 ---
 title: "Exploration before Exploitation"
-output: html_notebook
+output:
+  html_notebook: default
+  pdf_document: default
 ---
 ## Summary ##
 We will work on the following issues in order to get a
@@ -14,10 +16,21 @@ creating any statistical models:
   - Variable transformation
   - Variable creation
 
+```{r echo = FALSE}
+library(dplyr)
+library(plotly)
+library(lubridate)
+
+
+kbp$Date <- as.Date(kbp$Date, format = "%m/%d/%Y")
+
+
+```
+
+
 ## Exploration cleaning (must be in trivial amounts only here) ##
 Remove the non-police killings from Fatal encounters  
 ```{r}
-library(dplyr)
 fe.clean <- filter(fe.clean, fe.clean$kbp.filter == "killed by police")
 ```
 
@@ -26,11 +39,10 @@ First, we determine the number of records that can potentially be matched. These
 recorded when all the specified datasets are in existence. As of this writing, Killed by police is the most
 recent dataset as determined by its date of creation (2013). So, we will look at numbers partitioned at 2013:
 ```{r}
-library(plotly)
 fe_num_records_before_2013 <- nrow(filter(fe.clean, fe.clean$year < 2013))
-kbp_num_records_before_2013 <- nrow(filter(kbp, kbp$year < 2013))
+kbp_num_records_before_2013 <- nrow(filter(kbp, year(kbp$Date) < 2013)) #there is no year column
 fe_num_records_after_2013 <- nrow(filter(fe.clean, fe.clean$year >= 2013))
-kbp_num_records_after_2013 <- nrow(filter(kbp, kbp$year >= 2013))
+kbp_num_records_after_2013 <- nrow(filter(kbp, year(kbp$Date) >= 2013))
 num_record_list_before_2013 <- c(fe_num_records_before_2013, kbp_num_records_before_2013)
 num_record_list_after_2013 <- c(fe_num_records_after_2013, kbp_num_records_after_2013)
 dfs <- c("Fatal encounters", "Killed by Police")
@@ -74,7 +86,7 @@ p
 
 Now, Killed by Police:
 ```{r}
-kbp.age.data <- kbp$deceased_age
+kbp.age.data <- kbp$Age
 p <- plot_ly(x = ~kbp.age.data, name = "Killed by Police", type = "histogram")
 p
 ```
@@ -82,7 +94,7 @@ p
 Finally, both:
 ```{r}
 fe.age.data <- fe.clean$age
-kbp.age.data <- kbp$deceased_age
+kbp.age.data <- kbp$Age
 p <- plot_ly(alpha = 0.6) %>%
   add_histogram(x = ~fe.age.data, name = "Fatal encounters") %>%
   add_histogram(x = ~kbp.age.data, name = "Killed by Police") %>%
