@@ -7,6 +7,7 @@ library(igraph)
 
 path_to_src  = file.path(here::here(), 'R', 'Harmonizing')
 path_to_link = file.path(here::here(), 'R', 'Linking')
+path = file.path(here::here(), 'R', 'Merging')
 # source(file.path(path_to_src, 'Linker.R'))
 
 load(file=file.path(path_to_link,
@@ -63,7 +64,7 @@ final_merged = combined_harmonized %>%
                 mutate(in_kbp  = ifelse(is.na(in_kbp),  0, 1)) %>%
                 mutate(in_wapo = ifelse(is.na(in_wapo), 0, 1))
 
-save_dir = file.path(path_to_src, 'Merged')
+save_dir = file.path(path, 'Merged')
 
 if(!dir.exists(save_dir)) {
     dir.create(save_dir, recursive=T)
