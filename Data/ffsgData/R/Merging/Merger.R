@@ -74,3 +74,22 @@ save(final_merged,
      file = file.path(save_dir, "final_merged.RData"))
 
 
+# breakdown
+fe <- sort(colnames(fe_harmonized))
+kbp <- sort(colnames(kbp_harmonized))
+wapo <- sort(colnames(wapo_harmonized))
+mpv <- sort(colnames(mpv_harmonized))
+#common
+common <- Reduce(intersect, list(fe, kbp, wapo, mpv))
+
+#unique
+nfe <-  fe[-pmatch(common, fe)]
+nkbp<-  kbp[-pmatch(common, kbp)]
+nwapo <-  wapo[-pmatch(common, wapo)]
+nmpv <-  mpv[-pmatch(common, mpv)]
+
+#shared
+int_fe_wapo <- intersect(nfe, nwapo)
+int_fe_mpv <- intersect(nfe,nmpv )
+
+
