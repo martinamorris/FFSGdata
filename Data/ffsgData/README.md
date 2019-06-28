@@ -38,10 +38,12 @@ __`full_classification.RData`__ is an RData object with
 * pairs, a data frame with each possible pair assessed for linkage. it consists of 13 col (id1, id2, age, sex, race, state, year, month, day, firstname, middlename, is_math)
 * frequencies,  a vector consisting of the frequencies of( age, sex, race, state, year, month, day, firstname, lastname, middlename)
 * type, deduplication
-* M and U are estimated m- and uprobabilities for the present comparison pattern. Estimation of M and U is done by an EM algorithm, implemented by mygllm. For every comparison pattern, the estimated numbers of matches and non-matches are used to compute the corresponding probabilities.
-* W, 
-* Wdata, 
-* prediction a vector consisting of 3 levels: N, P, L
+* M: Object of class "numeric" Vector of m-probabilities as calculated by emWeights.
+* U: Object of class "numeric" Vector of u-probabilities as calculated by emWeights.
+* W: Object of class "numeric" Vector of log-likelihood weights as calculated by emWeights, corresponding to binary comparison patterns as created by bincombinations.
+* Wdata: Object of class "numeric" Vector of log-likelihood weights as calculated by emWeights,
+corresponding to the rows of pairs.
+* prediction a vector consisting of 3 levels: N (no link), P(possible), L(link)
 * threshold: the value to set the cutoff, in this code 6.
 
 2. `full_combined_harmonized` is a dataframe in which each of the harmonized datasets is stacked rowwise. The columns each dataset has in common are not duplicated; all other columns represent variables that are in a subset of the datasets (where subset size can be 1). For the columns that are present in some datasets but not others `NA` is filled in for the rows of the datasets that are missing that column. 

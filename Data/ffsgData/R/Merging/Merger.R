@@ -34,7 +34,7 @@ linked_sources = lapply(linked_ids,
 
 dup_link_idx = unlist(lapply(linked_sources, function(x) any(duplicated(x))))
 
-dup_links      =    linked_ids[ dup_link_idx]
+dup_links      =linked_ids[ dup_link_idx]
 unique_links   = linked_ids[!dup_link_idx]
 unique_sources = linked_sources[!dup_link_idx]
 
