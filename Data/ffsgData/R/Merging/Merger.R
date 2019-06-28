@@ -18,6 +18,10 @@ load(file=file.path(path_to_link,
                     "FinalClassification",
                     "full_combined_harmonized.RData"))
 
+load(file= file.path(path_to_src,
+                     "HarmonizedFiles",
+                     "HarmonizedDataSets.RData"))
+
 link_idx = classification$prediction == 'L'
 links = classification$pairs[link_idx, c('id1', 'id2')]
 link_graph = graph_from_edgelist(as.matrix(links), directed=F)
