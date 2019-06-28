@@ -4,6 +4,7 @@ library(tidyr)
 library(ggplot2)
 library(venn)
 library(igraph)
+library(stringr)
 
 path_to_src  = file.path(here::here(), 'R', 'Harmonizing')
 path_to_link = file.path(here::here(), 'R', 'Linking')
@@ -60,6 +61,21 @@ colnames(combined_harmonized)[colnames(combined_harmonized)=="..25"] =  "m25"
 
 
 
+
+under_to_camel = function(x) {
+    x =gsub("_", " ", x, perl=T)
+    x = str_to_title(x)
+    x = gsub("\\s", "\\U\\1", x , perl = T)
+    return(x)
+}
+
+
+
+
+
+
+
+
 final_merged = combined_harmonized %>%
                 group_by(person) %>%
                 summarise_all(collaps_vals) %>%
@@ -67,6 +83,9 @@ final_merged = combined_harmonized %>%
                 mutate(in_fe   = ifelse(is.na(in_fe),   0, 1)) %>%
                 mutate(in_kbp  = ifelse(is.na(in_kbp),  0, 1)) %>%
                 mutate(in_wapo = ifelse(is.na(in_wapo), 0, 1))
+
+final_merged = final_merged %>%  rename_all(under_to_camel)
+
 
 save_dir = file.path(path, 'Merged')
 
