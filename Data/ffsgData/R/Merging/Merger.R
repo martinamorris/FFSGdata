@@ -56,24 +56,18 @@ max_id   = nrow(combined_harmonized['uid'])
 end_cap = 1:(max_id - max_comp) + max_comp
 combined_harmonized['person'] = c(components(link_graph, mode="weak")$membership,
                                   end_cap)
-
+# changed the column ..25 to m25
 colnames(combined_harmonized)[colnames(combined_harmonized)=="..25"] =  "m25"
 
 
 
-
-under_to_camel = function(x) {
+# function to standardize the outputs
+to_camel = function(x) {
     x =gsub("_", " ", x, perl=T)
     x = str_to_title(x)
     x = gsub("\\s", "\\U\\1", x , perl = T)
     return(x)
 }
-
-
-
-
-
-
 
 
 final_merged = combined_harmonized %>%
@@ -84,7 +78,7 @@ final_merged = combined_harmonized %>%
                 mutate(in_kbp  = ifelse(is.na(in_kbp),  0, 1)) %>%
                 mutate(in_wapo = ifelse(is.na(in_wapo), 0, 1))
 
-final_merged = final_merged %>%  rename_all(under_to_camel)
+final_merged = final_merged %>%  rename_all(to_camel)
 
 
 save_dir = file.path(path, 'Merged')
@@ -97,7 +91,7 @@ save(final_merged,
      file = file.path(save_dir, "final_merged.RData"))
 
 
-# breakdown
+# breakdown of final_merged
 fe <- sort(colnames(fe_harmonized))
 kbp <- sort(colnames(kbp_harmonized))
 wapo <- sort(colnames(wapo_harmonized))
