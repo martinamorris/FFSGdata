@@ -1,6 +1,16 @@
-# How to Use This Package
+---
+title: ' How to Use This Package'
+output:
+  html_document: default
+  pdf_document: default
+---
+```{r echo = FALSE, include=FALSE}
 
-    
+source('R/Merging/Merger.R')
+```
+
+
+
 
 This package has 4 main parts:
 
@@ -38,12 +48,9 @@ __`full_classification.RData`__ is an RData object with
 * pairs, a data frame with each possible pair assessed for linkage. it consists of 13 col (id1, id2, age, sex, race, state, year, month, day, firstname, middlename, is_math)
 * frequencies,  a vector consisting of the frequencies of( age, sex, race, state, year, month, day, firstname, lastname, middlename)
 * type, deduplication
-* M: Object of class "numeric" Vector of m-probabilities as calculated by emWeights.
-* U: Object of class "numeric" Vector of u-probabilities as calculated by emWeights.
-* W: Object of class "numeric" Vector of log-likelihood weights as calculated by emWeights, corresponding to binary comparison patterns as created by bincombinations.
-* Wdata: Object of class "numeric" Vector of log-likelihood weights as calculated by emWeights,
-corresponding to the rows of pairs.
-* prediction a vector consisting of 3 levels: N (no link), P(possible), L(link)
+* M , U, W are the W = log(M/U) are the weights returned by the algorithm
+* Wdata, 
+* prediction a vector consisting of 3 levels: N (no link), P (possible), L(link)
 * threshold: the value to set the cutoff, in this code 6.
 
 2. `full_combined_harmonized` is a dataframe in which each of the harmonized datasets is stacked rowwise. The columns each dataset has in common are not duplicated; all other columns represent variables that are in a subset of the datasets (where subset size can be 1). For the columns that are present in some datasets but not others `NA` is filled in for the rows of the datasets that are missing that column. 
@@ -55,22 +62,21 @@ Merging consists of one file: `Merging.R`. It takes the contents of `full_classi
 a data frame named __final_merged__ consisting of 63 columns: 
 (person, date, name, aka, age, sex, race, state, X., Source, year, month, day, firstname, lastname, middlename, str_age, source, URLpic, address, city, zip, county, fullAddress, latitude, longitude, agency, causeOfDeath, circumstances...)
 
-**Common columns in 4 datasets** : age, aka, date, day, firstname, lastname, middlename, month, name, race, sex, source, state, str_age, year.
-
+**Common columns in 4 datasets** : `r common`
 **Shared columns**: 
 
-- Fatal encounter & Washington Post : "city" 
+- Fatal encounter & Washington Post : `r int_fe_wapo `
 
-- Fatal encounter & Mapping Police Violence: "zip"
+- Fatal encounter & Mapping Police Violence: `r int_fe_mpv`
 
 **Unique in each dataset** : 
-* Fatal encounters: address,  agency, causeOfDeath, circumstances, city, county,Description, fullAddress, kbp.filter, latitude, longitude, officialDisposition, URLarticle, URLpic, zip
 
-* Killed by Police: Source, X
+* Fatal encounters: `r nfe `
+* Killed by Police: `r nkbp`
 
-* Washington Post: armed, body_camera, city, flee, id, manner_of_death, signs_of_mental_illness, threat_level 
+* Washington Post:  `r nwapo`
 
-* Mapping Police Violence: ..25, A brief description of the circumstances surrounding the death, Agency responsible for death, Alleged Threat Level (Source: WaPo), Alleged Weapon (Source: WaPo), Body Camera (Source: WaPo), Cause of death, City, County, Criminal Charges?, Fleeing (Source: WaPo), Link to news article or photo of official document, Official disposition of death (justified or other), Street Address of Incident, Symptoms of mental illness? , Unarmed, URL of image of victim, WaPo ID (If included in WaPo database), zip                              
+* Mapping Police Violence: `r nmpv`                           
                                    
 
 

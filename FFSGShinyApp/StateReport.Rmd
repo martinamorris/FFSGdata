@@ -1,7 +1,9 @@
 ---
-title: "Washington State Report"
-date: "May 16, 2019"
-output: html_document
+title: "State Report"
+output:
+  html_document: default
+  pdf_document: default
+date: "`r format(Sys.time(), '%d %B, %Y')`"
 ---
 
 ```{r setup, include=FALSE}
@@ -10,13 +12,19 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r include=FALSE}
 source('R/StateReportCalcs.R')
 source('R/permillgraphfunc.R')
+
+ac <- "AL"
+state <- abbr2state(ac)
+
+
 ```
 
 ##State Metrics
 The below table shows an overview of fatal encounters for the state. Counts expresses the total number of fatal encounters, which is shown in the table for 2017 and for the total between 2000-2017. Capita is the number of fatal encounters per million people in the state's population and includes the value for 2017 as well as the average since 2000. The state is then given a rank for each measure as it is compared with other states (1 is the highest).
 ```{r, echo=FALSE}
 library(knitr)
-kable(Metrics)
+table_metrics(ac)
+
 ```
 
 <style>
@@ -35,18 +43,18 @@ kable(Metrics)
 <div class="column-left">
 ##Highest 10 Cities by Counts
 ```{r, echo=FALSE}
-top10_bar
+f_years(ac)
 ```  
 The above bar graph shows a comparison of the 10 cities with the highest counts of fatal encounters.
 
 ##Fatal Encounters over Time
 ```{r, echo=FALSE}
-permillgraph("Washington", all=TRUE, capita=TRUE)
+permillgraph(state, all=TRUE, capita=TRUE)
 ```
 
 ##Counts by Gender
 ```{r, echo=FALSE}
-kable(genderDf)
+perGender(ac)
 ```
 
 Above is the breakdown of counts by gender, and to the right is the breakdown of counts by age group.
@@ -56,22 +64,20 @@ Above is the breakdown of counts by gender, and to the right is the breakdown of
 <div class="column-right">
 ##Choropleth of Counties
 ```{r, echo=FALSE}
-plot_usmap( data = countyData , values = "number_values", include = "WA", lines = "red") +
-  scale_fill_continuous( low = "white", high = "red", name = "Fatal encounter", label = scales::comma) +
-  labs(title = "Washington state")
+statemap(ac)
 ```
 The above map shows a choropleth of total fatal encounters by county. Counties which are red have higher values while pale colored counties have lower values, and grey counties don't have data.
 
 ##Counts by Race
 ```{r, echo=FALSE}
-kable(raceDf)
+perRace(ac)
 ```
 
 Above is the breakdown by race, notice that the highest number is "Race Unspecified" due to the high number of missingness we can't properly understand the true ditribution. Also to be able to properly compare these values we would need to calculate them by capita to see how the counts are relative to the size of the race's population.
 
 ##Counts by Age
 ```{r, echo=FALSE}
-kable(ageDF)
+perAge(ac)
 ```
 
 </div>
