@@ -69,9 +69,11 @@ under_to_camel = function(x) {
     return(x)
 }
 
-merged = combined_harmonized %>%
-    group_by(person) %>%
-    spread()
+
+
+
+
+
 
 
 final_merged = combined_harmonized %>%
@@ -81,9 +83,6 @@ final_merged = combined_harmonized %>%
                 mutate(in_fe   = ifelse(is.na(in_fe),   0, 1)) %>%
                 mutate(in_kbp  = ifelse(is.na(in_kbp),  0, 1)) %>%
                 mutate(in_wapo = ifelse(is.na(in_wapo), 0, 1))
-
-
-
 
 final_merged = final_merged %>%  rename_all(under_to_camel)
 
@@ -114,6 +113,6 @@ nmpv <-  mpv[-pmatch(common, mpv)]
 
 #shared
 int_fe_wapo <- intersect(nfe, nwapo)
-int_fe_mpv <- intersect(nfe,nmpv)
+int_fe_mpv <- intersect(nfe,nmpv )
 
 

@@ -27,10 +27,6 @@ for (file in scraped_files) {
   load(scraped_path)
 }
 
-path2 = here::here(file.path('Data','ffsgData' ,'R', 'Harmonizing', 'HarmonizedFiles'))
-load( file.path(path2, "HarmonizedDataSets.RData"))
-
-
 kbp$Date <- as.character.factor(kbp$Date)
 kbp$Date <- as.Date(kbp$Date, format = "%m/%d/%Y")
 mpv$`Date of Incident (month/day/year)` <-  as.Date(mpv$`Date of Incident (month/day/year)`)
@@ -45,8 +41,6 @@ mpv$`Date of Incident (month/day/year)` <-  as.Date(mpv$`Date of Incident (month
 <!-- ```{r} -->
 <!-- #fe.clean <- filter(fe.clean, fe.clean$kbp.filter == "killed by police") -->
 <!-- ``` -->
-
-
 
 ## Number of records worth matching ##
 First, we determine the number of records that can potentially be matched. These are the records that are
@@ -69,59 +63,27 @@ before_2013 <- c(fe_before_2013, kbp_before_2013, wp_before_2013, mpv_before_201
 after_2013 <- c(fe_after_2013, kbp_after_2013,wp_after_2013, mpv_after_2013)
 dfs <- c("Fatal encounters", "Killed by Police", "Washington Post", "Mapping Police Violence")
 data <- data.frame(dfs, before_2013, after_2013)
-
-p.raw <- plot_ly(data, x = ~dfs, y = ~before_2013, type = 'bar', name = 'Before 2013',
+p <- plot_ly(data, x = ~dfs, y = ~before_2013, type = 'bar', name = 'Before 2013',
         marker = list(color = 'rgb(55, 83, 109)')) %>%
   add_trace(y = ~after_2013, name = 'After 2013', marker = list(color = 'rgb(26, 118, 255)')) %>%
     layout(title = "Number of records as partiitoned by the origin date of most recently created dataset",
-           yaxis = list(title = "Number of records"), xaxis = list(title = " Raw Dataset"), barmode = 'group', bargap = 0.15)
-p.raw
-
-
-hfe_before_2013 <- nrow(filter(fe_harmonized, fe_harmonized$year < 2013))
-hfe_after_2013 <- nrow(filter(fe_harmonized, fe_harmonized$year >= 2013))
-
-hkbp_before_2013 <- nrow(filter(kbp_harmonized, year(kbp_harmonized$date) < 2013))
-hkbp_after_2013 <- nrow(filter(kbp_harmonized, year(kbp_harmonized$date) >= 2013))
-
-hwp_before_2013 <- nrow(filter(wapo_harmonized, year(wapo_harmonized$date)< 2013 ))
-hwp_after_2013 <- nrow(filter(wapo_harmonized, year(wapo_harmonized$date) >= 2013 ))
-
-hmpv_before_2013 <-  nrow(filter(mpv_harmonized, year(mpv_harmonized$date)< 2013 ))
-hmpv_after_2013 <-  nrow(filter(mpv_harmonized, year(mpv_harmonized$date) >= 2013 ))
-
-hbefore_2013 <- c(hfe_before_2013, hkbp_before_2013, hwp_before_2013, hmpv_before_2013 )
-hafter_2013 <- c(hfe_after_2013, hkbp_after_2013, hwp_after_2013, hmpv_after_2013)
-hdfs <- c("Fatal encounters", "Killed by Police", "Washington Post", "Mapping Police Violence")
-hdata <- data.frame(hdfs, hbefore_2013, hafter_2013)
-
-
-p.har <- plot_ly(hdata, x = ~hdfs, y = ~hbefore_2013, type = 'bar', name = 'Before 2013',
-        marker = list(color = 'rgb(55, 83, 109)')) %>%
-  add_trace(y = ~hafter_2013, name = 'After 2013', marker = list(color = 'rgb(26, 118, 255)')) %>%
-    layout(title = "Number of records as partiitoned by the origin date of most recently created dataset",
-           yaxis = list(title = "Number of records"), xaxis = list(title = "Harmonized Dataset"), barmode = 'group', bargap = 0.15)
-p.har
-
-
-
-
+           yaxis = list(title = "Number of records"), xaxis = list(title = "Dataset"), barmode = 'group', bargap = 0.15)
+p
 ```
 As seen above, we have no case reported before 2013 for Killed by police, Mapping Police Violence and Washington Post  compared to majority of Fatal encounters' data recorded before 2013. Also note that even after 2013 fatal encounters records much more than the other datatsets. Henceforth, we shall only use the data from 2013 since that is the only data worth matching.
 
 ```{r echo = FALSE}
 fe.clean <- filter(fe.clean, fe.clean$year >= 2013)
-fe_harmonized <- filter(fe.clean, fe.clean$year >= 2013)
 ```
 
 ## Univariate Analysis for Age ##
 Here we look at the age variable recorded by all datasets (albeit under different column names). **Pay special attention to warnings to figure out what needs to be cleaned in the datasets since these warnings tell age entries that are anomalous like 25-30, 17 months, 40s, etc.**
 
 First, fatal encounters:
-Total age records for raw data are `r nrow(fe.clean)` .
-
-Total age records for harmonized data are `r length(fe_harmonized$age)`
-
+Total age records are 
+```{r echo = FALSE}
+nrow(fe.clean)
+```
 
 
 Total missing age records are: 
@@ -306,13 +268,6 @@ Of the non-missing, following is the histogram of occurences.
 p <- plot_ly(x = ~wapo$race, name = "Washington Post", type = "histogram")
 p
 ```
-
-
-
-
-
-
-
 
 
 
