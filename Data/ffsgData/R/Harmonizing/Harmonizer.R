@@ -111,6 +111,7 @@ harmonize <- function (df,
 
   canon_cols = c("name", "age", "sex", "race", "date")
 
+  # hispanic is added here because in all dataset except US 
   canon_races = c("Black", "White", "Hispanic",
                   'NA_PI', "Asian", "Other")
 
