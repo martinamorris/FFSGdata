@@ -116,3 +116,8 @@ int_fe_wapo <- intersect(nfe, nwapo)
 int_fe_mpv <- intersect(nfe,nmpv )
 
 
+
+# status after linkage
+
+
+

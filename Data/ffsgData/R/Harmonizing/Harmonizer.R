@@ -98,6 +98,7 @@ get_name <- function(name, order=NA) {
   }
 }
 
+
 get_name = Vectorize(get_name)
 
 harmonize <- function (df,
@@ -111,6 +112,7 @@ harmonize <- function (df,
 
   canon_cols = c("name", "age", "sex", "race", "date")
 
+  # we added hispanic to the list because every scrapped dataset has it as a value.
   canon_races = c("Black", "White", "Hispanic",
                   'NA_PI', "Asian", "Other")
 
@@ -242,6 +244,9 @@ col_map = c("name" = "Victim's name",
             "state" = "State")
 
 race_encoding = c('Hispanic'        = 'Hispanic',
+                  'White' = 'White',
+                  'Black' = 'Black',
+                  'Asian' = 'Asian',
                   'Native American' = 'NA_PI',
                   'Asian/Pacific Islander' = 'NA_PI',
                   '.default'   = NA_character_)
