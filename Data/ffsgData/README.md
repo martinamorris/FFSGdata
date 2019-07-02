@@ -21,6 +21,10 @@ Scraping is composed of five scraping scripts and one master script. The master 
 # Harmonizing
 Harmonizing is organized slightly differently than Scraping. Harmonizer only has one script, Harmonizer.R, which Harmonizes all 4 datasets (it does nothing to the census datasets). Upon completion, it saves all 4 datasets in a single file `HarmonizedDataSets.RData` in the folder `R/Harmonizing/HarmonizedFiles`. If a new dataset is ever added, it should be relatively straight forward to follow the example of existing datasets in `Harmonizer.R`.
 
+### Output
+`HarmonizedDataSets.RData` has 4 datasets : __fe_harmonized__, __kbp_harmonized__, __wapo_harmonized__, __mpv_harmonized__.
+All of these datasets consist of 15 commun columns along their unique colunm  variables.
+
 
 # Linking
 Linkage consists of two scripts: `ClericalReview.R` and `Linker.R`. 
