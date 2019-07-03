@@ -55,6 +55,25 @@ __`full_classification.RData`__ is an RData object with
 
 2. `full_combined_harmonized` is a dataframe in which each of the harmonized datasets is stacked rowwise. The columns each dataset has in common are not duplicated; all other columns represent variables that are in a subset of the datasets (where subset size can be 1). For the columns that are present in some datasets but not others `NA` is filled in for the rows of the datasets that are missing that column. 
 
+
+### Race missingness
+
+Missing race before linkage:
+
+* FE : `r round(nrow(filter(fe_harmonized, is.na(race))) / nrow(fe_harmonized) * 100, 2)`
+
+* KBP : `r  round(nrow(filter(kbp_harmonized, is.na(race))) / nrow(kbp_harmonized) * 100, 2)`
+
+* WAPO : `r round(nrow(filter(wapo_harmonized, is.na(race))) / nrow(wapo_harmonized) * 100, 2) `
+
+* MPV : `r round(nrow(filter(mpv_harmonized, is.na(race))) / nrow(mpv_harmonized) * 100, 2)`
+
+
+Missing race after linkage:
+Final dataset: `r round(nrow(filter(final_merged, is.na(Race)))/ nrow(final_merged) * 100, 2) `
+
+
+
 # Merging
 Merging consists of one file: `Merging.R`. It takes the contents of `full_classification`, which is a set of links between rows in `full_combined_harmonized`, and turns those links into a graph. It then uses that graph to find which sets of records are all linked together, indicating we think they are the same person. It then collapses `full_combined_harmonized` by the sets of linked records by naively choosing the first non-null value it finds to be the representive for that person. It also adds four columsn which indicate which datasets that person was originally found in. It outputs this new, collapsed file in `R/Merging/Merged`.
 
@@ -76,7 +95,10 @@ a data frame named __final_merged__ consisting of 63 columns:
 
 * Washington Post:  `r nwapo`
 
-* Mapping Police Violence: `r nmpv`                           
+* Mapping Police Violence: `r nmpv`   
+
+
+
                                    
 
 

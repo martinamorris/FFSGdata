@@ -52,6 +52,25 @@ corresponding to the rows of pairs.
 
 2. `full_combined_harmonized` is a dataframe in which each of the harmonized datasets is stacked rowwise. The columns each dataset has in common are not duplicated; all other columns represent variables that are in a subset of the datasets (where subset size can be 1). For the columns that are present in some datasets but not others `NA` is filled in for the rows of the datasets that are missing that column. 
 
+### Race missingness
+
+Missing race before linkage:
+
+* Fatal encounters : 31.53%
+
+* Killed by police : 39.33%
+
+* Washington post : 12.02%
+
+* Mapping police violence :  8.57%
+
+Missing race after linkage:
+
+* Final dataset: 31.06%
+
+
+
+
 # Merging
 Merging consists of one file: `Merging.R`. It takes the contents of `full_classification`, which is a set of links between rows in `full_combined_harmonized`, and turns those links into a graph. It then uses that graph to find which sets of records are all linked together, indicating we think they are the same person. It then collapses `full_combined_harmonized` by the sets of linked records by naively choosing the first non-null value it finds to be the representive for that person. It also adds four columsn which indicate which datasets that person was originally found in. It outputs this new, collapsed file in `R/Merging/Merged`.
 
