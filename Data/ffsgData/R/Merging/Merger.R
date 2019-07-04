@@ -4,9 +4,11 @@ library(tidyr)
 library(ggplot2)
 library(venn)
 library(igraph)
+library(stringr)
 
 path_to_src  = file.path(here::here(), 'R', 'Harmonizing')
 path_to_link = file.path(here::here(), 'R', 'Linking')
+path = file.path(here::here(), 'R', 'Merging')
 # source(file.path(path_to_src, 'Linker.R'))
 
 load(file=file.path(path_to_link,
@@ -16,6 +18,10 @@ load(file=file.path(path_to_link,
 load(file=file.path(path_to_link,
                     "FinalClassification",
                     "full_combined_harmonized.RData"))
+
+load(file= file.path(path_to_src,
+                     "HarmonizedFiles",
+                     "HarmonizedDataSets.RData"))
 
 link_idx = classification$prediction == 'L'
 links = classification$pairs[link_idx, c('id1', 'id2')]
@@ -29,7 +35,7 @@ linked_sources = lapply(linked_ids,
 
 dup_link_idx = unlist(lapply(linked_sources, function(x) any(duplicated(x))))
 
-dup_links      =    linked_ids[ dup_link_idx]
+dup_links      =linked_ids[ dup_link_idx]
 unique_links   = linked_ids[!dup_link_idx]
 unique_sources = linked_sources[!dup_link_idx]
 
@@ -50,6 +56,19 @@ max_id   = nrow(combined_harmonized['uid'])
 end_cap = 1:(max_id - max_comp) + max_comp
 combined_harmonized['person'] = c(components(link_graph, mode="weak")$membership,
                                   end_cap)
+# changed the column ..25 to m25
+colnames(combined_harmonized)[colnames(combined_harmonized)=="..25"] =  "m25"
+
+
+
+# function to standardize the outputs
+to_camel = function(x) {
+    x =gsub("_", " ", x, perl=T)
+    x = str_to_title(x)
+    x = gsub("\\s", "\\U\\1", x , perl = T)
+    return(x)
+}
+
 
 final_merged = combined_harmonized %>%
                 group_by(person) %>%
@@ -59,7 +78,10 @@ final_merged = combined_harmonized %>%
                 mutate(in_kbp  = ifelse(is.na(in_kbp),  0, 1)) %>%
                 mutate(in_wapo = ifelse(is.na(in_wapo), 0, 1))
 
-save_dir = file.path(path_to_src, 'Merged')
+final_merged = final_merged %>%  rename_all(to_camel)
+
+
+save_dir = file.path(path, 'Merged')
 
 if(!dir.exists(save_dir)) {
     dir.create(save_dir, recursive=T)
@@ -67,3 +89,24 @@ if(!dir.exists(save_dir)) {
 
 save(final_merged,
      file = file.path(save_dir, "final_merged.RData"))
+
+
+# breakdown of final_merged
+fe <- sort(colnames(fe_harmonized))
+kbp <- sort(colnames(kbp_harmonized))
+wapo <- sort(colnames(wapo_harmonized))
+mpv <- sort(colnames(mpv_harmonized))
+#common
+common <- Reduce(intersect, list(fe, kbp, wapo, mpv))
+
+#unique
+nfe <-  fe[-pmatch(common, fe)]
+nkbp<-  kbp[-pmatch(common, kbp)]
+nwapo <-  wapo[-pmatch(common, wapo)]
+nmpv <-  mpv[-pmatch(common, mpv)]
+
+#shared
+int_fe_wapo <- intersect(nfe, nwapo)
+int_fe_mpv <- intersect(nfe,nmpv )
+
+

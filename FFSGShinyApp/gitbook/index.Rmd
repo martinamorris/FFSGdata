@@ -1,0 +1,15 @@
+---
+title: "Fatal Force Study Group - Shiny App"
+site: bookdown::bookdown_site
+output: bookdown::gitbook 
+documentclass: book
+---
+#Introduction
+
+##Who is Fatal Force Study Group?
+
+The Fatal Force Study Group \(FFSG\) was founded at the University of Washington \(UW\) by professor Martina Morris. Morris has a strong background in Sociology and Statistics and after joining an activism group called [Not This Time](http://www.notthistime.global/) she decided to start investigating fatal encounters with police, along with a group of UW undergraduate students. Since then the group has been joined by Professor Ben Marwick, an UW archaeology professor with a strong interest in statistics and R, as well as several more undergraduate students from both UW and neighboring University Western Washington University.
+
+##Our Mission
+
+UW FFSG's mission is to bring justice and peace to communities most impacted by police brutality through a comprehensive data analysis. We are working to compile existing data sets on fatal encounters with police into one extensive data set. From there we are hoping to create an easy tool for anyone to investigate fatal encounters with police. Our tool will be in the form of a Shiny App which will include tables, graphs, and maps that users can directly interact with to better understand fatal encounters with police.

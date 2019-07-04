@@ -1,5 +1,5 @@
 ---
-title: "Fatal Encounters"
+title: "Killed By Police"
 author: "Vaughn Johnson"
 date: "2018-12-05"
 output: rmarkdown::html_vignette
@@ -9,8 +9,9 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-# Fatal Encounters
-Fatal Encounters seeks to "create a comprehensive national database of people who are killed through interactions with police started with a simple question: How often does that happen?". It's maintained by D. Brian Burghart.
+# Killed By Police
+
+Killed By Police was maintained by some individual between 2013 and 2018.
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
@@ -28,6 +29,10 @@ load(here::here(file.path("R", 'Harmonizing', "HarmonizedFiles","HarmonizedDataS
 fe  =  fe_harmonized
 mpv = mpv_harmonized
 kbp = kbp_harmonized
+wapo_harmonized
+min(fe_harmonized$date, na.rm=T)
+fe_harmonized[10:15, ]
+
 ```
 
 
@@ -54,23 +59,23 @@ display <- function(source, field) {
 ```
 
 
-## Fatal Encounters
-```{r}
-display(fe, 'name')
-display(fe, 'age')
-display(fe, 'race')
-display(fe, 'sex')
-display(fe, 'zip')
-display(fe, 'date')
 
-display(fe, 'aka')
-display(fe, 'city')
-display(fe, 'state')
-display(fe, 'county')
-display(fe, 'agency')
-display(fe, 'causeOfDeath')
-display(fe, 'circumstances')
-display(fe, 'officialDisposition')
-display(fe, 'mentalIllness')
-display(fe, 'year')
+## Killed By Police
+```{r}
+display(kbp, 'name')
+display(kbp, 'age')
+display(kbp, 'race')
+display(kbp, 'sex')
+display(kbp, 'date')
+display(kbp, "aka")
+display(kbp, "number")
+display(kbp,  "date_format")
+display(kbp, "year")
+display(kbp, "month")
+display(kbp, "day")
+display(kbp, "deceased")
+display(kbp, "method")
+display(kbp, "fb_page")
+display(kbp, "fb_pic")
+display(kbp, "state")
 ```

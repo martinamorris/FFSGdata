@@ -41,6 +41,7 @@ library(purrr)
 library(here)
 
 path_to_src = here::here(file.path('R', 'Harmonizing'))
+path = here::here(file.path('R', 'Harmonizing'))
 
 # Refresh data from all data sources#
 #source(file.path(here::here(), 'R', 'Scraping', "MasterScraper.R"))
@@ -304,7 +305,7 @@ wapo_harmonized = harmonize(wapo,
 
 #### SAVE ####
 
-save_dir = file.path(path_to_src,
+save_dir = file.path(path,
                       "HarmonizedFiles")
 
 save_file = file.path(save_dir, "HarmonizedDataSets.RData")
