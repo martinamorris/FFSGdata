@@ -88,8 +88,6 @@ final_merged = combined_harmonized %>%
 
 
 # status after linkage
-
-
 combined  = combined_harmonized %>%
     group_by(person) %>%
     select( person, race, in_fe, in_kbp, in_wapo, in_mpv)
