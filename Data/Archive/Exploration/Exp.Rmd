@@ -2,7 +2,7 @@
 title: "Exploration before Exploitation"
 output:
   html_document:
-    df_print: paged
+    code_folding: hide
 ---
 ## Summary ##
 We will work on the following issues in order to get a
