@@ -76,9 +76,28 @@ final_merged = combined_harmonized %>%
                 mutate(in_mpv  = ifelse(is.na(in_mpv),  0, 1)) %>%
                 mutate(in_fe   = ifelse(is.na(in_fe),   0, 1)) %>%
                 mutate(in_kbp  = ifelse(is.na(in_kbp),  0, 1)) %>%
-                mutate(in_wapo = ifelse(is.na(in_wapo), 0, 1))
+                mutate(in_wapo = ifelse(is.na(in_wapo), 0, 1)) %>%
+                select(-City, -County, -Source) # getting rid of duplicate
+
+
+
+# status after linkage
+combined  = combined_harmonized %>%
+    group_by(person) %>%
+    select( person, race, in_fe, in_kbp, in_wapo, in_mpv)
+
+final = final_merged %>%
+    select( person, race, in_fe, in_kbp, in_wapo, in_mpv) %>%
+    mutate(status = ifelse(is.na(race), "missing", "not missing"))
+
+
+join = inner_join(combined, final, by = "person") %>%
+    select(person, race.x, race.y, status) %>%
+    rename(beforeLinkage = race.x, afterLinkage = race.y)
+
 
 final_merged = final_merged %>%  rename_all(to_camel)
+
 
 
 save_dir = file.path(path, 'Merged')
@@ -108,5 +127,12 @@ nmpv <-  mpv[-pmatch(common, mpv)]
 #shared
 int_fe_wapo <- intersect(nfe, nwapo)
 int_fe_mpv <- intersect(nfe,nmpv )
+
+
+
+
+
+
+
 
 

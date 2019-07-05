@@ -21,6 +21,10 @@ Scraping is composed of five scraping scripts and one master script. The master 
 # Harmonizing
 Harmonizing is organized slightly differently than Scraping. Harmonizer only has one script, Harmonizer.R, which Harmonizes all 4 datasets (it does nothing to the census datasets). Upon completion, it saves all 4 datasets in a single file `HarmonizedDataSets.RData` in the folder `R/Harmonizing/HarmonizedFiles`. If a new dataset is ever added, it should be relatively straight forward to follow the example of existing datasets in `Harmonizer.R`.
 
+### Output
+`HarmonizedDataSets.RData` has 4 datasets : __fe_harmonized__, __kbp_harmonized__, __wapo_harmonized__, __mpv_harmonized__.
+All of these datasets consist of 15 commun columns along their unique colunm  variables.
+
 
 # Linking
 Linkage consists of two scripts: `ClericalReview.R` and `Linker.R`. 
@@ -47,6 +51,25 @@ corresponding to the rows of pairs.
 * threshold: the value to set the cutoff, in this code 6.
 
 2. `full_combined_harmonized` is a dataframe in which each of the harmonized datasets is stacked rowwise. The columns each dataset has in common are not duplicated; all other columns represent variables that are in a subset of the datasets (where subset size can be 1). For the columns that are present in some datasets but not others `NA` is filled in for the rows of the datasets that are missing that column. 
+
+### Race missingness
+
+Missing race before linkage:
+
+* Fatal encounters : 31.53%
+
+* Killed by police : 39.33%
+
+* Washington post : 12.02%
+
+* Mapping police violence :  8.57%
+
+Missing race after linkage:
+
+* Final dataset: 31.06%
+
+
+
 
 # Merging
 Merging consists of one file: `Merging.R`. It takes the contents of `full_classification`, which is a set of links between rows in `full_combined_harmonized`, and turns those links into a graph. It then uses that graph to find which sets of records are all linked together, indicating we think they are the same person. It then collapses `full_combined_harmonized` by the sets of linked records by naively choosing the first non-null value it finds to be the representive for that person. It also adds four columsn which indicate which datasets that person was originally found in. It outputs this new, collapsed file in `R/Merging/Merged`.
