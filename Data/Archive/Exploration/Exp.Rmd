@@ -294,11 +294,12 @@ Harmonized data: **`r nrow(filter(kbp_harmonized, is.na(kbp_harmonized$race)))`*
 Following is the histogram of occurences.
 ```{r}
 
+kbp$Race = as.character(kbp$Race) %>%   replace_na("Missing")
 p.raw  <- plot_ly(x = ~kbp$Race, type = "histogram") %>% 
   layout( xaxis = list(title =  "Killed by Police, raw data"))
 p.raw
 
-kbp_harmonized$race = kbp_harmonized$race %>%   replace_na("Missing")
+kbp_harmonized$race = as.character(kbp_harmonized$race) %>%   replace_na("Missing")
 
 p.har <- plot_ly(x = ~kbp_harmonized$race, type = "histogram", color = ~kbp_harmonized$race)  %>%  
   layout( xaxis = list(title = "Killed by Police, harmonized data"))
