@@ -159,7 +159,7 @@ p.har
 As seen above, we have no case reported before 2013 for Killed by police, Mapping Police Violence and Washington Post  compared to majority of Fatal encounters' data recorded before 2013. Also note that even after 2013 fatal encounters records much more than the other datatsets. Henceforth, we shall only use the data from 2013 since that is the only data worth matching.
 
 ```{r}
-fe.clean <- filter(fe_clean, fe_clean$year >= 2013)
+fe_clean <- filter(fe_clean, fe_clean$year >= 2013)
 fe_harmonized <- filter(fe_harmonized, fe_harmonized$year >= 2013)
 ```
 
@@ -185,8 +185,10 @@ Harmonized data :**`r nrow(filter(fe_harmonized, is.na(fe_harmonized$age) | fe_h
 Following is the histogram of occurences:
 ```{r}
 
-fe.clean$age = fe.clean$age %>%  replace_na("Missing")
-p.raw <- plot_ly(x = ~fe.clean$age, type = "histogram") %>% 
+fe_clean = fe_clean %>% 
+  mutate( age = replace(age, age == "", "Missing"))
+
+p.raw <- plot_ly(x = ~fe_clean$age, type = "histogram") %>% 
   layout( xaxis = list( title = "Fatal encounters, Raw dataset"))
 p.raw
 
