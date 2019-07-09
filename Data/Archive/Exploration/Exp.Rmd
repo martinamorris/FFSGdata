@@ -16,7 +16,7 @@ creating any statistical models:
   - Variable transformation
   - Variable creation
 
-```{r}
+```{r , warning= FALSE}
 library(dplyr)
 library(plotly)
 library(lubridate)
@@ -36,6 +36,7 @@ for (file in scraped_files) {
 kbp$Date <- as.character.factor(kbp$Date)
 kbp$Date <- as.Date(kbp$Date, format = "%m/%d/%Y")
 mpv$`Date of Incident (month/day/year)` <-  as.Date(mpv$`Date of Incident (month/day/year)`)
+
 
 
 ```
@@ -85,9 +86,22 @@ hwp_before_2013 <- nrow(filter(wapo_harmonized, year(wapo_harmonized$date)< 2013
 hwp_after_2013 <- nrow(filter(wapo_harmonized, year(wapo_harmonized$date) >= 2013 ))
 hmpv_before_2013 <-  nrow(filter(mpv_harmonized, year(mpv_harmonized$date)< 2013 ))
 hmpv_after_2013 <-  nrow(filter(mpv_harmonized, year(mpv_harmonized$date) >= 2013 ))
-hbefore_2013 <- c(hfe_before_2013, hkbp_before_2013, hwp_before_2013, hmpv_before_2013 )
-hafter_2013 <- c(hfe_after_2013, hkbp_after_2013, hwp_after_2013, hmpv_after_2013)
-hdfs <- c("Fatal encounters", "Killed by Police", "Washington Post", "Mapping Police Violence")
+
+hbefore_2013 <- c(hfe_before_2013, 
+                  hkbp_before_2013,
+                  hwp_before_2013,
+                  hmpv_before_2013 )
+
+hafter_2013 <- c(hfe_after_2013,
+                 hkbp_after_2013,
+                 hwp_after_2013,
+                 hmpv_after_2013)
+
+hdfs <- c("Fatal encounters", 
+          "Killed by Police",
+          "Washington Post", 
+          "Mapping Police Violence")
+
 hdata <- data.frame(hdfs, hbefore_2013, hafter_2013)
 p.har <- plot_ly(hdata, x = ~hdfs, y = ~hbefore_2013, type = 'bar', name = 'Before 2013',
         marker = list(color = 'rgb(55, 83, 109)')) %>%
@@ -125,7 +139,8 @@ Harmonized data :**`r nrow(filter(fe_harmonized, is.na(fe_harmonized$age) | fe_h
 Following is the histogram of occurences:
 ```{r}
 
-fe.clean$age = fe.clean$age %>%  replace_na("Missing")
+
+fe.clean$age = fe.clean$age %>%  replace("")
 p.raw <- plot_ly(x = ~fe.clean$age, type = "histogram") %>% 
   layout( xaxis = list( title = "Fatal encounters, Raw dataset"))
 p.raw
@@ -267,7 +282,7 @@ Harmonized data: **`r nrow(filter(fe_harmonized, is.na(fe_harmonized$race) | fe_
 
 Following is the histogram of occurences.
 ```{r}
-fe.clean$race<- replace(fe.clean$race, is.na(fe.clean$race), "NA")
+#fe.clean$race<- fe.clean$race %>% replace_na( "Missing")
 p.raw <- plot_ly(x = ~fe.clean$race, type = "histogram", color =  ~fe.clean$race)  %>% 
   layout( xaxis = list(title ="Fatal encounters, raw dataset"))
 p.raw
@@ -336,7 +351,6 @@ p.har
 
 Fourth, Washington Post:
 Total race records are: **`r length(wapo$race)`**
-
 Total missing race records are
 Raw data:
 ```{r}

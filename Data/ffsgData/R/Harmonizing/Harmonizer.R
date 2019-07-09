@@ -147,9 +147,7 @@ harmonize <- function (df,
     mutate(middlename = get_name(name, 'middle')) %>%
 
     mutate(str_age = age) %>%
-    mutate(age  = as.numeric(
-                    gsub("[^[0-9]]", NA, age)
-                            )) %>%
+    mutate(age  = as.numeric(age)) %>%
 
     # Recode Columns
     mutate(race = recode(race, !!!race_encoding)) %>%
@@ -328,3 +326,8 @@ save(fe_harmonized,
      kbp_harmonized,
      wapo_harmonized,
      file=save_file)
+
+
+newage = fe.clean  %>%  filter( age == "40s")
+newage = newage %>% mutate(age  = as.numeric( gsub("[^[0-9]]", NA, age)))
+
