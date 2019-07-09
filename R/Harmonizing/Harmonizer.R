@@ -148,7 +148,7 @@ harmonize <- function (df,
     mutate(middlename = get_name(name, 'middle')) %>%
 
     mutate(str_age = age) %>%
-    mutate(age  = as.numeric(age)) %>%
+    mutate(age  = as.numeric(as.character(age))) %>%
 
     # Recode Columns
     mutate(race = recode(race, !!!race_encoding)) %>%
@@ -230,6 +230,9 @@ kbp_harmonized = harmonize(kbp,
                 date_format,
                 name_delim,
                 null_names)
+
+
+
 
 ### Mapping Police Violence
 col_map = c("name" = "Victim's name",

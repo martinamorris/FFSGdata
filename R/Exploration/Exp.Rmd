@@ -242,6 +242,8 @@ kbp_harmonized$age = kbp_harmonized$age %>%  replace_na("Missing")
 p.har <- plot_ly(x = ~as.factor(kbp_harmonized$age), type = "histogram")  %>% 
   layout( xaxis = list(title = "Killed by Police, Harmonized dataset"))
 p.har
+
+as.matrix(table(kbp_harmonized$age))
 ```
 
 Third, Washington post:
