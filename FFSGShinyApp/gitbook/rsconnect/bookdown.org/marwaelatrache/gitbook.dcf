@@ -1,0 +1,12 @@
+name: gitbook
+title: gitbook
+username: marwaelatrache
+account: marwaelatrache
+server: bookdown.org
+hostUrl: https://bookdown.org/__api__
+appId: 2710
+bundleId: 10943
+url: https://bookdown.org/marwaelatrache/gitbook/
+when: 1562185342.28567
+asMultiple: FALSE
+asStatic: FALSE

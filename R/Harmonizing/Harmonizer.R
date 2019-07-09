@@ -44,7 +44,7 @@ path_to_src = here::here(file.path('R', 'Harmonizing'))
 path = here::here(file.path('R', 'Harmonizing'))
 
 # Refresh data from all data sources#
-source(file.path(here::here(), 'R', 'Scraping', "MasterScraper.R"))
+#source(file.path(here::here(), 'R', 'Scraping', "MasterScraper.R"))
 
 
 scraped_files = c("fe.clean.Rdata", "MPV.clean.Rdata", "KBP.clean.Rdata", "WaPo.clean.Rdata")
