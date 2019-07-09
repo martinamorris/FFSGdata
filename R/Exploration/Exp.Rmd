@@ -16,7 +16,7 @@ creating any statistical models:
   - Variable transformation
   - Variable creation
 
-```{r}
+```{r, include= FALSE}
 library(dplyr)
 library(plotly)
 library(lubridate)
@@ -41,25 +41,9 @@ kbp$Date <- as.character.factor(kbp$Date)
 kbp$Date <- as.Date(kbp$Date, format = "%m/%d/%Y")
 mpv$`Date of Incident (month/day/year)` <-  as.Date(mpv$`Date of Incident (month/day/year)`)
 
-
-
-
-# 
- smt <-  kbp %>%  
-   filter(Age == '') %>% 
-   mutate( Age = NA_character_)
-   
-# person1 <-  kbp_harmonized %>% filter(is.na(age))
-
 ```
 
  
-<!--  it is already cleaned
-## Exploration cleaning (must be in trivial amounts only here) ## -->
-<!-- Remove the non-police killings from Fatal encounters   -->
-<!-- ```{r} -->
-<!-- #fe.clean <- filter(fe.clean, fe.clean$kbp.filter == "killed by police") -->
-<!-- ``` -->
 
 ## Number of records worth matching ##
 First, we determine the number of records that can potentially be matched. These are the records that are
@@ -180,15 +164,15 @@ Here we look at the age variable recorded by all datasets (albeit under differen
 
 First, fatal encounters:
 
-Total age records for raw data are **`r nrow(fe.clean)` .**
+Total age records for raw data are **`r nrow(fe_clean)` .**
 
 Total age records for harmonized data are **`r length(fe_harmonized$age)`**
 
 
 
-Total missing age records are: 
+_Total missing age records are: _
 
-Raw data : **`r nrow(filter(fe.clean, is.na(fe.clean$age) | fe.clean$age == ""))`**
+Raw data : **`r nrow(filter(fe_clean, is.na(fe_clean$age) | fe_clean$age == ""))`**
 
 Harmonized data :**`r nrow(filter(fe_harmonized, is.na(fe_harmonized$age) | fe_harmonized$age == ""))`**
 
@@ -220,7 +204,7 @@ Total age records for raw data are **`r nrow(kbp)`.**
 Total age records for harmonized data are **`r nrow(kbp_harmonized)`**
 
 
-Total missing age records are:
+_Total missing age records are:_
 
 Raw data: **`r nrow(filter(kbp, is.na(kbp$Age) | kbp$Age == ""  )) `**
 
@@ -230,7 +214,6 @@ Harmonized data: **`r nrow(filter(kbp_harmonized, is.na(kbp_harmonized$age) | kb
 Following is the histogram of occurences:
 ```{r}
 kbp$Age <- as.character(kbp$Age)
-
 kbp <-  kbp %>% 
   mutate( Age = replace(Age, Age == "", "Missing"))
 p.raw <- plot_ly(x = ~kbp$Age, type = "histogram")  %>% 
@@ -242,18 +225,19 @@ kbp_harmonized$age = kbp_harmonized$age %>%  replace_na("Missing")
 p.har <- plot_ly(x = ~as.factor(kbp_harmonized$age), type = "histogram")  %>% 
   layout( xaxis = list(title = "Killed by Police, Harmonized dataset"))
 p.har
-
-as.matrix(table(kbp_harmonized$age))
 ```
 
 Third, Washington post:
 
 Total age records for raw data are **`r nrow(wapo)`**
+
 Total age records for harmonized data are **`r nrow(wapo_harmonized)`** 
 
 
-Total missing age records are: 
+_Total missing age records are: _
+
 Raw data: **`r nrow(filter(wapo, is.na( wapo$age) | wapo$age == "")) `** 
+
 Harmonized data: **`r nrow(filter(wapo_harmonized, is.na( wapo_harmonized$age) | wapo_harmonized$age == ""))`**
 
 Following is the histogram of occurences:
@@ -279,20 +263,26 @@ p.har
 Fourth, Mapping Police Violence:
 
 Total age records for raw data are **`r nrow(mpv)`** 
+
 Total age records for harmonized data are **`r nrow(mpv_harmonized)`**
 
 
 
-Total missing age records are :
+_Total missing age records are :_
 Raw data : 
 ```{r}
-nrow(filter(mpv, is.na(mpv$`Victim's age`) |mpv$`Victim's age` == ""))
+nrow(filter(mpv, is.na(mpv$`Victim's age`) | mpv$`Victim's age` == "Unknown"))
 ```
 Harmonized data: **`r nrow(filter(mpv, is.na(mpv_harmonized$age) | mpv_harmonized$age == ""))`**
 
 Following is the histogram of occurences:
 ```{r}
-mpv$`Victim's age`= as.character(mpv$`Victim's age`) %>% replace_na("Missing")
+mpv$`Victim's age`=  mpv$`Victim's age` %>% 
+                     replace_na("Missing")
+
+mpv$`Victim's age` =replace(mpv$`Victim's age`, which(mpv$`Victim's age`=="Unknown"), "Missing")
+
+
 p.raw <- plot_ly(x = ~mpv$`Victim's age`, type = "histogram")  %>% 
   layout( xaxis = list(title = "Mapping Police Violence, Raw data"))
 p.raw
@@ -310,7 +300,7 @@ Finally, all datasets:
 ```{r}
 
 p.raw <- plot_ly(alpha = 0.6) %>%
-  add_histogram(x = ~fe.clean$age, name = "Fatal encounters") %>%
+  add_histogram(x = ~fe_clean$age, name = "Fatal encounters") %>%
   add_histogram(x = ~kbp$Age, name = "Killed by Police") %>%
   add_histogram(x = ~wapo$age, name = "Washington post") %>%
    add_histogram(x = ~mpv$`Victim's age`, name = "Mapping Police Violence") %>%
@@ -334,23 +324,25 @@ Same procedure as for age. We begin by plotting the statistics separately and th
 This should allow us to see the relative density of races recorded in each dataset. More importantly, it should allow us to see the race categories encoded in the datasets and how the matching algorithm should compare them.
 
 First, fatal encounters:
-Total race records are: **`r length(fe.clean$race)`**
+Total race records are: **`r length(fe_clean$race)`**
 
 
 
-Total missing race records are: 
-Raw data: **`r nrow(filter(fe.clean, is.na(fe.clean$race) | fe.clean$race == "")) `** 
+_Total missing race records are: _
+
+Raw data: **`r nrow(filter(fe_clean, is.na(fe_clean$race) | fe_clean$race == "Missing" | fe_clean$race == "Race unspecified" ))  `** 
 
 Harmonized data: **`r nrow(filter(fe_harmonized, is.na(fe_harmonized$race) | fe_harmonized$race == "")) `**
 
 
 Following is the histogram of occurences.
 ```{r}
-fe.clean$race<- replace(fe.clean$race, is.na(fe.clean$race), "NA")
-p.raw <- plot_ly(x = ~fe.clean$race, type = "histogram", color =  ~fe.clean$race)  %>% 
+fe_clean$race<- replace(fe_clean$race, fe_clean$race== "Race unspecified", "Missing")
+p.raw <- plot_ly(x = ~fe_clean$race, type = "histogram", color =  ~fe_clean$race)  %>% 
   layout( xaxis = list(title ="Fatal encounters, raw dataset"))
 p.raw
 
+fe_harmonized$race<- replace(fe_harmonized$race, is.na(fe_harmonized$race), "Missing")
 p.har <- plot_ly(x = ~fe_harmonized$race, type = "histogram", color = ~replace(fe_harmonized$race, is.na(fe_harmonized$race), "NA"))  %>% 
   layout( xaxis = list(title =  "Fatal encounters, harmonized dataset"))
 p.har
@@ -361,12 +353,14 @@ p.har
 
 
 Second, Killed by Police:
+
 Total race records are :  **`r nrow(kbp)`**
 
 
-Total missing race records are :
+_Total missing race records are :_
 
 Raw data: **`r nrow(filter(kbp, is.na(kbp$Race) | kbp$Race == ""))`** 
+
 Harmonized data: **`r nrow(filter(kbp_harmonized, is.na(kbp_harmonized$race)))`**
 
 
@@ -390,10 +384,10 @@ Third, Mapping Police Violence:
 
 Total race records are: **`r nrow(mpv)`**
 
-Total missing race records are:
+_Total missing race records are:_
 Raw data :
 ```{r}
-nrow(filter(mpv, is.na(mpv$`Victim's race`)))
+nrow(filter(mpv, mpv$`Victim's race` == "Unknown Race"  |mpv$`Victim's race` == "Unknown race" ))
 
 ```
 
@@ -401,22 +395,25 @@ Harmonized data : `r nrow(filter(mpv_harmonized, is.na(mpv_harmonized$race)))`
 
 Following is the histogram of occurences.
 ```{r}
-mpv$`Victim's race` = tolower(as.character(mpv$`Victim's race`) )%>%   replace_na("Missing")
+mpv$`Victim's race` = tolower(mpv$`Victim's race`)
+  
 p <- plot_ly(x = ~mpv$`Victim's race`, type = "histogram", color = ~mpv$`Victim's race`)  %>%  
   layout( xaxis = list(title =   "Mapping Police Violence, raw data"))
 p
 
-mpv_harmonized$race = as.character(mpv_harmonized$race) %>%   replace_na("Missing")
+mpv_harmonized$race = mpv_harmonized$race %>%   replace_na("Missing")
 p.har <- plot_ly(x = ~mpv_harmonized$race, name = , type = "histogram", color= ~mpv_harmonized$race)  %>%  
   layout( xaxis = list(title = "Mapping Police Violence, harmonized data"))
 p.har
 ```
 
 
-Fourth, Washington Post:
+Fourth, Washington Post: 
+
 Total race records are: **`r length(wapo$race)`**
 
-Total missing race records are
+_Total missing race records are:_
+
 Raw data:
 ```{r}
 nrow(filter(wapo, is.na(wapo$race) | wapo$race == "" | wapo$race == "Missing"))
@@ -449,7 +446,7 @@ Finally, all datasets:
 ```{r}
 
 p.raw <- plot_ly(alpha = 0.6) %>%
-  add_histogram(x = ~fe.clean$race, name = "Fatal encounters") %>%
+  add_histogram(x = ~fe_clean$race, name = "Fatal encounters") %>%
   add_histogram(x = ~kbp$Race, name = "Killed by Police") %>%
   add_histogram(x = ~wapo$race, name = "Washington post") %>%
    add_histogram(x = ~mpv$`Victim's race`, name = "Mapping Police Violence") %>%
