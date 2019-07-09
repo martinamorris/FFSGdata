@@ -160,7 +160,7 @@ As seen above, we have no case reported before 2013 for Killed by police, Mappin
 
 ```{r}
 fe.clean <- filter(fe_clean, fe_clean$year >= 2013)
-fe_harmonized <- filter(fe.clean, fe.clean$year >= 2013)
+fe_harmonized <- filter(fe_harmonized, fe_harmonized$year >= 2013)
 ```
 
 ## Univariate Analysis for Age ##

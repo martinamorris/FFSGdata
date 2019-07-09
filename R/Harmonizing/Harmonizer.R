@@ -43,6 +43,7 @@ library(here)
 path_to_src = here::here(file.path('R', 'Harmonizing'))
 path = here::here(file.path('R', 'Harmonizing'))
 
+
 # Refresh data from all data sources#
 #source(file.path(here::here(), 'R', 'Scraping', "MasterScraper.R"))
 
@@ -50,7 +51,7 @@ path = here::here(file.path('R', 'Harmonizing'))
 scraped_files = c("fe.clean.Rdata", "MPV.clean.Rdata", "KBP.clean.Rdata", "WaPo.clean.Rdata")
 
 for (file in scraped_files) {
-  scraped_path = file.path(path_to_src, '..', 'Scraping', "ScrapedFiles", file)
+  scraped_path = file.path( 'R', 'Scraping', "ScrapedFiles", file)
   load(scraped_path)
 }
 
@@ -181,7 +182,7 @@ name_delim  = " aka | or | transitioning from "
 
 null_names = c('Name withheld by police', "")
 
-fe_harmonized = harmonize(fe.clean,
+fe_harmonized = harmonize(fe_clean,
                           "fe",
                           col_map,
                           race_encoding,
