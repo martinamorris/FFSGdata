@@ -21,6 +21,7 @@ library(dplyr)
 library(plotly)
 library(lubridate)
 library(tidyr)
+library(plyr)
 
 
 path = here::here(file.path('R', 'Scraping'))
@@ -34,10 +35,21 @@ for (file in scraped_files) {
   load(scraped_path)
 }
 
+options(stringsAsFactors = FALSE)
+
 kbp$Date <- as.character.factor(kbp$Date)
 kbp$Date <- as.Date(kbp$Date, format = "%m/%d/%Y")
 mpv$`Date of Incident (month/day/year)` <-  as.Date(mpv$`Date of Incident (month/day/year)`)
 
+
+
+
+# 
+ smt <-  kbp %>%  
+   filter(Age == '') %>% 
+   mutate( Age = NA_character_)
+   
+# person1 <-  kbp_harmonized %>% filter(is.na(age))
 
 ```
 
@@ -192,7 +204,8 @@ p.raw <- plot_ly(x = ~fe_clean$age, type = "histogram") %>%
   layout( xaxis = list( title = "Fatal encounters, Raw dataset"))
 p.raw
 
-fe_harmonized$age = fe_harmonized$age %>%  replace_na("Missing")
+fe_harmonized$age = fe_harmonized$age %>%
+  replace_na("Missing")
 p.har <- plot_ly(x = ~fe_harmonized$age, type = "histogram") %>% 
   layout( xaxis = list(title = "Fatal encounters, Harmonized datset"))
 p.har
@@ -216,8 +229,10 @@ Harmonized data: **`r nrow(filter(kbp_harmonized, is.na(kbp_harmonized$age) | kb
 
 Following is the histogram of occurences:
 ```{r}
+kbp$Age <- as.character(kbp$Age)
 
-kbp$Age = kbp$Age %>% replace_na("Missing")
+kbp <-  kbp %>% 
+  mutate( Age = replace(Age, Age == "", "Missing"))
 p.raw <- plot_ly(x = ~kbp$Age, type = "histogram")  %>% 
   layout( xaxis = list(title = "Killed by Police, Raw dataset"))
 p.raw 
