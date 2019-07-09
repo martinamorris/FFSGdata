@@ -218,6 +218,7 @@ sex_encoding = c('F' = 'Female',
 date_format = "%m/%d/%Y"
 name_delim  = " aka | or | transitioning from "
 
+
 null_names = c(" ", "", "NULL", "An unidentified person")
 
 kbp_harmonized = harmonize(kbp,
@@ -228,9 +229,6 @@ kbp_harmonized = harmonize(kbp,
                 date_format,
                 name_delim,
                 null_names)
-
-
-
 
 ### Mapping Police Violence
 col_map = c("name" = "Victim's name",
@@ -261,8 +259,7 @@ name_delim  = " aka | or | transitioning from "
 null_names = c("Name withheld by police",
                "Unknown name")
 
-mpv_harmonized = harmonize(mpv,
-                           "mpv",
+mpv_harmonized = harmonize(mpv,"mpv",
                            col_map,
                            race_encoding,
                            sex_encoding,
@@ -326,8 +323,4 @@ save(fe_harmonized,
      kbp_harmonized,
      wapo_harmonized,
      file=save_file)
-
-
-newage = fe.clean  %>%  filter( age == "40s")
-newage = newage %>% mutate(age  = as.numeric( gsub("[^[0-9]]", NA, age)))
 

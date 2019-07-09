@@ -23,11 +23,12 @@ library(lubridate)
 library(tidyr)
 
 
-path = here::here(file.path('Data','ffsgData' ,'R', 'Scraping'))
+path = here::here(file.path('R', 'Scraping'))
 
-path2 = here::here(file.path('Data','ffsgData' ,'R', 'Harmonizing', 'HarmonizedFiles'))
+path2 = here::here(file.path( 'R','Harmonizing', 'HarmonizedFiles'))
 load( file.path(path2, "HarmonizedDataSets.RData"))
 scraped_files = c("fe.clean.Rdata", "MPV.clean.Rdata", "KBP.clean.Rdata", "WaPo.clean.Rdata")
+
 for (file in scraped_files) {
   scraped_path = file.path(path, '..', 'Scraping', "ScrapedFiles", file)
   load(scraped_path)
@@ -53,8 +54,8 @@ First, we determine the number of records that can potentially be matched. These
 recorded when all the specified datasets are in existence. As of this writing, Killed by police is the most
 recent dataset as determined by its date of creation (2013). So, we will look at numbers partitioned at 2013:
 ```{r}
-fe_before_2013 <- nrow(filter(fe.clean, fe.clean$year < 2013))
-fe_after_2013 <- nrow(filter(fe.clean, fe.clean$year >= 2013))
+fe_before_2013 <- nrow(filter(fe_clean, fe_clean$year < 2013))
+fe_after_2013 <- nrow(filter(fe_clean, fe_clean$year >= 2013))
 
 kbp_before_2013 <- nrow(filter(kbp, year(kbp$Date) < 2013)) #there is no year column
 kbp_after_2013 <- nrow(filter(kbp, year(kbp$Date) >= 2013))
@@ -106,6 +107,31 @@ hfe_before_2013 <- nrow(filter(fe_harmonized,
 hfe_after_2013 <- nrow(filter(fe_harmonized, 
                               fe_harmonized$year >= 2013))
 
+hkbp_before_2013 <- nrow(filter(kbp_harmonized,
+                                year(kbp_harmonized$date) < 2013))
+
+hkbp_after_2013 <- nrow(filter(kbp_harmonized, 
+                               year(kbp_harmonized$date) >= 2013))
+
+hwp_before_2013 <- nrow(filter(wapo_harmonized,
+                               year(wapo_harmonized$date)< 2013 ))
+hwp_after_2013 <- nrow(filter(wapo_harmonized, 
+                              year(wapo_harmonized$date) >= 2013 ))
+
+hmpv_before_2013 <-  nrow(filter(mpv_harmonized,
+                                 year(mpv_harmonized$date)< 2013 ))
+hmpv_after_2013 <-  nrow(filter(mpv_harmonized,
+                                year(mpv_harmonized$date) >= 2013 ))
+
+hbefore_2013 <- c(hfe_before_2013,
+                  hkbp_before_2013,
+                  hwp_before_2013,
+                  hmpv_before_2013 )
+
+hafter_2013 <- c(hfe_after_2013,
+                 hkbp_after_2013,
+                 hwp_after_2013,
+                 hmpv_after_2013)
 
 hdfs <- c("Fatal encounters", 
           "Killed by Police", 
@@ -133,7 +159,7 @@ p.har
 As seen above, we have no case reported before 2013 for Killed by police, Mapping Police Violence and Washington Post  compared to majority of Fatal encounters' data recorded before 2013. Also note that even after 2013 fatal encounters records much more than the other datatsets. Henceforth, we shall only use the data from 2013 since that is the only data worth matching.
 
 ```{r}
-fe.clean <- filter(fe.clean, fe.clean$year >= 2013)
+fe.clean <- filter(fe_clean, fe_clean$year >= 2013)
 fe_harmonized <- filter(fe.clean, fe.clean$year >= 2013)
 ```
 
