@@ -43,6 +43,7 @@ library(here)
 path_to_src = here::here(file.path('R', 'Harmonizing'))
 path = here::here(file.path('R', 'Harmonizing'))
 
+
 # Refresh data from all data sources#
 #source(file.path(here::here(), 'R', 'Scraping', "MasterScraper.R"))
 
@@ -50,7 +51,7 @@ path = here::here(file.path('R', 'Harmonizing'))
 scraped_files = c("fe.clean.Rdata", "MPV.clean.Rdata", "KBP.clean.Rdata", "WaPo.clean.Rdata")
 
 for (file in scraped_files) {
-  scraped_path = file.path(path_to_src, '..', 'Scraping', "ScrapedFiles", file)
+  scraped_path = file.path( 'R', 'Scraping', "ScrapedFiles", file)
   load(scraped_path)
 }
 
@@ -147,9 +148,7 @@ harmonize <- function (df,
     mutate(middlename = get_name(name, 'middle')) %>%
 
     mutate(str_age = age) %>%
-    mutate(age  = as.numeric(
-                    gsub("[^[0-9]]", NA, age)
-                            )) %>%
+    mutate(age  = as.numeric(as.character(age))) %>%
 
     # Recode Columns
     mutate(race = recode(race, !!!race_encoding)) %>%
@@ -183,7 +182,7 @@ name_delim  = " aka | or | transitioning from "
 
 null_names = c('Name withheld by police', "")
 
-fe_harmonized = harmonize(fe.clean,
+fe_harmonized = harmonize(fe_clean,
                           "fe",
                           col_map,
                           race_encoding,
@@ -219,6 +218,7 @@ sex_encoding = c('F' = 'Female',
 
 date_format = "%m/%d/%Y"
 name_delim  = " aka | or | transitioning from "
+
 
 null_names = c(" ", "", "NULL", "An unidentified person")
 
@@ -263,8 +263,7 @@ name_delim  = " aka | or | transitioning from "
 null_names = c("Name withheld by police",
                "Unknown name")
 
-mpv_harmonized = harmonize(mpv,
-                           "mpv",
+mpv_harmonized = harmonize(mpv,"mpv",
                            col_map,
                            race_encoding,
                            sex_encoding,
@@ -328,3 +327,4 @@ save(fe_harmonized,
      kbp_harmonized,
      wapo_harmonized,
      file=save_file)
+

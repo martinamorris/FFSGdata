@@ -89,12 +89,12 @@ scrape_FE_data <- function(url, save_file) {
                                "killed by self", "killed by police")
 
   # Filter out non-police-shootings and write out clean FE csv
-  fe.clean <- filter(fe, kbp.filter == "killed by police")
+  fe_clean <- filter(fe, kbp.filter == "killed by police")
 
   ## Clean up field entries
 
   # clean up year, using dateMDY variable -- this will fix the parsing errors
-  fe.clean$year <- as.numeric(substr(fe.clean$dateMDY,7,10))
+  fe_clean$year <- as.numeric(substr(fe_clean$dateMDY,7,10))
 
   # fix spelling errors in gender and race
   replacement <- function(x) {
@@ -108,7 +108,7 @@ scrape_FE_data <- function(url, save_file) {
     }
   }
 
-  fe.clean$sex <- as.character(lapply(fe.clean$sex, replacement))
+  fe_clean$sex <- as.character(lapply(fe_clean$sex, replacement))
 
   replacement.2 <- function(x) {
     if (is.na(x)) {
@@ -130,7 +130,7 @@ scrape_FE_data <- function(url, save_file) {
       return("Race unspecified")
     }
   }
-  fe.clean$race <- as.character(lapply(fe.clean$race, replacement.2))
+  fe_clean$race <- as.character(lapply(fe_clean$race, replacement.2))
 
-  save(fe.clean, file=save_file)
+  save(fe_clean, file=save_file)
 }
