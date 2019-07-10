@@ -23,6 +23,7 @@ library(lubridate)
 library(tidyr)
 library(plyr)
 library(DataExplorer)
+library(htmlwidgets)
 
 
 path = here::here(file.path('R', 'Scraping'))
@@ -43,7 +44,55 @@ kbp$Date <- as.Date(kbp$Date, format = "%m/%d/%Y")
 mpv$`Date of Incident (month/day/year)` <-  as.Date(mpv$`Date of Incident (month/day/year)`)
 ```
 
- 
+## Overview ##
+
+###Raw Data
+
+Fatal encounter
+```{r}
+str <- plot_str(fe_clean, print_network = FALSE)
+dia
+
+```
+
+Killed by police
+```{r}
+plot_str(kbp)
+```
+
+Washington post
+```{r}
+plot_str(wapo)
+```
+
+Mapping police violence
+```{r}
+plot_str(mpv)
+```
+
+
+###Harmonized dataset
+
+Fatal encounter
+```{r}
+plot_str(fe_harmonized)
+```
+
+Killed by police
+```{r}
+plot_str(kbp_harmonized)
+```
+
+Washington post
+```{r}
+plot_str(wapo_harmonized)
+```
+
+Mapping police violence
+```{r}
+plot_str(mpv_harmonized)
+```
+
 
 ## Number of records worth matching ##
 First, we determine the number of records that can potentially be matched. These are the records that are
@@ -630,19 +679,4 @@ plot_missing(mpv,
 
 plot_missing(mpv_harmonized,
              title = "Mapping Police Violence, Harmonized data")
-
-
-
-
-
-
-
 ```
-
-<!-- TODO: -->
-<!-- - general missingness -->
-<!-- - missing density by date -->
-<!-- - Relationship between variables -->
-<!-- - Variable transformation -->
-
-<!-- ----- Handle missing data??? ------ use the previous model ------ predict and analyze ----- Merging???? -->
