@@ -171,9 +171,9 @@ race_encoding = c('African-American/Black'  = 'Black',
                   'Middle Eastern'          = 'Other',
                   '.default'                = NA_character_)
 
-sex_encoding = c('F' = 'Female',
+sex_encoding = c('Female' = 'Female',
                  'W' = 'Female',
-                 'M' = 'Male',
+                 'Male' = 'Male',
                  'T' = 'Transgender',
                  '.default' = NA_character_)
 

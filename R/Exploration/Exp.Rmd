@@ -24,6 +24,7 @@ library(tidyr)
 library(plyr)
 library(DataExplorer)
 library(htmlwidgets)
+library(networkD3)
 
 
 path = here::here(file.path('R', 'Scraping'))
@@ -39,58 +40,79 @@ for (file in scraped_files) {
 
 options(stringsAsFactors = FALSE)
 
-kbp$Date <- as.character.factor(kbp$Date)
+kbp$Date <- as.character(kbp$Date)
 kbp$Date <- as.Date(kbp$Date, format = "%m/%d/%Y")
 mpv$`Date of Incident (month/day/year)` <-  as.Date(mpv$`Date of Incident (month/day/year)`)
 ```
 
 ## Overview ##
 
-###Raw Data
-
+### Raw Data
 Fatal encounter
 ```{r}
-str <- plot_str(fe_clean, print_network = FALSE)
-dia
+str <- plot_str(fe_clean,
+                print_network = FALSE)
+diagonalNetwork(str)
 
 ```
 
 Killed by police
 ```{r}
-plot_str(kbp)
+str <- plot_str(kbp,
+                print_network = FALSE)
+diagonalNetwork(str)
 ```
 
 Washington post
 ```{r}
-plot_str(wapo)
+
+str <- plot_str(wapo,
+                print_network = FALSE)
+diagonalNetwork(str)
+
 ```
 
 Mapping police violence
 ```{r}
-plot_str(mpv)
+str <- plot_str(mpv,
+                print_network = FALSE)
+diagonalNetwork(str)
+
 ```
 
 
-###Harmonized dataset
+### Harmonized dataset
 
 Fatal encounter
 ```{r}
-plot_str(fe_harmonized)
+str <- plot_str(fe_harmonized,
+                print_network = FALSE)
+diagonalNetwork(str)
+
 ```
 
 Killed by police
 ```{r}
-plot_str(kbp_harmonized)
+str <- plot_str(kbp_harmonized,
+                print_network = FALSE)
+diagonalNetwork(str)
+
 ```
 
 Washington post
 ```{r}
-plot_str(wapo_harmonized)
+str <- plot_str(wapo_harmonized,
+                print_network = FALSE)
+diagonalNetwork(str)
+
 ```
 
 Mapping police violence
 ```{r}
-plot_str(mpv_harmonized)
+str <- plot_str(mpv_harmonized,
+                print_network = FALSE)
+diagonalNetwork(str)
+
 ```
 
 
@@ -204,28 +226,26 @@ p.har
 As seen above, we have no case reported before 2013 for Killed by police, Mapping Police Violence and Washington Post  compared to majority of Fatal encounters' data recorded before 2013. Also note that even after 2013 fatal encounters records much more than the other datatsets. Henceforth, we shall only use the data from 2013 since that is the only data worth matching.
 
 ```{r}
-fe_clean <- filter(fe_clean,
+fe_clean_2013 <- filter(fe_clean,
                    fe_clean$year >= 2013)
 
-fe_harmonized <- filter(fe_harmonized,
+fe_harmonized_2013 <- filter(fe_harmonized,
                         fe_harmonized$year >= 2013)
 
 
-
-
 #non missing data 
-fe_age <-  fe_clean %>% 
+fe_age <-  fe_clean_2013 %>% 
              filter(age != "")
 
-fe_har_age <- fe_harmonized %>% 
+fe_har_age <- fe_harmonized_2013 %>% 
                   filter(!is.na(age))
 
 
-fe_race <-  fe_clean %>% 
+fe_race <-  fe_clean_2013 %>% 
                filter(race != "Race unspecified") 
 
 
-fe_har_race <-  fe_harmonized %>% 
+fe_har_race <-  fe_harmonized_2013 %>% 
                   filter(!is.na(race)) 
 
 kbp_age <- kbp %>% 
@@ -274,11 +294,11 @@ mpv_har_race <- mpv_harmonized %>%
 ## Univariate Analysis for Age ##
 Here we look at the age variable recorded by all datasets (albeit under different column names).
 
-First, fatal encounters:
+### Fatal encounters:
 
-Total age records for raw data are **`r nrow(fe_clean)` .**
+Total age records for raw data are **`r nrow(fe_clean_2013)` .**
 
-Total age records for harmonized data are **`r length(fe_harmonized$age)`**
+Total age records for harmonized data are **`r length(fe_harmonized_2013$age)`**
 
 
 
