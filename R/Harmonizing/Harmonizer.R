@@ -170,12 +170,14 @@ race_encoding = c('African-American/Black'  = 'Black',
                   'Native American/Alaskan' = 'NA_PI',
                   'Asian/Pacific Islander'  = 'Asian',
                   'Middle Eastern'          = 'Other',
+                  'Race unspecified'        = NA, 
                   '.default'                = NA_character_)
 
 sex_encoding = c('Female' = 'Female',
                  #'W' = 'Female',
                  'Male' = 'Male',
                  #'T' = 'Transgender',
+                 NULL = NA,
                  '.default' = NA_character_)
 
 date_format = "%m/%d/%Y"
@@ -234,6 +236,16 @@ kbp_harmonized = harmonize(kbp,
                 name_delim,
                 null_names)
 
+kbp_harmonized = kbp_harmonized %>%
+  mutate(race = ifelse(race == "", NA_character_, race)) %>% 
+  mutate (sex = ifelse(sex == "", NA_character_, sex)) %>% 
+  mutate (state = ifelse(state == "", NA_character_, state))
+  
+
+
+
+
+
 
 
 
@@ -252,12 +264,15 @@ race_encoding = c('Hispanic'        = 'Hispanic',
                   'Asian' = 'Asian',
                   'Native American' = 'NA_PI',
                   'Asian/Pacific Islander' = 'NA_PI',
+                  "Unknown race" = NA_character_,
+                  "Unknown Race" =  NA_character_,
                   '.default'   = NA_character_)
 
 sex_encoding = c('F' = 'Female',
                  'W' = 'Female',
                  'M' = 'Male',
                  'T' = 'Transgender',
+                 'Unknown' = NA_character_, 
                  '.default'     = NA_character_)
 
 date_format = "%Y-%m-%d"
@@ -308,6 +323,10 @@ wapo_harmonized = harmonize(wapo,
                            date_format,
                            name_delim,
                            null_names)
+
+wapo_harmonized = wapo_harmonized %>%
+  mutate(race = ifelse(race == "", NA_character_, race)) %>% 
+  mutate(sex = ifelse(sex == "", NA_character_, sex))
 
 
 #### SAVE ####

@@ -25,6 +25,7 @@ library(plyr)
 library(DataExplorer)
 library(htmlwidgets)
 library(networkD3)
+library(DT)
 
 
 path = here::here(file.path('R', 'Scraping'))
@@ -340,7 +341,7 @@ plot_ly(x = ~as.factor(fe_har_age$age), type = "histogram") %>%
 
 
 
-Second, Killed by Police:
+### Killed by Police:
 
 Total age records for raw data are **`r nrow(kbp)`.**
 
@@ -377,7 +378,7 @@ plot_ly(x = ~as.factor(kbp_har_age$age) ,
 
 ```
 
-Third, Washington post:
+### Washington post:
 
 Total age records for raw data are **`r nrow(wapo)`**
 
@@ -413,7 +414,7 @@ plot_ly( x = ~ as.factor(wapo_har_age$age),
          xaxis = list(title = "Age" ))
 ```
 
-Fourth, Mapping Police Violence:
+### Mapping Police Violence:
 
 Total age records for raw data are **`r nrow(mpv)`** 
 
@@ -456,7 +457,7 @@ plot_ly(x = ~as.factor(mpv_har_age$age),
 
 
 
-Finally, all datasets:
+### All datasets:
 ```{r}
 
  plot_ly(alpha = 0.6) %>%
@@ -492,7 +493,7 @@ Finally, all datasets:
 Same procedure as for age. We begin by plotting the statistics separately and then together stacked one on the top of the other.
 This should allow us to see the relative density of races recorded in each dataset. More importantly, it should allow us to see the race categories encoded in the datasets and how the matching algorithm should compare them.
 
-First, fatal encounters:
+### Fatal encounters:
 Total race records are: **`r length(fe_clean$race)`**
 
 
@@ -528,7 +529,7 @@ plot_ly(x = ~fe_har_race$race,
 ```
 
 
-Second, Killed by Police:
+### Killed by Police:
 
 Total race records are :  **`r nrow(kbp)`**
 
@@ -566,7 +567,7 @@ plot_ly(x = ~kbp_har_race$race,
 ```
 
 
-Third, Mapping Police Violence:
+### Mapping Police Violence:
 
 Total race records are: **`r nrow(mpv)`**
 
@@ -600,7 +601,7 @@ plot_ly(x = ~mpv_har_race$race,
 ```
 
 
-Fourth, Washington Post: 
+### Washington Post: 
 
 Total race records are: **`r length(wapo$race)`**
 
@@ -637,7 +638,7 @@ plot_ly(x = ~wapo_har_race$race,
 ```
 
 
-Finally, all datasets:
+### All datasets:
 ```{r}
 
  plot_ly(alpha = 0.6) %>%
@@ -673,7 +674,50 @@ Finally, all datasets:
 ```
 
 
-##Missing data 
+## Missing data
+```{r}
+
+nrow(filter(fe_harmonized_2013 , is.na(state)))
+nrow(filter(fe_harmonized_2013 , is.na(name)))
+nrow(filter(fe_harmonized_2013 , is.na(sex)))
+nrow(filter(fe_harmonized_2013 , is.na(race)))
+
+
+year <-  c(nrow(filter(fe_harmonized_2013 , is.na(year))),
+           nrow(filter(kbp_harmonized , is.na(year))),
+           nrow(filter(mpv_harmonized , is.na(year))),
+           nrow(filter(wapo_harmonized , is.na(year))))
+
+state <- c(nrow(filter(fe_harmonized_2013 , is.na(state))),
+           nrow(filter(kbp_harmonized , is.na(state))),
+           nrow(filter(mpv_harmonized , is.na(state))),
+           nrow(filter(wapo_harmonized , is.na(state))))
+
+name <- c(nrow(filter(fe_harmonized_2013 , is.na(name))),
+           nrow(filter(kbp_harmonized , is.na(name))),
+           nrow(filter(mpv_harmonized , is.na(name))),
+           nrow(filter(wapo_harmonized , is.na(name))))
+
+
+sex <- c(nrow(filter(fe_harmonized_2013 , is.na(sex))),
+           nrow(filter(kbp_harmonized , is.na(sex))),
+           nrow(filter(mpv_harmonized , is.na(sex))),
+           nrow(filter(wapo_harmonized , is.na(sex))))
+
+
+race <- c(nrow(filter(fe_harmonized_2013 , is.na(race))),
+           nrow(filter(kbp_harmonized , is.na(race))),
+           nrow(filter(mpv_harmonized , is.na(race))),
+           nrow(filter(wapo_harmonized , is.na(race))))
+
+missing <- data.frame(year, state, name, sex, race, row.names = c("fe", "kbp", "mpv", "wapo"))
+datatable(missing)
+```
+
+
+
+
+
 ```{r}
 
 plot_missing(fe_clean,
