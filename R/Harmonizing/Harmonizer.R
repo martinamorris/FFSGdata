@@ -55,6 +55,7 @@ for (file in scraped_files) {
   load(scraped_path)
 }
 
+
 #' Harmonize the various databases
 #'
 #' @param df Dataframe with scraped data
@@ -147,7 +148,7 @@ harmonize <- function (df,
     mutate(lastname   = get_name(name, 'last')) %>%
     mutate(middlename = get_name(name, 'middle')) %>%
 
-    mutate(str_age = age) %>%
+    mutate(chr_age = age) %>%
     mutate(age  = as.numeric(as.character(age))) %>%
 
     # Recode Columns
@@ -172,9 +173,9 @@ race_encoding = c('African-American/Black'  = 'Black',
                   '.default'                = NA_character_)
 
 sex_encoding = c('Female' = 'Female',
-                 'W' = 'Female',
+                 #'W' = 'Female',
                  'Male' = 'Male',
-                 'T' = 'Transgender',
+                 #'T' = 'Transgender',
                  '.default' = NA_character_)
 
 date_format = "%m/%d/%Y"
@@ -191,6 +192,8 @@ fe_harmonized = harmonize(fe_clean,
                           name_delim,
                           null_names)
 
+fe_harmonized = fe_harmonized %>%
+                 mutate( county = ifelse(county == "", NA_character_, county))
 
 
 ### Killed By Police
@@ -328,3 +331,5 @@ save(fe_harmonized,
      wapo_harmonized,
      file=save_file)
 
+
+smt <-  filter (fe_clean, is.na(county))
