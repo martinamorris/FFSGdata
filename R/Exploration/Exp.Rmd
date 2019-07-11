@@ -423,6 +423,7 @@ Total age records for harmonized data are **`r nrow(mpv_harmonized)`**
 
 
 _Pecentage missing age records are :_
+
 Raw data : 
 ```{r}
 round(table(is.na(mpv$`Victim's age`)  | mpv$`Victim's age` == "Unknown") / length(mpv$`Victim's age`), 2)
@@ -676,13 +677,6 @@ plot_ly(x = ~wapo_har_race$race,
 
 ## Missing data
 ```{r}
-
-nrow(filter(fe_harmonized_2013 , is.na(state)))
-nrow(filter(fe_harmonized_2013 , is.na(name)))
-nrow(filter(fe_harmonized_2013 , is.na(sex)))
-nrow(filter(fe_harmonized_2013 , is.na(race)))
-
-
 year <-  c(nrow(filter(fe_harmonized_2013 , is.na(year))),
            nrow(filter(kbp_harmonized , is.na(year))),
            nrow(filter(mpv_harmonized , is.na(year))),
@@ -719,7 +713,6 @@ datatable(missing)
 
 
 ```{r}
-
 plot_missing(fe_clean,
              title = "Fatal encounters, Raw dataset")
 
