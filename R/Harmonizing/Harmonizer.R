@@ -150,7 +150,7 @@ harmonize <- function (df,
 
     mutate(chr_age = age) %>%
     mutate(age  = as.numeric(as.character(age))) %>%
-
+  
     # Recode Columns
     mutate(race = recode(race, !!!race_encoding)) %>%
     mutate(sex  = recode( sex, !!!sex_encoding))
@@ -330,6 +330,3 @@ save(fe_harmonized,
      kbp_harmonized,
      wapo_harmonized,
      file=save_file)
-
-
-smt <-  filter (fe_clean, is.na(county))
