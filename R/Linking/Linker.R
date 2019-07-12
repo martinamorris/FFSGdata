@@ -36,10 +36,10 @@ combined_harmonized = plyr::rbind.fill(kbp_harmonized,
 combined_link = combined_harmonized %>%
                     select(c(common_cols, 'uid'))
 
-colinear = c("aka", 'name', 'date', 'str_age', 'source', 'uid')
+common_exclude = c("aka", 'name', 'date', 'chr_age', 'source', 'uid')
 
 blank_dedup_object = compare.dedup(combined_link,
-                                   exclude = colinear,
+                                   exclude = common_exclude,
                                    blockfld = c('state', 'year'),
                                    phonetic = T,
                                    strcmp = T)
