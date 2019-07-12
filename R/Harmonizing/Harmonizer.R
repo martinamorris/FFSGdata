@@ -41,7 +41,7 @@ library(purrr)
 library(here)
 
 path_to_src = here::here(file.path('R', 'Harmonizing'))
-path = here::here(file.path('R', 'Harmonizing'))
+path_to_save = here::here(file.path('Data', 'HarmonizedFiles'))
 
 
 # Refresh data from all data sources#
@@ -51,7 +51,7 @@ path = here::here(file.path('R', 'Harmonizing'))
 scraped_files = c("fe.clean.Rdata", "MPV.clean.Rdata", "KBP.clean.Rdata", "WaPo.clean.Rdata")
 
 for (file in scraped_files) {
-  scraped_path = file.path( 'R', 'Scraping', "ScrapedFiles", file)
+  scraped_path = file.path( 'Data', 'ScrapedFiles', file)
   load(scraped_path)
 }
 
@@ -309,14 +309,8 @@ wapo_harmonized = harmonize(wapo,
 
 #### SAVE ####
 
-save_dir = file.path(path,
-                      "HarmonizedFiles")
+save_file = file.path(path_to_save, "HarmonizedDataSets.RData")
 
-save_file = file.path(save_dir, "HarmonizedDataSets.RData")
-
-if(!dir.exists(save_file)) {
-  dir.create(save_dir, recursive=T)
-}
 
 if(!file.exists(save_file)) {
   file.create(save_file)
