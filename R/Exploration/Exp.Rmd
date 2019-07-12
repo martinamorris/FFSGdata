@@ -312,9 +312,9 @@ round(table(fe_clean$age == "" ) / length(fe_clean$age), 2)
 
 
 
-Harmonized data :**`r nrow(filter(fe_harmonized, is.na(fe_harmonized$age) | fe_harmonized$age == ""))`**
+Harmonized data :**`r nrow(filter(fe_harmonized_2013, is.na(fe_harmonized_2013$age) | fe_harmonized_2013$age == ""))`**
 ```{r}
-round(table(is.na(fe_harmonized$age))/ length(fe_harmonized$age), 2)
+round(table(is.na(fe_harmonized_2013$age))/ length(fe_harmonized_2013$age), 2)
 ```
 
  
@@ -503,13 +503,13 @@ _Percentage of  missing race records are: _
 
 Raw data: **`r nrow(filter(fe_clean, fe_clean$race == "Missing" | fe_clean$race == "Race unspecified" ))`**
 ```{r}
-round(table(fe_clean$race== "Race unspecified")/ length(fe_clean$race), 2)
+round(table(fe_clean_2013$race== "Race unspecified")/ length(fe_clean_2013$race), 2)
 ```
 
 
 Harmonized data: **`r nrow(filter(fe_harmonized, is.na(fe_harmonized$race) | fe_harmonized$race == "")) `**
 ```{r}
-round(table(is.na(fe_harmonized$race))/ length(fe_harmonized$race), 2)
+round(table(is.na(fe_harmonized_2013$race))/ length(fe_harmonized_2013$race), 2)
 ```
 
 
@@ -713,10 +713,10 @@ datatable(missing)
 
 
 ```{r}
-plot_missing(fe_clean,
+plot_missing(fe_clean_2013,
              title = "Fatal encounters, Raw dataset")
 
-plot_missing(fe_harmonized,
+plot_missing(fe_harmonized_2013,
              title = "Fatal encounters, Harmonized dataset")
 
 plot_missing(kbp,
