@@ -96,7 +96,6 @@ final_merged = combined_harmonized %>%
 #     select(person, race.x, race.y, status) %>%
 #     rename(beforeLinkage = race.x, afterLinkage = race.y)
 
-
 final_merged = final_merged %>%  rename_all(to_camel)
 save_dir = file.path(path_to_src, 'Merged')
 

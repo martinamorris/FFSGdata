@@ -240,15 +240,8 @@ kbp_harmonized = harmonize(kbp,
 kbp_harmonized = kbp_harmonized %>%
   mutate(race = ifelse(race == "", NA_character_, race)) %>% 
   mutate (sex = ifelse(sex == "", NA_character_, sex)) %>% 
-  mutate (state = ifelse(state == "", NA_character_, state))
-  
-
-
-
-
-
-
-
+  mutate (state = ifelse(state == "", NA_character_, state)) %>% 
+  rename(c("X." = "weapon"))
 
 ### Mapping Police Violence
 col_map = c("name" = "Victim's name",
@@ -289,6 +282,9 @@ mpv_harmonized = harmonize(mpv,"mpv",
                            date_format,
                            name_delim,
                            null_names)
+
+mpv_harmonized = mpv_harmonized %>% 
+                 select(-starts_with("..25"))
 
 
 
@@ -338,12 +334,14 @@ save_file = file.path(path_to_save,
                       "HarmonizedDataSets.RData")
 
 
-if(!file.exists(save_file)) {
-  file.create(save_file)
-}
+
 
 if(!dir.exists(save_file)) {
   dir.create(save_dir, recursive=T)
+}
+
+if(!file.exists(save_file)) {
+  file.create(save_file)
 }
 
 save(fe_harmonized,
