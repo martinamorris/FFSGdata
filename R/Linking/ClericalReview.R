@@ -14,9 +14,10 @@ library(RecordLinkage)
 path_to_src = here::here(file.path('R', 'Harmonizing'))
 source(file.path(path_to_src, "Harmonizer.R"))
 
-load(file.path(path_to_src,
-               "HarmonizedFiles",
-               "HarmonizedDataSets.RData"))
+#no need to load because we already sourced the file
+# load(file.path(path_to_src,
+#                "HarmonizedFiles",
+#                "HarmonizedDataSets.RData"))
 
 common_cols = Reduce(intersect, list(colnames(kbp_harmonized),
                                      colnames(fe_harmonized),

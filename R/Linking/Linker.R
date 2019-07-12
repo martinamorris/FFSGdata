@@ -11,13 +11,17 @@ library(plyr)
 library(here)
 library(RecordLinkage)
 
-path_to_src = here::here(file.path('R', 'Linking'))
 harmonizer_src = file.path(here::here(), 'R', 'Harmonizing')
-# source(file.path(harmonizer_src, "Harmonizer.R"))
+source(file.path(harmonizer_src, "Harmonizer.R"))
 
-load(file.path(harmonizer_src,
-               "HarmonizedFiles",
-               "HarmonizedDataSets.RData"))
+path_to_src = here::here(file.path('R', 'Linking'))
+path_to_save = here::here(file.path('Data', 'FinalClassification'))
+
+
+
+# load(file.path(harmonizer_src,
+#                "HarmonizedFiles",
+#                "HarmonizedDataSets.RData"))
 
 
 common_cols = Reduce(intersect, list(colnames(kbp_harmonized),
@@ -30,7 +34,9 @@ combined_harmonized = plyr::rbind.fill(kbp_harmonized,
                                        fe_harmonized,
                                        mpv_harmonized,
                                        wapo_harmonized) %>%
-                                       mutate("uid" = 1:nrow(.))
+                                       mutate("uid" = 1:nrow(.)) %>%
+                                       sample_n(100)
+  
 
 
 combined_link = combined_harmonized %>%
@@ -51,7 +57,7 @@ threshold = 6
 
 classification = emClassify(EM_dedup_object, threshold.upper = 6)
 
-save_dir = file.path(path_to_src, 'FinalClassification')
+save_dir = file.path(path_to_save)
 
 if(!dir.exists(save_dir)) {
     dir.create(save_dir, recursive=T)

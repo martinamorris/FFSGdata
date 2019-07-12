@@ -161,6 +161,7 @@ harmonize <- function (df,
 
 
 
+
 ### Fatal Encounters
 col_map = c('date' = 'dateMDY')
 
@@ -329,13 +330,20 @@ wapo_harmonized = wapo_harmonized %>%
   mutate(sex = ifelse(sex == "", NA_character_, sex))
 
 
+
 #### SAVE ####
 
-save_file = file.path(path_to_save, "HarmonizedDataSets.RData")
+save_dir = file.path(path_to_save)
+save_file = file.path(path_to_save,
+                      "HarmonizedDataSets.RData")
 
 
 if(!file.exists(save_file)) {
   file.create(save_file)
+}
+
+if(!dir.exists(save_file)) {
+  dir.create(save_dir, recursive=T)
 }
 
 save(fe_harmonized,
