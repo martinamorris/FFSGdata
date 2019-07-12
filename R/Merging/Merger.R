@@ -57,10 +57,6 @@ max_id   = nrow(combined_harmonized['uid'])
 end_cap = 1:(max_id - max_comp) + max_comp
 combined_harmonized['person'] = c(components(link_graph, mode="weak")$membership,
                                   end_cap)
-# changed the column ..25 to m25
-colnames(combined_harmonized)[colnames(combined_harmonized)=="..25"] =  "m25"
-
-
 
 # function to standardize the outputs
 to_camel = function(x) {

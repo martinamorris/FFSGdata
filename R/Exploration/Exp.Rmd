@@ -26,20 +26,21 @@ library(DataExplorer)
 library(htmlwidgets)
 library(networkD3)
 library(DT)
+library(gridExtra)
 
 
-path = here::here(file.path('R', 'Scraping'))
 
-path2 = here::here(file.path( 'R','Harmonizing', 'HarmonizedFiles'))
-load( file.path(path2, 'HarmonizedDataSets.RData'))
+
+path_to_har = here::here(file.path( 'Data', 'HarmonizedFiles'))
+path_to_clean = here::here(file.path( 'Data', 'ScrapedFiles'))
+load( file.path(path_to_har, 'HarmonizedDataSets.RData'))
 scraped_files = c('fe.clean.Rdata', 'MPV.clean.Rdata', 'KBP.clean.Rdata', 'WaPo.clean.Rdata')
 
 for (file in scraped_files) {
-  scraped_path = file.path(path, '..', 'Scraping', 'ScrapedFiles', file)
+  scraped_path = file.path(path_to_clean, file)
   load(scraped_path)
 }
 
-options(stringsAsFactors = FALSE)
 
 kbp$Date <- as.character(kbp$Date)
 kbp$Date <- as.Date(kbp$Date, format = '%m/%d/%Y')
@@ -321,20 +322,13 @@ round(table(is.na(fe_harmonized_2013$age))/ length(fe_harmonized_2013$age), 2)
  
 Following is the histogram of occurences of non missing:
 ```{r}
-
 plot_ly(x = ~fe_age$age, type = 'histogram') %>% 
   layout(title = 'Fatal encounters, Raw dataset',
-         xaxis = list(title= 'Age'))
-
-
-
+         xaxis = list(title= 'Age')) 
 
 plot_ly(x = ~as.factor(fe_har_age$age), type = 'histogram') %>% 
   layout(title = 'Fatal encounters, Harmonized dataset',
          xaxis = list(title= 'Age'))
-
-
-
 
 ```
 
