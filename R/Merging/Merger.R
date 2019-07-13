@@ -6,16 +6,16 @@ library(venn)
 library(igraph)
 library(stringr)
 
-path_to_src  = file.path(here::here(), 'R', 'Harmonizing')
-path_to_link = file.path(here::here(), 'R', 'Linking')
+path_to_src  = file.path(here::here(), 'Data')
+#path_to_link = file.path(here::here(), 'Data')
 path = file.path(here::here(), 'R', 'Merging')
 # source(file.path(path_to_src, 'Linker.R'))
 
-load(file=file.path(path_to_link,
+load(file=file.path(path_to_src,
                     "FinalClassification",
                     "full_classification.RData"))
 
-load(file=file.path(path_to_link,
+load(file=file.path(path_to_src,
                     "FinalClassification",
                     "full_combined_harmonized.RData"))
 
@@ -50,16 +50,13 @@ collaps_vals = function(x) {
     return(x[!is.na(x)][1])
 }
 
+
 # Pad end components
 max_comp = length(components(link_graph, mode="weak")$membership)
 max_id   = nrow(combined_harmonized['uid'])
 end_cap = 1:(max_id - max_comp) + max_comp
 combined_harmonized['person'] = c(components(link_graph, mode="weak")$membership,
                                   end_cap)
-# changed the column ..25 to m25
-colnames(combined_harmonized)[colnames(combined_harmonized)=="..25"] =  "m25"
-
-
 
 # function to standardize the outputs
 to_camel = function(x) {
@@ -81,26 +78,22 @@ final_merged = combined_harmonized %>%
 
 
 
-# status after linkage
-combined  = combined_harmonized %>%
-    group_by(person) %>%
-    select( person, race, in_fe, in_kbp, in_wapo, in_mpv)
-
-final = final_merged %>%
-    select( person, race, in_fe, in_kbp, in_wapo, in_mpv) %>%
-    mutate(status = ifelse(is.na(race), "missing", "not missing"))
-
-
-join = inner_join(combined, final, by = "person") %>%
-    select(person, race.x, race.y, status) %>%
-    rename(beforeLinkage = race.x, afterLinkage = race.y)
-
+# # status after linkage
+# combined  = combined_harmonized %>%
+#     group_by(person) %>%
+#     select( person, race, in_fe, in_kbp, in_wapo, in_mpv)
+# 
+# final = final_merged %>%
+#     select( person, race, in_fe, in_kbp, in_wapo, in_mpv) %>%
+#     mutate(status = ifelse(is.na(race), "missing", "not missing"))
+# 
+# 
+# join = inner_join(combined, final, by = "person") %>%
+#     select(person, race.x, race.y, status) %>%
+#     rename(beforeLinkage = race.x, afterLinkage = race.y)
 
 final_merged = final_merged %>%  rename_all(to_camel)
-
-
-
-save_dir = file.path(path, 'Merged')
+save_dir = file.path(path_to_src, 'Merged')
 
 if(!dir.exists(save_dir)) {
     dir.create(save_dir, recursive=T)

@@ -55,6 +55,7 @@ for (file in scraped_files) {
   load(scraped_path)
 }
 
+
 #' Harmonize the various databases
 #'
 #' @param df Dataframe with scraped data
@@ -147,9 +148,9 @@ harmonize <- function (df,
     mutate(lastname   = get_name(name, 'last')) %>%
     mutate(middlename = get_name(name, 'middle')) %>%
 
-    mutate(str_age = age) %>%
+    mutate(chr_age = age) %>%
     mutate(age  = as.numeric(as.character(age))) %>%
-
+  
     # Recode Columns
     mutate(race = recode(race, !!!race_encoding)) %>%
     mutate(sex  = recode( sex, !!!sex_encoding))
@@ -157,6 +158,7 @@ harmonize <- function (df,
   harmonized_df['source'] = source_name
   return(harmonized_df)
 }
+
 
 
 
@@ -169,12 +171,14 @@ race_encoding = c('African-American/Black'  = 'Black',
                   'Native American/Alaskan' = 'NA_PI',
                   'Asian/Pacific Islander'  = 'Asian',
                   'Middle Eastern'          = 'Other',
+                  'Race unspecified'        = NA, 
                   '.default'                = NA_character_)
 
-sex_encoding = c('F' = 'Female',
-                 'W' = 'Female',
-                 'M' = 'Male',
-                 'T' = 'Transgender',
+sex_encoding = c('Female' = 'Female',
+                 #'W' = 'Female',
+                 'Male' = 'Male',
+                 #'T' = 'Transgender',
+                 NULL = NA,
                  '.default' = NA_character_)
 
 date_format = "%m/%d/%Y"
@@ -191,6 +195,8 @@ fe_harmonized = harmonize(fe_clean,
                           name_delim,
                           null_names)
 
+fe_harmonized = fe_harmonized %>%
+                 mutate( county = ifelse(county == "", NA_character_, county))
 
 
 ### Killed By Police
@@ -231,8 +237,11 @@ kbp_harmonized = harmonize(kbp,
                 name_delim,
                 null_names)
 
-
-
+kbp_harmonized = kbp_harmonized %>%
+  mutate(race = ifelse(race == "", NA_character_, race)) %>% 
+  mutate (sex = ifelse(sex == "", NA_character_, sex)) %>% 
+  mutate (state = ifelse(state == "", NA_character_, state)) %>% 
+  rename(c("X." = "weapon"))
 
 ### Mapping Police Violence
 col_map = c("name" = "Victim's name",
@@ -249,12 +258,15 @@ race_encoding = c('Hispanic'        = 'Hispanic',
                   'Asian' = 'Asian',
                   'Native American' = 'NA_PI',
                   'Asian/Pacific Islander' = 'NA_PI',
+                  "Unknown race" = NA_character_,
+                  "Unknown Race" =  NA_character_,
                   '.default'   = NA_character_)
 
 sex_encoding = c('F' = 'Female',
                  'W' = 'Female',
                  'M' = 'Male',
                  'T' = 'Transgender',
+                 'Unknown' = NA_character_, 
                  '.default'     = NA_character_)
 
 date_format = "%Y-%m-%d"
@@ -270,6 +282,9 @@ mpv_harmonized = harmonize(mpv,"mpv",
                            date_format,
                            name_delim,
                            null_names)
+
+mpv_harmonized = mpv_harmonized %>% 
+                 select(-starts_with("..25"))
 
 
 
@@ -306,11 +321,24 @@ wapo_harmonized = harmonize(wapo,
                            name_delim,
                            null_names)
 
+wapo_harmonized = wapo_harmonized %>%
+  mutate(race = ifelse(race == "", NA_character_, race)) %>% 
+  mutate(sex = ifelse(sex == "", NA_character_, sex))
+
+
 
 #### SAVE ####
 
-save_file = file.path(path_to_save, "HarmonizedDataSets.RData")
+save_dir = file.path(path_to_save)
+save_file = file.path(path_to_save,
+                      "HarmonizedDataSets.RData")
 
+
+
+
+if(!dir.exists(save_file)) {
+  dir.create(save_dir, recursive=T)
+}
 
 if(!file.exists(save_file)) {
   file.create(save_file)
@@ -321,4 +349,3 @@ save(fe_harmonized,
      kbp_harmonized,
      wapo_harmonized,
      file=save_file)
-

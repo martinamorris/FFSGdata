@@ -1,0 +1,60 @@
+---
+title: "linker Report"
+output:
+  html_document:
+    code_folding: hide
+---
+
+```{r, include= FALSE}
+library(networkD3)
+library(dplyr)
+path_to_src = here::here(file.path( 'Data'))
+load(file=file.path(path_to_src,
+                    "FinalClassification",
+                    "full_classification.RData"))
+
+load(file=file.path(path_to_src,
+                    "FinalClassification",
+                    "full_combined_harmonized.RData"))
+
+load(file= file.path(path_to_src,
+                     "HarmonizedFiles",
+                     "HarmonizedDataSets.RData"))
+```
+
+
+## Overview
+
+Commmon columns :
+```{r}
+Reduce(intersect, list(colnames(kbp_harmonized),
+                                     colnames(fe_harmonized),
+                                     colnames(mpv_harmonized),
+                                     colnames(wapo_harmonized)))
+```
+
+
+Classification outputs:
+
+
+```{r}
+
+str <- plot_str(classification$data,
+                print_network = FALSE)
+diagonalNetwork(str)
+```
+Combined harmonized outputs:
+
+```{r}
+str <- plot_str(combined_harmonized,
+                print_network = FALSE)
+diagonalNetwork(str)
+
+```
+
+##Missing data
+```{r}
+
+plot_missing(classification$data)
+```
+
