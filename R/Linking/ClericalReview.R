@@ -11,20 +11,20 @@ library(dplyr)
 library(here)
 library(RecordLinkage)
 
-path_to_src = here::here(file.path('R', 'Harmonizing'))
-source(file.path(path_to_src, "Harmonizer.R"))
+path_to_src = here::here(file.path('Data'))
+#source(file.path(path_to_src, "Harmonizer.R"))
 
-#no need to load because we already sourced the file
-# load(file.path(path_to_src,
-#                "HarmonizedFiles",
-#                "HarmonizedDataSets.RData"))
+
+ load(file.path(path_to_src,
+               "HarmonizedFiles",
+                "HarmonizedDataSets.RData"))
 
 common_cols = Reduce(intersect, list(colnames(kbp_harmonized),
                                      colnames(fe_harmonized),
                                      colnames(mpv_harmonized),
                                      colnames(wapo_harmonized)))
 
-colinear = c("aka", 'name', 'date', 'str_age')
+colinear = c("aka", 'name', 'date', 'chr_age')
 
 combined_harmonized = plyr::rbind.fill(kbp_harmonized,
                                        fe_harmonized,
