@@ -6,6 +6,7 @@ output:
 ---
 
 ```{r, include= FALSE}
+library(DataExplorer)
 library(networkD3)
 library(dplyr)
 path_to_src = here::here(file.path( 'Data'))

@@ -39,6 +39,7 @@ library(dplyr)
 library(tidyverse)
 library(purrr)
 library(here)
+library(plyr)
 
 path_to_src = here::here(file.path('R', 'Harmonizing'))
 path_to_save = here::here(file.path('Data', 'HarmonizedFiles'))
@@ -178,7 +179,7 @@ sex_encoding = c('Female' = 'Female',
                  #'W' = 'Female',
                  'Male' = 'Male',
                  #'T' = 'Transgender',
-                 NULL = NA,
+                 'NULL' = NA_character_,
                  '.default' = NA_character_)
 
 date_format = "%m/%d/%Y"
@@ -240,8 +241,12 @@ kbp_harmonized = harmonize(kbp,
 kbp_harmonized = kbp_harmonized %>%
   mutate(race = ifelse(race == "", NA_character_, race)) %>% 
   mutate (sex = ifelse(sex == "", NA_character_, sex)) %>% 
-  mutate (state = ifelse(state == "", NA_character_, state)) %>% 
-  rename(c("X." = "weapon"))
+  mutate (state = ifelse(state == "", NA_character_, state))
+
+
+plyr::rename(kbp_harmonized, c('X.' = "weapon"))
+
+
 
 ### Mapping Police Violence
 col_map = c("name" = "Victim's name",
@@ -262,10 +267,10 @@ race_encoding = c('Hispanic'        = 'Hispanic',
                   "Unknown Race" =  NA_character_,
                   '.default'   = NA_character_)
 
-sex_encoding = c('F' = 'Female',
+sex_encoding = c('Female' = 'Female',
                  'W' = 'Female',
-                 'M' = 'Male',
-                 'T' = 'Transgender',
+                 'Male' = 'Male',
+                 'Treansgender' = 'Transgender',
                  'Unknown' = NA_character_, 
                  '.default'     = NA_character_)
 
@@ -275,7 +280,8 @@ name_delim  = " aka | or | transitioning from "
 null_names = c("Name withheld by police",
                "Unknown name")
 
-mpv_harmonized = harmonize(mpv,"mpv",
+mpv_harmonized = harmonize(mpv,
+                           "mpv",
                            col_map,
                            race_encoding,
                            sex_encoding,
@@ -283,7 +289,7 @@ mpv_harmonized = harmonize(mpv,"mpv",
                            name_delim,
                            null_names)
 
-mpv_harmonized = mpv_harmonized %>% 
+ mpv_harmonized = mpv_harmonized %>% 
                  select(-starts_with("..25"))
 
 
