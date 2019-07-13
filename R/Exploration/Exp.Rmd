@@ -116,7 +116,7 @@ diagonalNetwork(str)
 ```
 
 
-## Number of records worth matching ##
+## Number of records ##
 First, we determine the number of records that can potentially be matched. These are the records that are
 recorded when all the specified datasets are in existence. As of this writing, Killed by police is the most
 recent dataset as determined by its date of creation (2013). So, we will look at numbers partitioned at 2013:
@@ -154,7 +154,7 @@ data <- data.frame(dfs,
                    before_2013, 
                    after_2013)
 
-p.raw <- plot_ly(data, x = ~dfs, y = ~before_2013, 
+plot_ly(data, x = ~dfs, y = ~before_2013, 
                  type = 'bar', 
                  name = 'Before 2013',
                  marker = list(color = 'rgb(55, 83, 109)')) %>%
@@ -166,62 +166,6 @@ p.raw <- plot_ly(data, x = ~dfs, y = ~before_2013,
          xaxis = list(title = 'Dataset'), 
          barmode = 'group', 
          bargap = 0.15)
-p.raw
-
-#harmonized data
-hfe_before_2013 <- nrow(filter(fe_harmonized, 
-                               fe_harmonized$year < 2013))
-hfe_after_2013 <- nrow(filter(fe_harmonized, 
-                              fe_harmonized$year >= 2013))
-
-hkbp_before_2013 <- nrow(filter(kbp_harmonized,
-                                year(kbp_harmonized$date) < 2013))
-
-hkbp_after_2013 <- nrow(filter(kbp_harmonized, 
-                               year(kbp_harmonized$date) >= 2013))
-
-hwp_before_2013 <- nrow(filter(wapo_harmonized,
-                               year(wapo_harmonized$date)< 2013 ))
-hwp_after_2013 <- nrow(filter(wapo_harmonized, 
-                              year(wapo_harmonized$date) >= 2013 ))
-
-hmpv_before_2013 <-  nrow(filter(mpv_harmonized,
-                                 year(mpv_harmonized$date)< 2013 ))
-hmpv_after_2013 <-  nrow(filter(mpv_harmonized,
-                                year(mpv_harmonized$date) >= 2013 ))
-
-hbefore_2013 <- c(hfe_before_2013,
-                  hkbp_before_2013,
-                  hwp_before_2013,
-                  hmpv_before_2013 )
-
-hafter_2013 <- c(hfe_after_2013,
-                 hkbp_after_2013,
-                 hwp_after_2013,
-                 hmpv_after_2013)
-
-hdfs <- c('Fatal encounters', 
-          'Killed by Police', 
-          'Washington Post', 
-          'Mapping Police Violence')
-
-hdata <- data.frame(hdfs, 
-                    hbefore_2013, 
-                    hafter_2013)
-
-p.har <- plot_ly(hdata, x = ~hdfs, y = ~hbefore_2013, 
-                 type = 'bar', 
-                 name = 'Before 2013',
-                 marker = list(color = 'rgb(55, 83, 109)')) %>%
-  add_trace(y = ~hafter_2013, 
-            name = 'After 2013', 
-            marker = list(color = 'rgb(26,118,255)')) %>%
-  layout(title = 'Number of records', 
-         yaxis = list(title = 'Number of records'),          
-         xaxis = list(title = 'Harmonized Dataset'), 
-         barmode = 'group', bargap = 0.15)
-p.har
-
 ```
 As seen above, we have no case reported before 2013 for Killed by police, Mapping Police Violence and Washington Post  compared to majority of Fatal encounters' data recorded before 2013. Also note that even after 2013 fatal encounters records much more than the other datatsets. Henceforth, we shall only use the data from 2013 since that is the only data worth matching.
 
