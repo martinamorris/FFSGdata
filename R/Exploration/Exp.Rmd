@@ -178,6 +178,8 @@ fe_harmonized_2013 <- filter(fe_harmonized,
 
 
 #non missing data 
+
+#fe
 fe_age <-  fe_clean_2013 %>% 
              filter(age != '')
 
@@ -192,6 +194,8 @@ fe_race <-  fe_clean_2013 %>%
 fe_har_race <-  fe_harmonized_2013 %>% 
                   filter(!is.na(race)) 
 
+#kbp
+
 kbp_age <- kbp %>% 
              filter(Age != '')
 
@@ -202,9 +206,9 @@ kbp_har_age <- kbp_harmonized %>%
 kbp_race <- kbp %>% 
              filter(Race != '')
 
-
 kbp_har_race <- kbp_harmonized %>%
                    filter(!is.na(race))
+
 
 wapo_age <-  wapo %>% 
                  filter(!is.na(age))
@@ -605,10 +609,115 @@ plot_ly(x = ~wapo_har_race$race,
   layout(barmode = 'overlay',
          title = 'Race, harmonized dataset',
          xaxis = list(title = 'Race'))
+```
 
 
+## Univariate Analysis for Sex ##
+Here we look at the sex variable recorded by all datasets.
+
+### Fatal encounter
+
+```{r, warning= FALSE}
+plot_ly(x = ~fe_clean_2013$sex,
+        type = 'histogram',
+        color = ~fe_clean_2013$sex) %>%
+  layout(title = 'Fatal encounters, raw data' ,
+         xaxis = list(title =  'Sex'))
+
+plot_ly(x = ~fe_harmonized_2013$sex,
+        type = 'histogram',
+        color = ~fe_harmonized_2013$sex) %>%
+  layout(title = 'Fatal encounters, harmonized data' ,
+         xaxis = list(title =  'Sex'))
+```
+
+
+### Killed by police
+```{r, warning=FALSE}
+plot_ly(x = ~kbp$Gender,
+        type = 'histogram',
+        color = ~kbp$Gender) %>%
+  layout(title = 'Killed by police, raw data' ,
+         xaxis = list(title =  'Sex'))
+
+plot_ly(x = ~kbp_harmonized$sex,
+        type = 'histogram',
+        color = ~kbp_harmonized$sex) %>%
+  layout(title = 'Killed by police, harmonized data' ,
+         xaxis = list(title =  'Sex'))
+```
+
+
+### Washington post
+
+```{r, warning=FALSE}
+plot_ly(x = ~wapo$gender,
+        type = 'histogram',
+        color = ~wapo$gender) %>%
+  layout(title = 'Washington post, raw data' ,
+         xaxis = list(title =  'Sex'))
+
+plot_ly(x = ~wapo_harmonized$sex,
+        type = 'histogram',
+        color = ~wapo_harmonized$sex) %>%
+  layout(title = 'Washington post, harmonized data' ,
+         xaxis = list(title =  'Sex'))
+```
+
+
+
+### Mapping police violence
+```{r, warning=FALSE}
+plot_ly(x = ~mpv$`Victim's gender`,
+        type = 'histogram',
+        color = ~mpv$`Victim's gender`) %>%
+  layout(title = 'Mapping police violence, raw data' ,
+         xaxis = list(title =  'Sex'))
+
+plot_ly(x = ~mpv_harmonized$sex,
+        type = 'histogram',
+        color = ~mpv_harmonized$sex) %>%
+  layout(title = 'Mapping police violence, harmonized data' ,
+         xaxis = list(title =  'Sex'))
+```
+
+### All datasets:
+```{r, warning= FALSE}
+
+ plot_ly(alpha = 0.6) %>%
+  add_histogram(x = ~fe_clean_2013$sex,
+                name = 'Fatal encounters') %>%
+  add_histogram(x = ~kbp$Gender,
+                name = 'Killed by Police') %>%
+  add_histogram(x = ~wapo$gender,
+                name = 'Washington post') %>%
+   add_histogram(x = ~mpv$`Victim's gender`,
+                 name = 'Mapping Police Violence') %>%
+  layout(barmode = 'overlay',
+         title = 'Race, Raw dataset',
+         xaxis = list(title = 'Sex' ))
+
+ plot_ly(alpha = 0.6) %>%
+  add_histogram(x = ~fe_harmonized_2013$sex,
+                name = 'Fatal encounters') %>%
+  add_histogram(x = ~kbp_harmonized$sex,
+                name = 'Killed by Police') %>%
+  add_histogram(x = ~wapo_harmonized$sex,
+                name = 'Washington post') %>%
+   add_histogram(x = ~mpv_harmonized$sex,
+                 name = 'Mapping Police Violence') %>%
+  layout(barmode = 'overlay',
+         title = 'Race, harmonized dataset',
+         xaxis = list(title = 'Sex'))
 
 ```
+
+
+
+
+
+
+
 
 
 ## Missing data

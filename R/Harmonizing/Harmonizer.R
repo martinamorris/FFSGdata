@@ -266,7 +266,7 @@ race_encoding = c('Hispanic'        = 'Hispanic',
 sex_encoding = c('Female' = 'Female',
                  'W' = 'Female',
                  'Male' = 'Male',
-                 'Treansgender' = 'Transgender',
+                 'Transgender' = 'Transgender',
                  'Unknown' = NA_character_, 
                  '.default'     = NA_character_)
 
