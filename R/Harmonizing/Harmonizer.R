@@ -238,10 +238,6 @@ kbp_harmonized = harmonize(kbp,
                 name_delim,
                 null_names)
 
-kbp_harmonized = kbp_harmonized %>%
-  mutate(race = ifelse(race == "", NA_character_, race)) %>% 
-  mutate (sex = ifelse(sex == "", NA_character_, sex)) %>% 
-  mutate (state = ifelse(state == "", NA_character_, state))
 
 
 plyr::rename(kbp_harmonized, c('X.' = "weapon"))
@@ -270,7 +266,7 @@ race_encoding = c('Hispanic'        = 'Hispanic',
 sex_encoding = c('Female' = 'Female',
                  'W' = 'Female',
                  'Male' = 'Male',
-                 'Treansgender' = 'Transgender',
+                 'Transgender' = 'Transgender',
                  'Unknown' = NA_character_, 
                  '.default'     = NA_character_)
 
