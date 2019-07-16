@@ -242,6 +242,7 @@ kbp_harmonized = harmonize(kbp,
 
 
 
+
 plyr::rename(kbp_harmonized, c('X.' = "weapon"))
 
 

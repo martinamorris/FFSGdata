@@ -37,7 +37,7 @@ scrape_all_data <- function() {
         dir.create(pop_save_dir)
     }
 
-    #scrape_population_data(county_urls, pop_save_dir)
+    scrape_population_data(county_urls, pop_save_dir)
 
 
 
