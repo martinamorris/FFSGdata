@@ -172,7 +172,7 @@ race_encoding = c('African-American/Black'  = 'Black',
                   'Native American/Alaskan' = 'NA_PI',
                   'Asian/Pacific Islander'  = 'Asian',
                   'Middle Eastern'          = 'Other',
-                  'Race unspecified'        = NA, 
+                  'Race unspecified'        = NA_character_, 
                   '.default'                = NA_character_)
 
 sex_encoding = c('Female' = 'Female',
@@ -211,6 +211,8 @@ col_map = c('name' = 'Name',
 race_encoding = c('B' = "Black",
                   'W' = 'White',
                   'L' = 'Hispanic',
+                  'H' =  'Hispanic',
+                  'M' = NA_character_,
                   'I' = 'NA_PI',
                   'PI'  = 'NA_PI',
                   'A' = 'Asian',
@@ -218,9 +220,9 @@ race_encoding = c('B' = "Black",
                   '.default' = NA_character_)
 
 sex_encoding = c('F' = 'Female',
-                 'W' = 'Female',
                  'M' = 'Male',
                  'T' = 'Transgender',
+                 'NULL' = NA_character_,
                  '.default'  = NA_character_)
 
 date_format = "%m/%d/%Y"

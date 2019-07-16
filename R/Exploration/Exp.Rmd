@@ -203,11 +203,6 @@ kbp_age <- kbp %>%
 kbp_har_age <- kbp_harmonized %>%
                    filter(!is.na(age))
 
-kbp_race <- kbp %>% 
-             filter(Race != '')
-
-kbp_har_race <- kbp_harmonized %>%
-                   filter(!is.na(race))
 
 
 wapo_age <-  wapo %>% 
@@ -492,16 +487,16 @@ round(table(is.na(kbp_harmonized$race)) / length(kbp_harmonized$race), 2)
 
 
 Following is the histogram of occurences.
-```{r}
-plot_ly(x = ~kbp_race$Race,
+```{r, warning= FALSE}
+plot_ly(x = ~kbp$Race,
         type = 'histogram') %>% 
   layout(title = 'Killed by Police, raw data',
          xaxis = list(title = 'Race'))
 
 
-plot_ly(x = ~kbp_har_race$race,
+plot_ly(x = ~kbp_harmonized$race,
          type = 'histogram',
-         color = ~kbp_har_race$race)  %>%  
+         color = ~kbp_harmonized$race)  %>%  
   layout(title = 'Killed by Police, harmonized data',
          xaxis = list(title = 'Race' ))
 
@@ -585,7 +580,7 @@ plot_ly(x = ~wapo_har_race$race,
  plot_ly(alpha = 0.6) %>%
   add_histogram(x = ~fe_race$race,
                 name = 'Fatal encounters') %>%
-  add_histogram(x = ~kbp_race$Race,
+  add_histogram(x = ~kbp$Race,
                 name = 'Killed by Police') %>%
   add_histogram(x = ~wapo_race$race,
                 name = 'Washington post') %>%
@@ -600,7 +595,7 @@ plot_ly(x = ~wapo_har_race$race,
  plot_ly(alpha = 0.6) %>%
   add_histogram(x = ~fe_har_race$race,
                 name = 'Fatal encounters') %>%
-  add_histogram(x = ~kbp_har_race$race,
+  add_histogram(x = ~kbp_harmonized$race,
                 name = 'Killed by Police') %>%
   add_histogram(x = ~wapo_har_race$race,
                 name = 'Washington post') %>%
