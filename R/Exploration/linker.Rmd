@@ -9,6 +9,8 @@ output:
 library(DataExplorer)
 library(networkD3)
 library(dplyr)
+library(rlist)
+
 path_to_src = here::here(file.path( 'Data'))
 load(file=file.path(path_to_src,
                     "FinalClassification",
@@ -26,7 +28,7 @@ load(file= file.path(path_to_src,
 
 ## Overview
 
-Commmon columns :
+Common columns :
 ```{r}
 Reduce(intersect, list(colnames(kbp_harmonized),
                                      colnames(fe_harmonized),
@@ -37,13 +39,73 @@ Reduce(intersect, list(colnames(kbp_harmonized),
 
 Classification outputs:
 
-
+Classification is a list of 10 components:
 ```{r}
+list.names(classification)
+```
 
+* Data:
+```{r}
 str <- plot_str(classification$data,
                 print_network = FALSE)
 diagonalNetwork(str)
 ```
+
+* Pairs:
+```{r}
+str <- plot_str(classification$pairs,
+                print_network = FALSE)
+diagonalNetwork(str)
+
+```
+
+
+* Frequencies:
+```{r}
+classification$frequencies
+```
+
+* type 
+```{r}
+classification$type
+```
+
+* M:
+```{r}
+head(classification$M)
+```
+
+* W:
+```{r}
+head(classification$W)
+```
+
+
+* U :
+```{r}
+head(classification$U)
+```
+
+
+* Wdata:
+```{r}
+head(classification$Wdata)
+```
+
+
+* Prediction:
+
+```{r}
+table(classification$prediction)
+```
+### Missing data 
+
+```{r}
+plot_missing(classification$data)
+```
+
+
+
 Combined harmonized outputs:
 
 ```{r}
@@ -53,9 +115,17 @@ diagonalNetwork(str)
 
 ```
 
-##Missing data
+### Missing data
 ```{r}
 
-plot_missing(classification$data)
+common <-  combined_harmonized %>% 
+            select(firstname,
+                       lastname,
+                       age,
+                       sex,
+                       race,
+                       state,
+                       year)
+plot_missing(common)
 ```
 
