@@ -151,10 +151,11 @@ harmonize <- function (df,
 
     mutate(chr_age = age) %>%
     mutate(age  = as.numeric(as.character(age))) %>%
+    mutate(sex = as.character(sex)) %>% 
   
     # Recode Columns
     mutate(race = recode(race, !!!race_encoding)) %>%
-    mutate(sex  = recode( sex, !!!sex_encoding))
+    mutate(sex  = recode(sex, !!!sex_encoding))
 
   harmonized_df['source'] = source_name
   return(harmonized_df)
@@ -222,11 +223,11 @@ race_encoding = c('B' = "Black",
 sex_encoding = c('F' = 'Female',
                  'M' = 'Male',
                  'T' = 'Transgender',
-                 'NULL' = NA_character_,
                  '.default'  = NA_character_)
 
 date_format = "%m/%d/%Y"
 name_delim  = " aka | or | transitioning from "
+
 
 
 null_names = c(" ", "", "NULL", "An unidentified person")
@@ -240,12 +241,10 @@ kbp_harmonized = harmonize(kbp,
                 name_delim,
                 null_names)
 
+kbp_harmonized = kbp_harmonized %>% 
+  mutate(sex = ifelse(sex == '', NA_character_, sex))
 
-
-
-plyr::rename(kbp_harmonized, c('X.' = "weapon"))
-
-
+rename(kbp_harmonized, c('X.' = 'weapon'))
 
 ### Mapping Police Violence
 col_map = c("name" = "Victim's name",

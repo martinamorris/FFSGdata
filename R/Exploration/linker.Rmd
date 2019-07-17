@@ -28,6 +28,14 @@ load(file= file.path(path_to_src,
 
 ## Overview
 
+In this document, we will go through the outputs generated from `Linker.R`.
+When running `Linker.R`, we get two outputs: classification and combined_harmonized.
+
+
+### Combined harmonized outputs:
+
+before going through combined_harmonized output, let'd first see the common columns to all 4 datasets:
+
 Common columns :
 ```{r}
 Reduce(intersect, list(colnames(kbp_harmonized),
@@ -37,76 +45,8 @@ Reduce(intersect, list(colnames(kbp_harmonized),
 ```
 
 
-Classification outputs:
 
-Classification is a list of 10 components:
-```{r}
-list.names(classification)
-```
-
-* Data:
-```{r}
-str <- plot_str(classification$data,
-                print_network = FALSE)
-diagonalNetwork(str)
-```
-
-* Pairs:
-```{r}
-str <- plot_str(classification$pairs,
-                print_network = FALSE)
-diagonalNetwork(str)
-
-```
-
-
-* Frequencies:
-```{r}
-classification$frequencies
-```
-
-* type 
-```{r}
-classification$type
-```
-
-* M:
-```{r}
-head(classification$M)
-```
-
-* W:
-```{r}
-head(classification$W)
-```
-
-
-* U :
-```{r}
-head(classification$U)
-```
-
-
-* Wdata:
-```{r}
-head(classification$Wdata)
-```
-
-
-* Prediction:
-
-```{r}
-table(classification$prediction)
-```
-### Missing data 
-
-```{r}
-plot_missing(classification$data)
-```
-
-
-
-Combined harmonized outputs:
+`Combined harmonized`is a dataframe in which each of the four harmonized dataset is stacked rowwise.
 
 ```{r}
 str <- plot_str(combined_harmonized,
@@ -115,17 +55,87 @@ diagonalNetwork(str)
 
 ```
 
-### Missing data
+
+### Classification outputs:
+
+Classification is a list of 10 components, below is the components of this list:
+```{r}
+list.names(classification)
+```
+
+* *Data*: is the original data that we want to preform record linkage on
+```{r}
+str <- plot_str(classification$data,
+                print_network = FALSE)
+diagonalNetwork(str)
+```
+
+* *Pairs*: is a dataframe of all possible pairs in _data_.
+Each row represents the comparison pattern of two records, identified by columns *id1* and *id2*. The other columns contain for each considered attribute a real number in the range [0..1] representing the degree of similarity. These columns are named according to the respective columns in data. The last column
+contains the matching status of the pair, coded as 1 for a match or 0 for a non-match.
+```{r}
+str <- plot_str(classification$pairs,
+                print_network = FALSE)
+diagonalNetwork(str)
+
+```
+
+
+* *Frequencies*: the average frequency of values for each column included in pairs (reciprocal of number of distinct values).
+```{r}
+classification$frequencies
+```
+
+* *type*: to identify which process is done: 'deduplication' or 'linkage'
+```{r}
+classification$type
+```
+
+* *M*: the probabilty given the pair is a match. 
+As the values were skewed, we had to log the y-axis.
 ```{r}
 
-common <-  combined_harmonized %>% 
-            select(firstname,
-                       lastname,
-                       age,
-                       sex,
-                       race,
-                       state,
-                       year)
-plot_missing(common)
+boxplot(log(classification$M))
+plot(density(log(classification$M)))
+
 ```
+
+* *U*: the probabilty given the pair is a nonmatch. 
+As the values were skewed, we had to log the y-axis.
+```{r}
+
+boxplot(log(classification$U))
+plot(density(log(classification$U)))
+
+```
+
+
+* *W*: is the weight for each pair. it is calculated using the function emWeights in the package recordLinkage.
+W is the log of M divided by U.
+
+```{r}
+boxplot(classification$W)
+plot(density(classification$W))
+hist(classification$W, breaks = 400 )
+```
+
+* *Wdata*: Vector of log-likelihood weights as calculated by emWeights,
+corresponding to the rows of pairs.
+
+```{r}
+plot(density(classification$Wdata))
+hist(classification$Wdata, breaks = 50)
+```
+
+
+* *Prediction*: Linkage result. Coded as a factor with levels "N" for non-links, "P" for possible links and "L" for links.
+
+```{r}
+table(classification$prediction)
+```
+
+
+
+
+
 
