@@ -521,7 +521,7 @@ round(table(is.na(mpv_harmonized$race)) / length(mpv_harmonized$race), 2)
 
 
 Following is the histogram of occurences.
-```{r}
+```{r, warning= FALSE}
 
 plot_ly(x = ~mpv_race$`Victim's race`, 
          type = 'histogram',
@@ -556,7 +556,7 @@ round(table(is.na(wapo_harmonized$race)) / length(wapo_harmonized$race), 2)
 
 
 Following is the histogram of occurences.
-```{r}
+```{r, warning = FALSE}
 plot_ly(x = ~wapo_race$race,
         type = 'histogram',
         color = ~wapo_race$race) %>%
@@ -575,7 +575,7 @@ plot_ly(x = ~wapo_har_race$race,
 
 
 ### All datasets:
-```{r}
+```{r, warning= FALSE}
 
  plot_ly(alpha = 0.6) %>%
   add_histogram(x = ~fe_race$race,

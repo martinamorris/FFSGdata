@@ -218,11 +218,13 @@ race_encoding = c('B' = "Black",
                   'PI'  = 'NA_PI',
                   'A' = 'Asian',
                   'O' = 'Other',
+                  'NULL' = NA_character_,
                   '.default' = NA_character_)
 
 sex_encoding = c('F' = 'Female',
                  'M' = 'Male',
                  'T' = 'Transgender',
+                 'NULL' = NA_character_,
                  '.default'  = NA_character_)
 
 date_format = "%m/%d/%Y"
@@ -242,10 +244,8 @@ kbp_harmonized = harmonize(kbp,
                 null_names)
 
 kbp_harmonized = kbp_harmonized %>% 
-  mutate(sex = ifelse(sex == '', NA_character_, sex))
-
-rename(kbp_harmonized, c('X.' = 'weapon'))
-
+  rename(weapon = X.)
+ 
 ### Mapping Police Violence
 col_map = c("name" = "Victim's name",
             "age" = "Victim's age",
