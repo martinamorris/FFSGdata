@@ -30,6 +30,8 @@ load(file= file.path(path_to_src,
 
 In this document, we will go through the outputs generated from `Linker.R`.
 When running `Linker.R`, we get two outputs: classification and combined_harmonized.
+for a more detailed description of how each variables is calculated using RecordLinkage, please look over these resources: [resource 1](https://cran.r-project.org/web/packages/RecordLinkage/RecordLinkage.pdf), [resource 2](http://v-neck.github.io/final/),
+[resource 3](https://docs.google.com/presentation/d/19XFzorND9YIxosJm74sgS-We_qJSvCoGWwsGXubt-N0/edit#slide=id.p)
 
 
 ### Combined harmonized outputs:
