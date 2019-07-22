@@ -3,7 +3,6 @@ title: "linker Report"
 output:
   html_document:
     code_folding: hide
-  pdf_document: default
 ---
 
 ```{r, include= FALSE}
@@ -11,19 +10,23 @@ library(DataExplorer)
 library(networkD3)
 library(dplyr)
 library(rlist)
+library(ggplot2)
 library(data.table)
 library(DT)
-
-path_to_src = here::here(file.path( 'Data'))
+library(cowplot)
+path_to_src = here::here('Vaughn', 'ffsgData', 'R')
 load(file=file.path(path_to_src,
+                    "Linking",
                     "FinalClassification",
                     "full_classification.RData"))
 
 load(file=file.path(path_to_src,
+                    "Linking",
                     "FinalClassification",
                     "full_combined_harmonized.RData"))
 
 load(file= file.path(path_to_src,
+                     "Harmonizing",
                      "HarmonizedFiles",
                      "HarmonizedDataSets.RData"))
 ```
@@ -33,13 +36,13 @@ load(file= file.path(path_to_src,
 
 In this document, we will go through the outputs generated from `Linker.R`.
 When running `Linker.R`, we get two outputs: classification and combined_harmonized.
-for a more detailed description of how each variable is calculated using RecordLinkage, please look over these resources: [resource 1](https://cran.r-project.org/web/packages/RecordLinkage/RecordLinkage.pdf), [resource 2](http://v-neck.github.io/final/),
+for a more detailed description of how each variables is calculated using RecordLinkage, please look over these resources: [resource 1](https://cran.r-project.org/web/packages/RecordLinkage/RecordLinkage.pdf), [resource 2](http://v-neck.github.io/final/),
 [resource 3](https://docs.google.com/presentation/d/19XFzorND9YIxosJm74sgS-We_qJSvCoGWwsGXubt-N0/edit#slide=id.p)
 
 
 ### Combined harmonized outputs:
 
-before going through combined_harmonized output, let's first see the common columns to all 4 datasets:
+before going through combined_harmonized output, let'd first see the common columns to all 4 datasets:
 
 Common columns :
 ```{r}
@@ -51,8 +54,7 @@ Reduce(intersect, list(colnames(kbp_harmonized),
 
 
 
-`Combined harmonized`is a data frame in which each of the four harmonized datasets is stacked row-wise.
-
+`Combined harmonized`is a dataframe in which each of the four harmonized dataset is stacked rowwise.
 
 ```{r}
 str <- plot_str(combined_harmonized,
@@ -61,7 +63,7 @@ diagonalNetwork(str)
 
 ```
 
-**Breakout of common columns in combined_harmonized dataset**
+
 
 ```{r}
 
@@ -101,12 +103,6 @@ datatable(dcast(combined_harmonized,
                   fun.aggregate = length),
           rownames = FALSE)
 ```
-
-
-
-
-
-
 ### Classification outputs:
 
 Classification is a list of 10 components, below is the components of this list:
@@ -114,7 +110,7 @@ Classification is a list of 10 components, below is the components of this list:
 list.names(classification)
 ```
 
-* *Data*: is the original data that we want to perform record linkage on
+* *Data*: is the original data that we want to preform record linkage on
 ```{r}
 str <- plot_str(classification$data,
                 print_network = FALSE)
@@ -142,11 +138,13 @@ classification$frequencies
 classification$type
 ```
 
-* *M*: the conditional probability of a match given the observed difference in attributes.
+* *M*: the probabilty given the pair is a match. 
+As the values were skewed, we had to log the y-axis.
 ```{r}
 par(mfrow=c(1,2))
 boxplot(log(classification$M))
 plot(density(log(classification$M)))
+
 
 ```
 
@@ -156,12 +154,13 @@ As the values were skewed, we had to log the y-axis.
 par(mfrow=c(1,2))
 boxplot(log(classification$U))
 plot(density(log(classification$U)))
-
 ```
 
 
 
-* *M vs U*: 
+* *M vs U*:
+
+
 ```{r}
 plot(log(classification$M),log(classification$U))
 ```
@@ -174,6 +173,7 @@ par(mfrow=c(1,2))
 boxplot(classification$W)
 plot(density(classification$W))
 
+
 hist(classification$W, breaks = 400 )
 ```
 
@@ -183,7 +183,8 @@ corresponding to the rows of pairs.
 ```{r}
 par(mfrow=c(1,2))
 plot(density(classification$Wdata))
-hist(classification$Wdata)
+hist(classification$Wdata, breaks = 50)
+
 ```
 
 
@@ -194,74 +195,6 @@ table(classification$prediction)
 ```
 
 
-**Pairs between -21 and -19**
-```{r}
-classification$pairs$weight <- classification$Wdata
-
-filtered <- classification$pairs %>% 
-            filter(weight > -21, weight < -19) %>% 
-            select(id1,
-                   id2)
-
-
-cb <- combined_harmonized %>%
-  select(firstname,
-         lastname,
-         sex,
-         age,
-         state,
-         day,
-         year,
-         source,
-         uid)
-
-join <-  inner_join(filtered,
-                    cb,
-                    by= c("id1" = "uid"))
-
-second_join <- inner_join( join,
-                           cb,
-                           by= c("id2" = "uid"),
-                           suffix = c(".1", ".2"))
-
-
-datatable(dcast(second_join,
-      source.1 ~source.2,
-      fun.aggregate = length,
-      value.var = "sex.2"),
-      rownames = FALSE)
-
-datatable(dcast(second_join,
-      sex.1 ~sex.2,
-      fun.aggregate = length,
-      value.var = "sex.2"),
-      rownames = FALSE)
-
-datatable(dcast(second_join,
-      age.1 ~age.2,
-      fun.aggregate = length,
-      value.var = "state.2"),
-      rownames = FALSE)
-
-datatable(dcast(second_join,
-      race.1 ~race.2,
-      fun.aggregate = length,
-      value.var = "state.2"),
-      rownames = FALSE)
-
-datatable(dcast(second_join,
-      state.1 ~state.2,
-      fun.aggregate = length,
-      value.var = "state.2"),
-      rownames = FALSE)
-
-datatable(dcast(second_join,
-      year.1 ~year.2,
-      fun.aggregate = length,
-      value.var = "year.2"),
-      rownames = FALSE)
-
-```
 
 
 

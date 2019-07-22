@@ -39,11 +39,8 @@ library(dplyr)
 library(tidyverse)
 library(purrr)
 library(here)
-library(plyr)
 
 path_to_src = here::here(file.path('R', 'Harmonizing'))
-path_to_save = here::here(file.path('Data', 'HarmonizedFiles'))
-
 
 # Refresh data from all data sources#
 #source(file.path(here::here(), 'R', 'Scraping', "MasterScraper.R"))
@@ -52,10 +49,9 @@ path_to_save = here::here(file.path('Data', 'HarmonizedFiles'))
 scraped_files = c("fe.clean.Rdata", "MPV.clean.Rdata", "KBP.clean.Rdata", "WaPo.clean.Rdata")
 
 for (file in scraped_files) {
-  scraped_path = file.path( 'Data', 'ScrapedFiles', file)
+  scraped_path = file.path(path_to_src, '..', 'Scraping', "ScrapedFiles", file)
   load(scraped_path)
 }
-
 
 #' Harmonize the various databases
 #'
@@ -101,7 +97,6 @@ get_name <- function(name, order=NA) {
   }
 }
 
-
 get_name = Vectorize(get_name)
 
 harmonize <- function (df,
@@ -115,7 +110,6 @@ harmonize <- function (df,
 
   canon_cols = c("name", "age", "sex", "race", "date")
 
-  # we added hispanic to the list because every scrapped dataset has it as a value.
   canon_races = c("Black", "White", "Hispanic",
                   'NA_PI', "Asian", "Other")
 
@@ -149,18 +143,18 @@ harmonize <- function (df,
     mutate(lastname   = get_name(name, 'last')) %>%
     mutate(middlename = get_name(name, 'middle')) %>%
 
-    mutate(chr_age = age) %>%
-    mutate(age  = as.numeric(as.character(age))) %>%
-    mutate(sex = as.character(sex)) %>% 
-  
+    mutate(str_age = age) %>%
+    mutate(age  = as.numeric(
+                    gsub("[^[0-9]]", NA, age)
+                            )) %>%
+
     # Recode Columns
     mutate(race = recode(race, !!!race_encoding)) %>%
-    mutate(sex  = recode(sex, !!!sex_encoding))
+    mutate(sex  = recode( sex, !!!sex_encoding))
 
   harmonized_df['source'] = source_name
   return(harmonized_df)
 }
-
 
 
 
@@ -173,14 +167,12 @@ race_encoding = c('African-American/Black'  = 'Black',
                   'Native American/Alaskan' = 'NA_PI',
                   'Asian/Pacific Islander'  = 'Asian',
                   'Middle Eastern'          = 'Other',
-                  'Race unspecified'        = NA_character_, 
                   '.default'                = NA_character_)
 
-sex_encoding = c('Female' = 'Female',
-                 #'W' = 'Female',
-                 'Male' = 'Male',
-                 #'T' = 'Transgender',
-                 'NULL' = NA_character_,
+sex_encoding = c('F' = 'Female',
+                 'W' = 'Female',
+                 'M' = 'Male',
+                 'T' = 'Transgender',
                  '.default' = NA_character_)
 
 date_format = "%m/%d/%Y"
@@ -188,7 +180,7 @@ name_delim  = " aka | or | transitioning from "
 
 null_names = c('Name withheld by police', "")
 
-fe_harmonized = harmonize(fe_clean,
+fe_harmonized = harmonize(fe.clean,
                           "fe",
                           col_map,
                           race_encoding,
@@ -197,8 +189,6 @@ fe_harmonized = harmonize(fe_clean,
                           name_delim,
                           null_names)
 
-fe_harmonized = fe_harmonized %>%
-                 mutate( county = ifelse(county == "", NA_character_, county))
 
 
 ### Killed By Police
@@ -212,25 +202,20 @@ col_map = c('name' = 'Name',
 race_encoding = c('B' = "Black",
                   'W' = 'White',
                   'L' = 'Hispanic',
-                  'H' =  'Hispanic',
-                  'M' = NA_character_,
                   'I' = 'NA_PI',
                   'PI'  = 'NA_PI',
                   'A' = 'Asian',
                   'O' = 'Other',
-                  'NULL' = NA_character_,
                   '.default' = NA_character_)
 
 sex_encoding = c('F' = 'Female',
+                 'W' = 'Female',
                  'M' = 'Male',
                  'T' = 'Transgender',
-                 'NULL' = NA_character_,
                  '.default'  = NA_character_)
 
 date_format = "%m/%d/%Y"
 name_delim  = " aka | or | transitioning from "
-
-
 
 null_names = c(" ", "", "NULL", "An unidentified person")
 
@@ -243,9 +228,9 @@ kbp_harmonized = harmonize(kbp,
                 name_delim,
                 null_names)
 
-kbp_harmonized = kbp_harmonized %>% 
-  rename(weapon = X.)
- 
+
+
+
 ### Mapping Police Violence
 col_map = c("name" = "Victim's name",
             "age" = "Victim's age",
@@ -256,20 +241,14 @@ col_map = c("name" = "Victim's name",
             "state" = "State")
 
 race_encoding = c('Hispanic'        = 'Hispanic',
-                  'White' = 'White',
-                  'Black' = 'Black',
-                  'Asian' = 'Asian',
                   'Native American' = 'NA_PI',
                   'Asian/Pacific Islander' = 'NA_PI',
-                  "Unknown race" = NA_character_,
-                  "Unknown Race" =  NA_character_,
                   '.default'   = NA_character_)
 
-sex_encoding = c('Female' = 'Female',
+sex_encoding = c('F' = 'Female',
                  'W' = 'Female',
-                 'Male' = 'Male',
-                 'Transgender' = 'Transgender',
-                 'Unknown' = NA_character_, 
+                 'M' = 'Male',
+                 'T' = 'Transgender',
                  '.default'     = NA_character_)
 
 date_format = "%Y-%m-%d"
@@ -286,9 +265,6 @@ mpv_harmonized = harmonize(mpv,
                            date_format,
                            name_delim,
                            null_names)
-
- mpv_harmonized = mpv_harmonized %>% 
-                 select(-starts_with("..25"))
 
 
 
@@ -325,20 +301,13 @@ wapo_harmonized = harmonize(wapo,
                            name_delim,
                            null_names)
 
-wapo_harmonized = wapo_harmonized %>%
-  mutate(race = ifelse(race == "", NA_character_, race)) %>% 
-  mutate(sex = ifelse(sex == "", NA_character_, sex))
-
-
 
 #### SAVE ####
 
-save_dir = file.path(path_to_save)
-save_file = file.path(path_to_save,
-                      "HarmonizedDataSets.RData")
+save_dir = file.path(path_to_src,
+                      "HarmonizedFiles")
 
-
-
+save_file = file.path(save_dir, "HarmonizedDataSets.RData")
 
 if(!dir.exists(save_file)) {
   dir.create(save_dir, recursive=T)

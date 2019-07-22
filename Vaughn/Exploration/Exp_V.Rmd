@@ -29,19 +29,31 @@ library(DT)
 
 
 
-path_to_har = here::here(file.path( 'Data', 'HarmonizedFiles'))
-path_to_clean = here::here(file.path( 'Data', 'ScrapedFiles'))
-load( file.path(path_to_har, 'HarmonizedDataSets.RData'))
-scraped_files = c('fe.clean.Rdata', 'MPV.clean.Rdata', 'KBP.clean.Rdata', 'WaPo.clean.Rdata')
+path_to_src = here::here('Vaughn', 'ffsgData', 'R')
+load( file.path(path_to_src,
+                'Harmonizing',
+                'HarmonizedFiles',
+                'HarmonizedDataSets.RData'))
+
+scraped_files = c('fe.clean.Rdata', 
+                  'MPV.clean.Rdata',
+                  'KBP.clean.Rdata',
+                  'WaPo.clean.Rdata')
 
 for (file in scraped_files) {
-  scraped_path = file.path(path_to_clean, file)
+  scraped_path = file.path(path_to_src,
+                           'Scraping',
+                           'ScrapedFiles',
+                           file)
   load(scraped_path)
 }
 
 
 kbp$Date <- as.character(kbp$Date)
-kbp$Date <- as.Date(kbp$Date, format = '%m/%d/%Y')
+
+kbp$Date <- as.Date(kbp$Date,
+                    format = '%m/%d/%Y')
+
 mpv$`Date of Incident (month/day/year)` <-  as.Date(mpv$`Date of Incident (month/day/year)`)
 ```
 
@@ -50,7 +62,7 @@ mpv$`Date of Incident (month/day/year)` <-  as.Date(mpv$`Date of Incident (month
 ### Raw Data
 Fatal encounter
 ```{r}
-str <- plot_str(fe_clean,
+str <- plot_str(fe.clean,
                 print_network = FALSE)
 diagonalNetwork(str)
 
@@ -121,8 +133,8 @@ First, we determine the number of records that can potentially be matched. These
 recorded when all the specified datasets are in existence. As of this writing, Killed by police is the most
 recent dataset as determined by its date of creation (2013). So, we will look at numbers partitioned at 2013:
 ```{r}
-fe_before_2013 <- nrow(filter(fe_clean, fe_clean$year < 2013))
-fe_after_2013 <- nrow(filter(fe_clean, fe_clean$year >= 2013))
+fe_before_2013 <- nrow(filter(fe.clean, fe.clean$year < 2013))
+fe_after_2013 <- nrow(filter(fe.clean, fe.clean$year >= 2013))
 
 kbp_before_2013 <- nrow(filter(kbp, year(kbp$Date) < 2013)) #there is no year column
 kbp_after_2013 <- nrow(filter(kbp, year(kbp$Date) >= 2013))
@@ -170,8 +182,8 @@ plot_ly(data, x = ~dfs, y = ~before_2013,
 As seen above, we have no case reported before 2013 for Killed by police, Mapping Police Violence and Washington Post  compared to majority of Fatal encounters' data recorded before 2013. Also note that even after 2013 fatal encounters records much more than the other datatsets. Henceforth, we shall only use the data from 2013 since that is the only data worth matching.
 
 ```{r}
-fe_clean_2013 <- filter(fe_clean,
-                   fe_clean$year >= 2013)
+fe.clean_2013 <- filter(fe.clean,
+                   fe.clean$year >= 2013)
 
 fe_harmonized_2013 <- filter(fe_harmonized,
                         fe_harmonized$year >= 2013)
@@ -180,14 +192,14 @@ fe_harmonized_2013 <- filter(fe_harmonized,
 #non missing data 
 
 #fe
-fe_age <-  fe_clean_2013 %>% 
+fe_age <-  fe.clean_2013 %>% 
              filter(age != '')
 
 fe_har_age <- fe_harmonized_2013 %>% 
                   filter(!is.na(age))
 
 
-fe_race <-  fe_clean_2013 %>% 
+fe_race <-  fe.clean_2013 %>% 
                filter(race != 'Race unspecified') 
 
 
@@ -239,7 +251,7 @@ Here we look at the age variable recorded by all datasets (albeit under differen
 
 ### Fatal encounters:
 
-Total age records for raw data are **`r nrow(fe_clean_2013)` .**
+Total age records for raw data are **`r nrow(fe.clean_2013)` .**
 
 Total age records for harmonized data are **`r length(fe_harmonized_2013$age)`**
 
@@ -249,7 +261,7 @@ _Percentage of  missing age records are: _
 
 Raw data :
 ```{r}
-round(table(fe_clean$age == '' ) / length(fe_clean$age), 2)
+round(table(fe.clean$age == '' ) / length(fe.clean$age), 2)
 ```
 
 
@@ -263,6 +275,7 @@ round(table(is.na(fe_harmonized_2013$age))/ length(fe_harmonized_2013$age), 2)
  
 Following is the histogram of occurences of non missing:
 ```{r}
+
 plot_ly(x = ~fe_age$age, type = 'histogram') %>% 
   layout(title = 'Fatal encounters, Raw dataset',
          xaxis = list(title= 'Age')) 
@@ -430,15 +443,15 @@ Same procedure as for age. We begin by plotting the statistics separately and th
 This should allow us to see the relative density of races recorded in each dataset. More importantly, it should allow us to see the race categories encoded in the datasets and how the matching algorithm should compare them.
 
 ### Fatal encounters:
-Total race records are: **`r length(fe_clean$race)`**
+Total race records are: **`r length(fe.clean$race)`**
 
 
 
 _Percentage of  missing race records are: _
 
-Raw data: **`r nrow(filter(fe_clean, fe_clean$race == 'Missing' | fe_clean$race == 'Race unspecified' ))`**
+Raw data: **`r nrow(filter(fe.clean, fe.clean$race == 'Missing' | fe.clean$race == 'Race unspecified' ))`**
 ```{r}
-round(table(fe_clean_2013$race== 'Race unspecified')/ length(fe_clean_2013$race), 2)
+round(table(fe.clean_2013$race== 'Race unspecified')/ length(fe.clean_2013$race), 2)
 ```
 
 
@@ -613,9 +626,9 @@ Here we look at the sex variable recorded by all datasets.
 ### Fatal encounter
 
 ```{r, warning= FALSE}
-plot_ly(x = ~fe_clean_2013$sex,
+plot_ly(x = ~fe.clean_2013$sex,
         type = 'histogram',
-        color = ~fe_clean_2013$sex) %>%
+        color = ~fe.clean_2013$sex) %>%
   layout(title = 'Fatal encounters, raw data' ,
          xaxis = list(title =  'Sex'))
 
@@ -680,7 +693,7 @@ plot_ly(x = ~mpv_harmonized$sex,
 ```{r, warning= FALSE}
 
  plot_ly(alpha = 0.6) %>%
-  add_histogram(x = ~fe_clean_2013$sex,
+  add_histogram(x = ~fe.clean_2013$sex,
                 name = 'Fatal encounters') %>%
   add_histogram(x = ~kbp$Gender,
                 name = 'Killed by Police') %>%
