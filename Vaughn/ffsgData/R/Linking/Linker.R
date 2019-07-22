@@ -11,17 +11,13 @@ library(plyr)
 library(here)
 library(RecordLinkage)
 
-harmonizer_src = file.path(here::here(), 'R', 'Harmonizing')
-source(file.path(harmonizer_src, "Harmonizer.R"))
-
 path_to_src = here::here(file.path('R', 'Linking'))
-path_to_save = here::here(file.path('Data', 'FinalClassification'))
+harmonizer_src = file.path(here::here(), 'R', 'Harmonizing')
+# source(file.path(harmonizer_src, "Harmonizer.R"))
 
-
-
-# load(file.path(harmonizer_src,
-#                "HarmonizedFiles",
-#                "HarmonizedDataSets.RData"))
+load(file.path(harmonizer_src,
+               "HarmonizedFiles",
+               "HarmonizedDataSets.RData"))
 
 
 common_cols = Reduce(intersect, list(colnames(kbp_harmonized),
@@ -35,16 +31,15 @@ combined_harmonized = plyr::rbind.fill(kbp_harmonized,
                                        mpv_harmonized,
                                        wapo_harmonized) %>%
                                        mutate("uid" = 1:nrow(.))
-  
 
 
 combined_link = combined_harmonized %>%
                     select(c(common_cols, 'uid'))
 
-common_exclude = c("aka", 'name', 'date', 'chr_age', 'source', 'uid')
+colinear = c("aka", 'name', 'date', 'str_age', 'source', 'uid')
 
 blank_dedup_object = compare.dedup(combined_link,
-                                   exclude = common_exclude,
+                                   exclude = colinear,
                                    blockfld = c('state', 'year'),
                                    phonetic = T,
                                    strcmp = T)
@@ -55,7 +50,8 @@ EM_dedup_object = emWeights(blank_dedup_object)
 threshold = 6
 
 classification = emClassify(EM_dedup_object, threshold.upper = 6)
-save_dir = file.path(path_to_save)
+
+save_dir = file.path(path_to_src, 'FinalClassification')
 
 if(!dir.exists(save_dir)) {
     dir.create(save_dir, recursive=T)

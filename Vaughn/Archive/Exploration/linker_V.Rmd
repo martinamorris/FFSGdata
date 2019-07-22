@@ -3,7 +3,6 @@ title: "linker Report"
 output:
   html_document:
     code_folding: hide
-  pdf_document: default
 ---
 
 ```{r, include= FALSE}
@@ -11,19 +10,23 @@ library(DataExplorer)
 library(networkD3)
 library(dplyr)
 library(rlist)
+library(ggplot2)
 library(data.table)
 library(DT)
-
-path_to_src = here::here(file.path( 'Data'))
+library(cowplot)
+path_to_src = here::here('Vaughn', 'ffsgData', 'R')
 load(file=file.path(path_to_src,
+                    "Linking",
                     "FinalClassification",
                     "full_classification.RData"))
 
 load(file=file.path(path_to_src,
+                    "Linking",
                     "FinalClassification",
                     "full_combined_harmonized.RData"))
 
 load(file= file.path(path_to_src,
+                     "Harmonizing",
                      "HarmonizedFiles",
                      "HarmonizedDataSets.RData"))
 ```
@@ -60,7 +63,7 @@ diagonalNetwork(str)
 
 ```
 
-**Breakout of common columns in combined_harmonized dataset**
+
 
 ```{r}
 
@@ -100,12 +103,6 @@ datatable(dcast(combined_harmonized,
                   fun.aggregate = length),
           rownames = FALSE)
 ```
-
-
-
-
-
-
 ### Classification outputs:
 
 Classification is a list of 10 components, below is the components of this list:
@@ -148,6 +145,7 @@ par(mfrow=c(1,2))
 boxplot(log(classification$M))
 plot(density(log(classification$M)))
 
+
 ```
 
 * *U*: the probabilty given the pair is a nonmatch. 
@@ -156,7 +154,6 @@ As the values were skewed, we had to log the y-axis.
 par(mfrow=c(1,2))
 boxplot(log(classification$U))
 plot(density(log(classification$U)))
-
 ```
 
 
@@ -176,6 +173,7 @@ par(mfrow=c(1,2))
 boxplot(classification$W)
 plot(density(classification$W))
 
+
 hist(classification$W, breaks = 400 )
 ```
 
@@ -185,7 +183,8 @@ corresponding to the rows of pairs.
 ```{r}
 par(mfrow=c(1,2))
 plot(density(classification$Wdata))
-hist(classification$Wdata)
+hist(classification$Wdata, breaks = 50)
+
 ```
 
 
@@ -196,66 +195,6 @@ table(classification$prediction)
 ```
 
 
-
-
-
-**Pairs between -21 and -19**
-```{r}
-classification$pairs$weight <- classification$Wdata
-
-filtered <- classification$pairs %>% 
-            filter(weight > -21, weight < -19) %>% 
-            select(id1,
-                   id2)
-
-
-cb <- combined_harmonized %>%
-  select(firstname,
-         lastname,
-         sex,
-         age,
-         state,
-         day,
-         year,
-         source,
-         uid)
-
-join <-  inner_join(filtered,
-                    cb,
-                    by= c("id1" = "uid"))
-
-second_join <- inner_join( join,
-                           cb,
-                           by= c("id2" = "uid"),
-                           suffix = c(".1", ".2"))
-
-
-datatable(dcast(second_join,
-      source.1 ~source.2,
-      fun.aggregate = length,
-      value.var = "sex.2"),
-      rownames = FALSE)
-
-datatable(dcast(second_join,
-      sex.1 ~sex.2,
-      fun.aggregate = length,
-      value.var = "sex.2"),
-      rownames = FALSE)
-
-
-datatable(dcast(second_join,
-      state.1 ~state.2,
-      fun.aggregate = length,
-      value.var = "state.2"),
-      rownames = FALSE)
-
-datatable(dcast(second_join,
-      year.1 ~year.2,
-      fun.aggregate = length,
-      value.var = "year.2"),
-      rownames = FALSE)
-
-```
 
 
 
