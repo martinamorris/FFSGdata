@@ -33,13 +33,13 @@ load(file= file.path(path_to_src,
 
 In this document, we will go through the outputs generated from `Linker.R`.
 When running `Linker.R`, we get two outputs: classification and combined_harmonized.
-for a more detailed description of how each variables is calculated using RecordLinkage, please look over these resources: [resource 1](https://cran.r-project.org/web/packages/RecordLinkage/RecordLinkage.pdf), [resource 2](http://v-neck.github.io/final/),
+for a more detailed description of how each variable is calculated using RecordLinkage, please look over these resources: [resource 1](https://cran.r-project.org/web/packages/RecordLinkage/RecordLinkage.pdf), [resource 2](http://v-neck.github.io/final/),
 [resource 3](https://docs.google.com/presentation/d/19XFzorND9YIxosJm74sgS-We_qJSvCoGWwsGXubt-N0/edit#slide=id.p)
 
 
 ### Combined harmonized outputs:
 
-before going through combined_harmonized output, let'd first see the common columns to all 4 datasets:
+before going through combined_harmonized output, let's first see the common columns to all 4 datasets:
 
 Common columns :
 ```{r}
@@ -51,7 +51,8 @@ Reduce(intersect, list(colnames(kbp_harmonized),
 
 
 
-`Combined harmonized`is a dataframe in which each of the four harmonized dataset is stacked rowwise.
+`Combined harmonized`is a data frame in which each of the four harmonized datasets is stacked row-wise.
+
 
 ```{r}
 str <- plot_str(combined_harmonized,
@@ -113,7 +114,7 @@ Classification is a list of 10 components, below is the components of this list:
 list.names(classification)
 ```
 
-* *Data*: is the original data that we want to preform record linkage on
+* *Data*: is the original data that we want to perform record linkage on
 ```{r}
 str <- plot_str(classification$data,
                 print_network = FALSE)
@@ -141,8 +142,7 @@ classification$frequencies
 classification$type
 ```
 
-* *M*: the probabilty given the pair is a match. 
-As the values were skewed, we had to log the y-axis.
+* *M*: the conditional probability of a match given the observed difference in attributes.
 ```{r}
 par(mfrow=c(1,2))
 boxplot(log(classification$M))
@@ -161,9 +161,7 @@ plot(density(log(classification$U)))
 
 
 
-* *M vs U*:
-
-
+* *M vs U*: 
 ```{r}
 plot(log(classification$M),log(classification$U))
 ```
@@ -194,9 +192,6 @@ hist(classification$Wdata)
 ```{r}
 table(classification$prediction)
 ```
-
-
-
 
 
 **Pairs between -21 and -19**
@@ -242,6 +237,17 @@ datatable(dcast(second_join,
       value.var = "sex.2"),
       rownames = FALSE)
 
+datatable(dcast(second_join,
+      age.1 ~age.2,
+      fun.aggregate = length,
+      value.var = "state.2"),
+      rownames = FALSE)
+
+datatable(dcast(second_join,
+      race.1 ~race.2,
+      fun.aggregate = length,
+      value.var = "state.2"),
+      rownames = FALSE)
 
 datatable(dcast(second_join,
       state.1 ~state.2,
