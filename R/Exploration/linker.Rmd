@@ -210,6 +210,7 @@ cb <- combined_harmonized %>%
          sex,
          age,
          state,
+         race,
          day,
          year,
          source,
@@ -238,12 +239,6 @@ datatable(dcast(second_join,
       rownames = FALSE)
 
 datatable(dcast(second_join,
-      age.1 ~age.2,
-      fun.aggregate = length,
-      value.var = "state.2"),
-      rownames = FALSE)
-
-datatable(dcast(second_join,
       race.1 ~race.2,
       fun.aggregate = length,
       value.var = "state.2"),
@@ -260,6 +255,12 @@ datatable(dcast(second_join,
       fun.aggregate = length,
       value.var = "year.2"),
       rownames = FALSE)
+
+
+
+ggplot(second_join, aes(x = age.1 ,y =age.2)) +
+  geom_point() +
+  geom_density2d()
 
 ```
 
