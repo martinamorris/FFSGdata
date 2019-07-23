@@ -175,63 +175,6 @@ fe_clean_2013 <- filter(fe_clean,
 
 fe_harmonized_2013 <- filter(fe_harmonized,
                         fe_harmonized$year >= 2013)
-
-
-#non missing data 
-
-#fe
-fe_age <-  fe_clean_2013 %>% 
-             filter(age != '')
-
-fe_har_age <- fe_harmonized_2013 %>% 
-                  filter(!is.na(age))
-
-
-fe_race <-  fe_clean_2013 %>% 
-               filter(race != 'Race unspecified') 
-
-
-fe_har_race <-  fe_harmonized_2013 %>% 
-                  filter(!is.na(race)) 
-
-#kbp
-
-kbp_age <- kbp %>% 
-             filter(Age != '')
-
-
-kbp_har_age <- kbp_harmonized %>%
-                   filter(!is.na(age))
-
-
-
-wapo_age <-  wapo %>% 
-                 filter(!is.na(age))
-
-wapo_har_age <-  wapo_harmonized %>% 
-                     filter(!is.na(age))
-
-
-wapo_race <-  wapo %>% 
-                 filter(!is.na(race))
-
-
-wapo_har_race <-  wapo_harmonized %>% 
-                     filter(!is.na(race))
-
-mpv_age <- mpv %>%
-               filter(!is.na(`Victim's age`),
-                      `Victim's age` != 'Unknown')
-
-mpv_har_age <- mpv_harmonized %>% 
-                   filter(!is.na(age))
-
-mpv_race <- mpv %>%
-               filter(`Victim's race` != 'Unknown race',
-                      `Victim's race` != 'Unknown Race')
-
-mpv_har_race <- mpv_harmonized %>% 
-                   filter(!is.na(race))
 ```
 
 ## Univariate Analysis for Age ##
@@ -263,6 +206,13 @@ round(table(is.na(fe_harmonized_2013$age))/ length(fe_harmonized_2013$age), 2)
  
 Following is the histogram of occurences of non missing:
 ```{r}
+
+fe_age <-  fe_clean_2013 %>% 
+             filter(age != '')
+
+fe_har_age <- fe_harmonized_2013 %>% 
+                  filter(!is.na(age))
+
 plot_ly(x = ~fe_age$age, type = 'histogram') %>% 
   layout(title = 'Fatal encounters, Raw dataset',
          xaxis = list(title= 'Age')) 
@@ -300,6 +250,13 @@ round(table(is.na(kbp_harmonized$age) | kbp_harmonized$age == '') / length(kbp_h
 
 Following is the histogram of occurences:
 ```{r}
+kbp_age <- kbp %>% 
+             filter(Age != '')
+
+
+kbp_har_age <- kbp_harmonized %>%
+                   filter(!is.na(age))
+
 plot_ly(x = ~kbp_age$Age,
          type = 'histogram')  %>% 
   layout( title = 'Killed by Police, Raw dataset', 
@@ -336,6 +293,12 @@ round(table(is.na( wapo_harmonized$age) | wapo_harmonized$age == '') / length(wa
 
 Following is the histogram of occurences:
 ```{r}
+
+wapo_age <-  wapo %>% 
+                 filter(!is.na(age))
+
+wapo_har_age <-  wapo_harmonized %>% 
+                     filter(!is.na(age))
 
 plot_ly(x = ~as.factor(wapo_age$age),
                  type = 'histogram')   %>% 
@@ -374,6 +337,13 @@ round(table(is.na(mpv_harmonized$age)) / length(mpv_harmonized$age), 2)
 
 Following is the histogram of occurences:
 ```{r}
+
+mpv_age <- mpv %>%
+               filter(!is.na(`Victim's age`),
+                      `Victim's age` != 'Unknown')
+
+mpv_har_age <- mpv_harmonized %>% 
+                   filter(!is.na(age))
 
 plot_ly(x = ~mpv_age$`Victim's age`,
         type = 'histogram')  %>% 
@@ -451,6 +421,13 @@ round(table(is.na(fe_harmonized_2013$race))/ length(fe_harmonized_2013$race), 2)
 
 Following is the histogram of occurences.
 ```{r}
+#non missing
+fe_race <-  fe_clean_2013 %>% 
+               filter(race != 'Race unspecified') 
+fe_har_race <-  fe_harmonized_2013 %>% 
+                  filter(!is.na(race)) 
+
+
 plot_ly(x = ~fe_race$race ,
         type = 'histogram', 
         color =  ~fe_race$race)  %>% 
@@ -523,6 +500,13 @@ round(table(is.na(mpv_harmonized$race)) / length(mpv_harmonized$race), 2)
 Following is the histogram of occurences.
 ```{r, warning= FALSE}
 
+mpv_race <- mpv %>%
+               filter(`Victim's race` != 'Unknown race',
+                      `Victim's race` != 'Unknown Race')
+
+mpv_har_race <- mpv_harmonized %>% 
+                   filter(!is.na(race))
+
 plot_ly(x = ~mpv_race$`Victim's race`, 
          type = 'histogram',
          color = ~mpv_race$`Victim's race`)  %>%  
@@ -557,6 +541,13 @@ round(table(is.na(wapo_harmonized$race)) / length(wapo_harmonized$race), 2)
 
 Following is the histogram of occurences.
 ```{r, warning = FALSE}
+wapo_race <-  wapo %>% 
+                 filter(!is.na(race))
+
+
+wapo_har_race <-  wapo_harmonized %>% 
+                     filter(!is.na(race))
+
 plot_ly(x = ~wapo_race$race,
         type = 'histogram',
         color = ~wapo_race$race) %>%
