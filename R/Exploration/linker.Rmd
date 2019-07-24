@@ -13,6 +13,7 @@ library(dplyr)
 library(rlist)
 library(data.table)
 library(DT)
+library(plotly)
 
 path_to_src = here::here(file.path( 'Data'))
 load(file=file.path(path_to_src,
@@ -199,7 +200,7 @@ table(classification$prediction)
 classification$pairs$weight <- classification$Wdata
 
 filtered <- classification$pairs %>% 
-            filter(weight > -21, weight < -19) %>% 
+            filter(weight >= -21, weight <= -20) %>% 
             select(id1,
                    id2)
 
@@ -210,6 +211,7 @@ cb <- combined_harmonized %>%
          sex,
          age,
          state,
+         race,
          day,
          year,
          source,
@@ -238,12 +240,6 @@ datatable(dcast(second_join,
       rownames = FALSE)
 
 datatable(dcast(second_join,
-      age.1 ~age.2,
-      fun.aggregate = length,
-      value.var = "state.2"),
-      rownames = FALSE)
-
-datatable(dcast(second_join,
       race.1 ~race.2,
       fun.aggregate = length,
       value.var = "state.2"),
@@ -260,6 +256,20 @@ datatable(dcast(second_join,
       fun.aggregate = length,
       value.var = "year.2"),
       rownames = FALSE)
+
+
+randomSample <- second_join %>% 
+  
+  sample_n(10000)
+
+ggplot(randomSample , aes(x = age.1 ,y =age.2)) +
+  geom_point() 
+
+
+
+plot_ly(data = second_join,
+        x = ~age.1,
+        y = ~age.2)
 
 ```
 

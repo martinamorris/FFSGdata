@@ -39,7 +39,6 @@ library(dplyr)
 library(tidyverse)
 library(purrr)
 library(here)
-library(plyr)
 
 path_to_src = here::here(file.path('R', 'Harmonizing'))
 path_to_save = here::here(file.path('Data', 'HarmonizedFiles'))
@@ -207,17 +206,18 @@ col_map = c('name' = 'Name',
             'sex'  = 'Gender',
             'race' = 'Race',
             'date' = 'Date',
-            'state' = 'State')
+            'state' = 'State',
+            'weapon' = 'X.')
 
 race_encoding = c('B' = "Black",
                   'W' = 'White',
                   'L' = 'Hispanic',
                   'H' =  'Hispanic',
-                  'M' = NA_character_,
                   'I' = 'NA_PI',
                   'PI'  = 'NA_PI',
                   'A' = 'Asian',
                   'O' = 'Other',
+                  'M' = NA_character_,
                   'NULL' = NA_character_,
                   '.default' = NA_character_)
 
@@ -243,8 +243,9 @@ kbp_harmonized = harmonize(kbp,
                 name_delim,
                 null_names)
 
-kbp_harmonized = kbp_harmonized %>% 
-  rename(weapon = X.)
+kbp_harmonized$race = dplyr::na_if(kbp_harmonized$race, "")
+
+
  
 ### Mapping Police Violence
 col_map = c("name" = "Victim's name",
@@ -255,12 +256,12 @@ col_map = c("name" = "Victim's name",
             "zip" = "Zipcode",
             "state" = "State")
 
-race_encoding = c('Hispanic'        = 'Hispanic',
+race_encoding = c('Hispanic' = 'Hispanic',
                   'White' = 'White',
                   'Black' = 'Black',
                   'Asian' = 'Asian',
                   'Native American' = 'NA_PI',
-                  'Asian/Pacific Islander' = 'NA_PI',
+                  'Pacific Islander' = 'NA_PI',
                   "Unknown race" = NA_character_,
                   "Unknown Race" =  NA_character_,
                   '.default'   = NA_character_)
@@ -336,8 +337,6 @@ wapo_harmonized = wapo_harmonized %>%
 save_dir = file.path(path_to_save)
 save_file = file.path(path_to_save,
                       "HarmonizedDataSets.RData")
-
-
 
 
 if(!dir.exists(save_file)) {

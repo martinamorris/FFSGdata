@@ -11,18 +11,18 @@ library(plyr)
 library(here)
 library(RecordLinkage)
 
-harmonizer_src = file.path(here::here(), 'R', 'Harmonizing')
-source(file.path(harmonizer_src, "Harmonizer.R"))
+harmonizer_src = file.path(here::here(), 'Data', 'HarmonizedFiles')
+#source(file.path(harmonizer_src, 'Harmonizer.R'))
 
 path_to_src = here::here(file.path('R', 'Linking'))
 path_to_save = here::here(file.path('Data', 'FinalClassification'))
 
 
+load(file.path(harmonizer_src,
+                "HarmonizedDataSets.RData"))
 
-# load(file.path(harmonizer_src,
-#                "HarmonizedFiles",
-#                "HarmonizedDataSets.RData"))
-
+fe_harmonized = fe_harmonized %>% 
+  filter(year >= 2013)
 
 common_cols = Reduce(intersect, list(colnames(kbp_harmonized),
                                      colnames(fe_harmonized),
