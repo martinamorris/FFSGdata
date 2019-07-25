@@ -14,6 +14,7 @@ library(rlist)
 library(data.table)
 library(DT)
 library(plotly)
+library(ggplot2)
 
 path_to_src = here::here(file.path( 'Data'))
 load(file=file.path(path_to_src,
@@ -200,7 +201,7 @@ table(classification$prediction)
 classification$pairs$weight <- classification$Wdata
 
 filtered <- classification$pairs %>% 
-            filter(weight >= -21, weight <= -20) %>% 
+            filter(weight >= -21, weight < -19) %>% 
             select(id1,
                    id2)
 
@@ -259,13 +260,7 @@ datatable(dcast(second_join,
 
 
 randomSample <- second_join %>% 
-  
-  sample_n(10000)
-
-ggplot(randomSample , aes(x = age.1 ,y =age.2)) +
-  geom_point() 
-
-
+  sample_n(1000)
 
 plot_ly(data = second_join,
         x = ~age.1,

@@ -26,6 +26,7 @@ library(DataExplorer)
 library(htmlwidgets)
 library(networkD3)
 library(DT)
+library(tibble)
 
 
 
@@ -708,35 +709,35 @@ plot_ly(x = ~mpv_harmonized$sex,
 
 ## Missing data
 ```{r}
-year <-  c(nrow(filter(fe_harmonized_2013 , is.na(year))),
-           nrow(filter(kbp_harmonized , is.na(year))),
-           nrow(filter(mpv_harmonized , is.na(year))),
-           nrow(filter(wapo_harmonized , is.na(year))))
-
-state <- c(nrow(filter(fe_harmonized_2013 , is.na(state))),
-           nrow(filter(kbp_harmonized , is.na(state))),
-           nrow(filter(mpv_harmonized , is.na(state))),
-           nrow(filter(wapo_harmonized , is.na(state))))
-
-name <- c(nrow(filter(fe_harmonized_2013 , is.na(name))),
-           nrow(filter(kbp_harmonized , is.na(name))),
-           nrow(filter(mpv_harmonized , is.na(name))),
-           nrow(filter(wapo_harmonized , is.na(name))))
 
 
-sex <- c(nrow(filter(fe_harmonized_2013 , is.na(sex))),
-           nrow(filter(kbp_harmonized , is.na(sex))),
-           nrow(filter(mpv_harmonized , is.na(sex))),
-           nrow(filter(wapo_harmonized , is.na(sex))))
 
 
-race <- c(nrow(filter(fe_harmonized_2013 , is.na(race))),
-           nrow(filter(kbp_harmonized , is.na(race))),
-           nrow(filter(mpv_harmonized , is.na(race))),
-           nrow(filter(wapo_harmonized , is.na(race))))
 
-missing <- data.frame(year, state, name, sex, race, row.names = c('fe', 'kbp', 'mpv', 'wapo'))
-datatable(missing)
+fe_missing <- as.data.frame(t(round(colMeans(is.na(fe_harmonized_2013)) *100, 2)),
+                            row.names = "FE") %>%
+              select(firstname, lastname, age, race, sex, state, year)
+
+kbp_missing <- as.data.frame(t(round(colMeans(is.na(kbp_harmonized)) *100, 2)),
+                             row.names = "KBP") %>%
+              select(firstname, lastname, age, race, sex, state, year)
+
+wapo_missing <- as.data.frame(t(round(colMeans(is.na(wapo_harmonized)) *100, 2)),
+                              row.names = "WAPO") %>%
+              select(firstname, lastname, age, race, sex, state, year)
+
+mpv_missing <- as.data.frame(t(round(colMeans(is.na(mpv_harmonized)) *100, 2)),
+                             row.names = "MPV") %>%
+              select(firstname, lastname, age, race, sex, state, year)
+
+
+missing_df <- t(rbind(fe_missing,
+                    kbp_missing,
+                    wapo_missing,
+                    mpv_missing))
+
+datatable(missing_df)
+
 ```
 
 

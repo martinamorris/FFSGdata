@@ -48,6 +48,7 @@ path_to_save = here::here(file.path('Data', 'HarmonizedFiles'))
 #source(file.path(here::here(), 'R', 'Scraping', "MasterScraper.R"))
 
 
+
 scraped_files = c("fe.clean.Rdata", "MPV.clean.Rdata", "KBP.clean.Rdata", "WaPo.clean.Rdata")
 
 for (file in scraped_files) {
@@ -55,6 +56,9 @@ for (file in scraped_files) {
   load(scraped_path)
 }
 
+
+# We encoded Asian as NA_PI beacause our largest  dataset FE doesn't distinguish between Asian
+# and PA
 
 #' Harmonize the various databases
 #'
@@ -170,7 +174,7 @@ race_encoding = c('African-American/Black'  = 'Black',
                   'European-American/White' = 'White',
                   'Hispanic/Latino'         = 'Hispanic',
                   'Native American/Alaskan' = 'NA_PI',
-                  'Asian/Pacific Islander'  = 'Asian',
+                  'Asian/Pacific Islander'  = 'NA_PI',
                   'Middle Eastern'          = 'Other',
                   'Race unspecified'        = NA_character_, 
                   '.default'                = NA_character_)
@@ -215,7 +219,7 @@ race_encoding = c('B' = "Black",
                   'H' =  'Hispanic',
                   'I' = 'NA_PI',
                   'PI'  = 'NA_PI',
-                  'A' = 'Asian',
+                  'A' = 'NA_PI',
                   'O' = 'Other',
                   'M' = NA_character_,
                   'NULL' = NA_character_,
@@ -259,7 +263,7 @@ col_map = c("name" = "Victim's name",
 race_encoding = c('Hispanic' = 'Hispanic',
                   'White' = 'White',
                   'Black' = 'Black',
-                  'Asian' = 'Asian',
+                  'Asian' = 'NA_PI',
                   'Native American' = 'NA_PI',
                   'Pacific Islander' = 'NA_PI',
                   "Unknown race" = NA_character_,

@@ -6,8 +6,8 @@
 #' the top level directory for the package
 #' ie, where ffsg.Rproj is kept
 
-library(dplyr)
 library(plyr)
+library(dplyr)
 library(here)
 library(RecordLinkage)
 
