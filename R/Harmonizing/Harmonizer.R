@@ -49,7 +49,7 @@ path_to_save = here::here(file.path('Data', 'HarmonizedFiles'))
 
 
 
-scraped_files = c("fe.clean.Rdata", "MPV.clean.Rdata", "KBP.clean.Rdata", "WaPo.clean.Rdata")
+scraped_files = c('fe.clean.Rdata', 'MPV.clean.Rdata', 'KBP.clean.Rdata', 'WaPo.clean.Rdata')
 
 for (file in scraped_files) {
   scraped_path = file.path( 'Data', 'ScrapedFiles', file)
@@ -306,7 +306,7 @@ race_encoding = c('B' = "Black",
                   'L' = 'Hispanic',
                   'H' = 'Hispanic',
                   'N' = 'NA_PI',
-                  'A' = 'Asian',
+                  'A' = 'NA_PI',
                   'O' = 'Other',
                   '.default' = NA_character_)
 
