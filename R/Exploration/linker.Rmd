@@ -147,8 +147,10 @@ classification$type
 * *M*: the conditional probability of a match given the observed difference in attributes.
 ```{r}
 par(mfrow=c(1,2))
-boxplot(log(classification$M))
-plot(density(log(classification$M)))
+boxplot(log(classification$M),
+        xlab = "M")
+plot(density(log(classification$M)),
+     xlab = "M")
 
 ```
 
@@ -156,8 +158,10 @@ plot(density(log(classification$M)))
 As the values were skewed, we had to log the y-axis.
 ```{r}
 par(mfrow=c(1,2))
-boxplot(log(classification$U))
-plot(density(log(classification$U)))
+boxplot(log(classification$U),
+        xlab = "U")
+plot(density(log(classification$U)),
+     xlab = "U")
 
 ```
 
@@ -165,7 +169,11 @@ plot(density(log(classification$U)))
 
 * *M vs U*: 
 ```{r}
-plot(log(classification$M),log(classification$U))
+scatter.smooth(log(classification$M),
+               log(classification$U),
+               xlab = "M",
+               ylab = "U",
+               col = "#c79d9d")
 ```
 
 * *W*: is the weight for each pair. it is calculated using the function emWeights in the package recordLinkage.
@@ -173,10 +181,14 @@ W is the log of M divided by U.
 
 ```{r}
 par(mfrow=c(1,2))
-boxplot(classification$W)
-plot(density(classification$W))
+boxplot(classification$W,
+        xlab = "W")
+plot(density(classification$W),
+     xlab = "W")
 
-hist(classification$W, breaks = 400 )
+hist(classification$W,
+     breaks = 400,
+     xlab = "W")
 ```
 
 * *Wdata*: Vector of log-likelihood weights as calculated by emWeights,
@@ -184,8 +196,10 @@ corresponding to the rows of pairs.
 
 ```{r}
 par(mfrow=c(1,2))
-plot(density(classification$Wdata))
-hist(classification$Wdata)
+plot(density(classification$Wdata),
+     xlab = "Wdata")
+hist(classification$Wdata,
+     xlab = "Wdata")
 ```
 
 
@@ -226,48 +240,66 @@ second_join <- inner_join( join,
                            cb,
                            by= c("id2" = "uid"),
                            suffix = c(".1", ".2"))
+```
 
-
+ **Source**
+```{r}
 datatable(dcast(second_join,
       source.1 ~source.2,
       fun.aggregate = length,
       value.var = "sex.2"),
       rownames = FALSE)
+```
 
+**Gender**
+```{r}
 datatable(dcast(second_join,
       sex.1 ~sex.2,
       fun.aggregate = length,
       value.var = "sex.2"),
       rownames = FALSE)
 
+```
+
+**Race**
+```{r}
 datatable(dcast(second_join,
       race.1 ~race.2,
       fun.aggregate = length,
       value.var = "state.2"),
       rownames = FALSE)
+```
 
+
+**Age**
+```{r}
+scatter.smooth(second_join$age.1,
+               second_join$age.2,
+               col = "#c79d9d",
+               xlab = "pair 1",
+               ylab = "pair2")
+
+```
+
+
+**State**
+```{r}
 datatable(dcast(second_join,
       state.1 ~state.2,
       fun.aggregate = length,
       value.var = "state.2"),
       rownames = FALSE)
 
+```
+
+**Year**
+
+```{r}
 datatable(dcast(second_join,
       year.1 ~year.2,
       fun.aggregate = length,
       value.var = "year.2"),
       rownames = FALSE)
-
-
-randomSample <- second_join %>% 
-  sample_n(1000)
-
-plot_ly(data = second_join,
-        x = ~age.1,
-        y = ~age.2)
-
 ```
-
-
 
 
