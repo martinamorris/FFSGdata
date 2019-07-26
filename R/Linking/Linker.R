@@ -41,7 +41,7 @@ combined_harmonized = plyr::rbind.fill(#kbp_harmonized,
 combined_link = combined_harmonized %>%
                     select(c(common_cols, 'uid'))
 
-common_exclude = c("aka", 'name', 'date', 'chr_age', 'source', 'uid')
+common_exclude = c("aka", 'name', 'date', 'chr_age', 'source', 'uid', 'middlename')
 
 blank_dedup_object = compare.dedup(combined_link,
                                    exclude = common_exclude,

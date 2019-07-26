@@ -148,9 +148,9 @@ classification$type
 ```{r}
 par(mfrow=c(1,2))
 boxplot(log(classification$M),
-        xlab = "M")
+        xlab = "log(M)")
 plot(density(log(classification$M)),
-     xlab = "M")
+     xlab = "log(M)")
 
 ```
 
@@ -169,11 +169,17 @@ plot(density(log(classification$U)),
 
 * *M vs U*: 
 ```{r}
-scatter.smooth(log(classification$M),
-               log(classification$U),
-               xlab = "M",
-               ylab = "U",
-               col = "#c79d9d")
+scatter.smooth(log10(classification$M),
+               log10(classification$U),
+               xlab = "log(M)",
+               ylab = "log(U)",
+               col = "#c79d9d",
+               pch = 1)
+
+
+
+min(classification$M)
+min(classification$U)
 ```
 
 * *W*: is the weight for each pair. it is calculated using the function emWeights in the package recordLinkage.
