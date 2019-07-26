@@ -6,8 +6,8 @@
 #' the top level directory for the package
 #' ie, where ffsg.Rproj is kept
 
-library(dplyr)
 library(plyr)
+library(dplyr)
 library(here)
 library(RecordLinkage)
 
@@ -24,13 +24,13 @@ load(file.path(harmonizer_src,
 fe_harmonized = fe_harmonized %>% 
   filter(year >= 2013)
 
-common_cols = Reduce(intersect, list(colnames(kbp_harmonized),
+common_cols = Reduce(intersect, list(#colnames(kbp_harmonized),
                                      colnames(fe_harmonized),
                                      colnames(mpv_harmonized),
                                      colnames(wapo_harmonized)))
 
 
-combined_harmonized = plyr::rbind.fill(kbp_harmonized,
+combined_harmonized = plyr::rbind.fill(#kbp_harmonized,
                                        fe_harmonized,
                                        mpv_harmonized,
                                        wapo_harmonized) %>%
@@ -41,7 +41,7 @@ combined_harmonized = plyr::rbind.fill(kbp_harmonized,
 combined_link = combined_harmonized %>%
                     select(c(common_cols, 'uid'))
 
-common_exclude = c("aka", 'name', 'date', 'chr_age', 'source', 'uid')
+common_exclude = c("aka", 'name', 'date', 'chr_age', 'source', 'uid', 'middlename')
 
 blank_dedup_object = compare.dedup(combined_link,
                                    exclude = common_exclude,

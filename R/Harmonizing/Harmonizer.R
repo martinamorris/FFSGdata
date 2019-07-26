@@ -48,13 +48,17 @@ path_to_save = here::here(file.path('Data', 'HarmonizedFiles'))
 #source(file.path(here::here(), 'R', 'Scraping', "MasterScraper.R"))
 
 
-scraped_files = c("fe.clean.Rdata", "MPV.clean.Rdata", "KBP.clean.Rdata", "WaPo.clean.Rdata")
+
+scraped_files = c('fe.clean.Rdata', 'MPV.clean.Rdata', 'KBP.clean.Rdata', 'WaPo.clean.Rdata')
 
 for (file in scraped_files) {
   scraped_path = file.path( 'Data', 'ScrapedFiles', file)
   load(scraped_path)
 }
 
+
+# We encoded Asian as ANAPI beacause our largest  dataset FE doesn't distinguish between Asian
+# and PA
 
 #' Harmonize the various databases
 #'
@@ -116,7 +120,7 @@ harmonize <- function (df,
 
   # we added hispanic to the list because every scrapped dataset has it as a value.
   canon_races = c("Black", "White", "Hispanic",
-                  'NA_PI', "Asian", "Other")
+                  'ANAPI', "Asian", "Other")
 
 
   # Assert that our data frame has the right columns
@@ -169,8 +173,8 @@ col_map = c('date' = 'dateMDY')
 race_encoding = c('African-American/Black'  = 'Black',
                   'European-American/White' = 'White',
                   'Hispanic/Latino'         = 'Hispanic',
-                  'Native American/Alaskan' = 'NA_PI',
-                  'Asian/Pacific Islander'  = 'Asian',
+                  'Native American/Alaskan' = 'ANAPI',
+                  'Asian/Pacific Islander'  = 'ANAPI',
                   'Middle Eastern'          = 'Other',
                   'Race unspecified'        = NA_character_, 
                   '.default'                = NA_character_)
@@ -213,9 +217,9 @@ race_encoding = c('B' = "Black",
                   'W' = 'White',
                   'L' = 'Hispanic',
                   'H' =  'Hispanic',
-                  'I' = 'NA_PI',
-                  'PI'  = 'NA_PI',
-                  'A' = 'Asian',
+                  'I' = 'ANAPI',
+                  'PI'  = 'ANAPI',
+                  'A' = 'ANAPI',
                   'O' = 'Other',
                   'M' = NA_character_,
                   'NULL' = NA_character_,
@@ -259,15 +263,14 @@ col_map = c("name" = "Victim's name",
 race_encoding = c('Hispanic' = 'Hispanic',
                   'White' = 'White',
                   'Black' = 'Black',
-                  'Asian' = 'Asian',
-                  'Native American' = 'NA_PI',
-                  'Pacific Islander' = 'NA_PI',
+                  'Asian' = 'ANAPI',
+                  'Native American' = 'ANAPI',
+                  'Pacific Islander' = 'ANAPI',
                   "Unknown race" = NA_character_,
                   "Unknown Race" =  NA_character_,
                   '.default'   = NA_character_)
 
 sex_encoding = c('Female' = 'Female',
-                 'W' = 'Female',
                  'Male' = 'Male',
                  'Transgender' = 'Transgender',
                  'Unknown' = NA_character_, 
@@ -301,8 +304,8 @@ race_encoding = c('B' = "Black",
                   'W' = 'White',
                   'L' = 'Hispanic',
                   'H' = 'Hispanic',
-                  'N' = 'NA_PI',
-                  'A' = 'Asian',
+                  'N' = 'ANAPI',
+                  'A' = 'ANAPI',
                   'O' = 'Other',
                   '.default' = NA_character_)
 
@@ -352,3 +355,4 @@ save(fe_harmonized,
      kbp_harmonized,
      wapo_harmonized,
      file=save_file)
+
