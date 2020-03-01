@@ -30,7 +30,7 @@ library(rio)
 #' @return Void. Saves the data to `save_file`.
 #' @export
 scrape_FE_data <- function(url, save_file) {
-  fe <- rio::import(url)
+  fe <- rio::import(url, sep=",")
 
   ##################################################################################
 
@@ -39,6 +39,7 @@ scrape_FE_data <- function(url, save_file) {
   irrelevant_cols = c("Unique ID",
                       "Unique identifier (redundant)",
                       "Unique ID formula",
+                      "Were police aware of symptoms of mental illness before interaction? INTERNAL USE, NOT FOR ANALYSIS",
                       "Video")
 
   fe = fe %>% select(-irrelevant_cols)
@@ -59,13 +60,13 @@ scrape_FE_data <- function(url, save_file) {
                    "Full Address" = 'fullAddress',
                    "Latitude" = 'latitude',
                    "Longitude" = 'longitude',
-                   "Agency responsible for death" = 'agency',
-                   "Cause of death" = 'causeOfDeath',
-                   "A brief description of the circumstances surrounding the death" = 'circumstances',
-                   "Dispositions/Exclusions INTERNAL USE, NOT FOR ANALYSIS" = 'officialDisposition',
-                    "Link to news article or photo of official document" = 'URLarticle',
-                   "Date&Description" = 'Description',
-                   "Date (Year)" = 'year')
+                   "Agency(ies) involved in death" = 'agency',
+                    "Cause of death" = 'causeOfDeath',
+                    "A brief description of the circumstances surrounding the death" = 'circumstances',
+                   "Official disposition of death (justified or other) INTERNAL USE, NOT FOR ANALYSIS" = 'officialDisposition',
+            "Link to news article or photo of official document" = 'URLarticle',
+                    "Date&Description" = 'Description',
+                    "Date (Year)" = 'year')
 
   # Dp
   fe = fe %>% plyr::rename(new_names)
