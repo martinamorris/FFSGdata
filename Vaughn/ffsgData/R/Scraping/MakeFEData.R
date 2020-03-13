@@ -63,7 +63,7 @@ scrape_FE_data <- function(url, save_file) {
                    "Cause of death" = 'causeOfDeath',
                    "A brief description of the circumstances surrounding the death" = 'circumstances',
                    "Dispositions/Exclusions INTERNAL USE, NOT FOR ANALYSIS" = 'officialDisposition',
-                    "Link to news article or photo of official document" = 'URLarticle',
+                   "Link to news article or photo of official document" = 'URLarticle',
                    "Date&Description" = 'Description',
                    "Date (Year)" = 'year')
 
